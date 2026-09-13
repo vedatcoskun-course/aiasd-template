@@ -8,6 +8,9 @@ Replace this scaffold with your own project as the weeks progress.
 import streamlit as st
 
 # ── Page configuration ────────────────────────────────────────────
+# layout="centered" keeps a single, narrow column — the layout that survives a phone
+# screen. layout="wide" looks better on your laptop and breaks on a 390px screen, so
+# only reach for it if you have tested what it does when narrow.
 st.set_page_config(
     page_title="My AI Project",  # TODO: replace with your project name
     page_icon="🤖",

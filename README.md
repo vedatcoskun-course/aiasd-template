@@ -114,3 +114,4 @@ remember that a committed key is an automatic 10-point deduction.
 - Do **not** commit `.venv/`, `__pycache__/`, or API keys.
 - Run `ruff check .` before committing — it is part of the Week 9 grade and catches the unused imports AI tends to leave behind.
 - Use `.env` for secrets and keep it in `.gitignore`.
+- Your app must work on a phone as well as a laptop. Narrow your browser window to ~390px now and then — if something is cut off or scrolls sideways, fix it while the page is small, not in Week 10.
