@@ -1,15 +1,8 @@
-# Core app
-streamlit>=1.35.0
+# Week 1 — the minimum needed to start.
+# Heavier dependencies arrive per week: see requirements/weekNN.txt
+#
+#   pip install -r requirements.txt
 
-# LLM APIs
-anthropic>=0.25.0
-google-generativeai>=0.5.0
-ollama>=0.2.0
-
-# RAG / vector search
-faiss-cpu>=1.8.0
-sentence-transformers>=3.0.0
-
-# Utilities
-python-dotenv>=1.0.0
-requests>=2.31.0
+streamlit==1.41.1
+python-dotenv==1.0.1
+requests==2.32.3

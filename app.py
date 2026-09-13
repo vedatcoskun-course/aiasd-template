@@ -9,7 +9,7 @@ import streamlit as st
 
 # ── Page configuration ────────────────────────────────────────────
 st.set_page_config(
-    page_title="My AI Project",   # TODO: replace with your project name
+    page_title="My AI Project",  # TODO: replace with your project name
     page_icon="🤖",
     layout="centered",
 )

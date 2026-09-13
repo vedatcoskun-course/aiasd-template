@@ -1,0 +1,19 @@
+# Linting and formatting configuration.
+# Check:  ruff check .
+# Fix:    ruff check . --fix
+# Format: ruff format .
+
+line-length = 100
+target-version = "py312"
+
+exclude = [".venv", "__pycache__", "faiss_index", "chroma_db"]
+
+[lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes — undefined names, unused imports
+    "I",    # import sorting
+    "UP",   # prefer modern Python syntax
+    "B",    # common bug patterns
+]
+ignore = ["E501"]   # long lines are handled by the formatter

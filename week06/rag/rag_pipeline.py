@@ -4,10 +4,11 @@ Starter RAG pipeline skeleton — fill in the TODOs.
 """
 
 from pathlib import Path
-# pip install faiss-cpu sentence-transformers
-# from sentence_transformers import SentenceTransformer
+
+# Week 6 dependencies:  pip install -r requirements/week06.txt
 # import faiss
 # import numpy as np
+# from sentence_transformers import SentenceTransformer
 
 
 def load_documents(folder: str) -> list[str]:

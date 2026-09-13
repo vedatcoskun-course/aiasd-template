@@ -1,0 +1,19 @@
+%% Sequence Diagram — Week 4
+%% One core use case from your SRS, end to end.
+%% Render at: https://mermaid.live
+
+sequenceDiagram
+    actor User
+    participant UI as Streamlit UI
+    participant Logic as App Logic
+    participant Client as llm_client
+    participant Model as LLM (Qwen / Claude)
+
+    User->>UI: enters a request
+    UI->>Logic: passes input + session history
+    Logic->>Client: chat(messages, system_prompt)
+    Client->>Model: request
+    Model-->>Client: generated text
+    Client-->>Logic: response string
+    Logic-->>UI: formatted result
+    UI-->>User: renders the answer
