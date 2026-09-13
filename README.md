@@ -50,6 +50,59 @@ pip install -r requirements/week10.txt   # + Selenium
 
 ---
 
+## Who you are — `student.json`
+
+Fill this in on Week 1, at the repo root:
+
+```json
+{
+  "student_id": "20210042",
+  "first_name": "Ayşe",
+  "last_name": "Yılmaz",
+  "nickname": "kaplumbaga"
+}
+```
+
+Your **nickname** is what appears on the class board projected at the end of each
+session, so you can find your own row at a glance. Letters, digits, `-` and `_`,
+2–20 characters. Choose whatever you like — just not your student number, and pick
+something you will still recognise in December.
+
+Keep this repository **private** while the course runs. It carries your student
+number and name.
+
+---
+
+## Automatic checks
+
+Every push runs the same checks your instructor runs. You see a green tick or a red
+cross on your commit in GitHub, and you can see exactly which check failed.
+
+The `WEEK` file at the repo root tells the checker which week you are submitting.
+It starts at `0`. **Set it to the week number when you start that week:**
+
+```bash
+echo 1 > WEEK      # Week 1
+```
+
+Weeks are checked cumulatively — Week 3 also re-checks Weeks 1 and 2. If a later
+change breaks something earlier, you want to hear about it from CI, not in December.
+
+Run the checks locally before you push:
+
+```bash
+python .github/check_deliverables.py
+```
+
+A red cross is not a grade. It is a list of what is still missing, and it is far
+better to see it on Tuesday than after the deadline.
+
+**The secret scan runs on every push, at every week.** If an API key reaches the
+repository the check fails loudly — remove it, rotate the key immediately, and
+remember that a committed key is an automatic 10-point deduction.
+
+---
+
 ## Repository rules
 
 - Commit **at minimum once per week**, before the session.
