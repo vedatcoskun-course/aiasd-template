@@ -1,0 +1,16 @@
+%% Sequence Diagram — Week 3
+%% Shows the flow of one core use case.
+%% Render at: https://mermaid.live
+
+sequenceDiagram
+    actor User
+    participant UI as Streamlit UI
+    participant Logic as App Logic
+    participant LLM as LLM (Claude/Qwen)
+
+    User->>UI: Enter prompt
+    UI->>Logic: pass input
+    Logic->>LLM: API call with system prompt + user input
+    LLM-->>Logic: response text
+    Logic-->>UI: formatted result
+    UI-->>User: display response
