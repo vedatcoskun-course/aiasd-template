@@ -27,6 +27,10 @@ You create it from the template on Week 1 and commit to it every week.
 
 Each week you also update `ai_log.md` with a reflection on how you used AI.
 
+**Yeni başlıyorsanız:** haftalık akışın tamamı — derse gelmeden, derste ve ders
+sonrasında ne yapacağınız, puanların nasıl dağıldığı, takıldığınızda ne yapmanız
+gerektiği — [`HAFTALIK_AKIS.md`](HAFTALIK_AKIS.md) dosyasında adım adım anlatılıyor.
+
 ---
 
 ## Running the app
