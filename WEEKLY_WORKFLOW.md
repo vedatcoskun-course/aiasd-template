@@ -13,14 +13,16 @@ Come back here when you are stuck.
 | When | What you do | Points |
 |------|-------------|--------|
 | Before the session | Read the assignment | — |
-| During the session (3 h) | Set `WEEK`, work, push | 2 |
-| End of the session | One last push — I freeze the state | ↑ same 2 |
-| By Saturday 23:59 | Finish the rest, write `ai_log.md` | 3 |
-| Every week | Consistency, `ai_log.md` quality, commit hygiene | 5 |
+| During the session (3 h) | Set `WEEK`, work, push | 5 |
+| End of the session | One last push — I freeze the state | ↑ same 5 |
+| By Saturday 23:59 | Finish the rest, write `ai_log.md` | 5 |
 
-Ten points a week. Half comes from automated checks, half from my reading of your work.
-That split is deliberate: the automated half proves the work exists and runs, but only a
-person can tell whether you understood it.
+Ten points a week, split evenly between two moments: **five measured at the end of the
+session, five at the Saturday deadline.**
+
+Half the week's mark riding on the session is deliberate. This is where the work
+belongs — in the room, while you can still ask. The other half rests on finishing, and
+on the two things a checker cannot see.
 
 **The deadline is the same every week: Saturday 23:59.** There is nothing to work out —
 whatever is in your repository at Saturday midnight is what I grade. Most of the work
@@ -83,14 +85,14 @@ At the end of the session I freeze every repository as it stands and run the che
 Work you have not pushed is invisible — it sits on your laptop and does not count.
 
 The result is projected as an anonymised table; find your row by the nickname in your
-`student.json`. That table is worth **2 points**.
+`student.json`. That table is worth **5 points — half the week**.
 
 ---
 
 ## 3. After the session — until Saturday 23:59
 
 Finish the rest of the week's work by Saturday midnight. I take a second snapshot on
-Sunday morning; your state at the deadline decides the 3-point part.
+Sunday morning; your state at the deadline decides the other 5 points.
 
 ### `ai_log.md` — do not skip it
 
@@ -124,22 +126,19 @@ git push
 ```
 
 The **Actions** tab of your repository on GitHub shows the result of every push. A green
-tick means the automated part of that week is done — 3 points.
+tick on your Saturday state is worth **2 points**.
 
-### The 5 points that are not automated
+### The 3 points that are not automated
 
-Half of the week's marks come from things the checker cannot see.
-
-**Consistency with earlier weeks — 2 points.** Does this week's work actually follow
-from the requirements and design you wrote in previous weeks? Changing your mind is
-normal and healthy — but the change must be visible. A silently abandoned requirement
-costs marks; a requirement dropped with a one-line justification in `ai_log.md` costs
-nothing. That is what engineering looks like.
+**Consistency and commit discipline — 1 point.** Does this week's work actually follow
+from the requirements and design you wrote in previous weeks, and does your commit
+history show work spread across the week rather than one last-minute dump? Changing your
+mind is normal and healthy — but the change must be visible. A silently abandoned
+requirement costs the mark; a requirement dropped with a one-line justification in
+`ai_log.md` costs nothing. That is what engineering looks like.
 
 **`ai_log.md` quality — 2 points.** A concrete AI error, the pasted evidence, and how
 you noticed.
-
-**Commit hygiene — 1 point.** Meaningful messages, work spread across the week.
 
 An LLM can produce every file an assignment asks for. What it cannot do is make those
 files agree with the ten weeks around them, or notice its own mistakes on your behalf.
