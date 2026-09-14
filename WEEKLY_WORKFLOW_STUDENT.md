@@ -100,6 +100,16 @@ Work you have not pushed is invisible — it sits on your laptop and does not co
 The result is projected as an anonymised table; find your row by the nickname in your
 `student.json`. That table is worth **5 points — half the week**.
 
+### If you cannot be there
+
+Illness and emergencies happen and they should not cost you half a week's mark. If you
+have a documented reason for missing a session, tell me, do the session's work, and
+**push it within 24 hours**. I will give you those 5 points by hand.
+
+What this does not cover is the work itself. You still produce it, and still quickly —
+the 24 hours is the point. Missing the room costs you the room: the chance to ask while
+you are stuck, which is the part I cannot give back afterwards.
+
 ---
 
 ## 3. After the session — until Saturday 23:59
