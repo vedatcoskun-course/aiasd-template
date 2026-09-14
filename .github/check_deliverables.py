@@ -44,6 +44,40 @@ def parses(path: str) -> bool:
     return True
 
 
+def ai_log_evidence(week: int) -> str:
+    """The pasted exchange backing this week's claim — a fenced block with content.
+
+    An untouched template block holds only an HTML comment, which is stripped here,
+    so the placeholder does not count as evidence.
+    """
+    text = read("ai_log.md") or ""
+    match = re.search(
+        rf"^##\s*Week\s*{week}\b(.*?)(?=^##\s*Week\s|\Z)", text, re.MULTILINE | re.DOTALL
+    )
+    if not match:
+        return ""
+    blocks = re.findall(r"```[^\n]*\n(.*?)```", match.group(1), re.DOTALL)
+    cleaned = [re.sub(r"<!--.*?-->", "", b, flags=re.DOTALL).strip() for b in blocks]
+    return "\n".join(c for c in cleaned if c).strip()
+
+
+def check_ai_log(week: int) -> None:
+    """Every week: a filled-in reflection, and the exchange that backs it up."""
+    check(
+        week,
+        f"ai_log.md Week {week} filled in",
+        len(ai_log_section(week)) > 80,
+        "section empty or untouched",
+    )
+    evidence = ai_log_evidence(week)
+    check(
+        week,
+        f"ai_log.md Week {week} evidence pasted",
+        len(evidence) >= 80,
+        f"{len(evidence)} characters in the code block — paste the real exchange",
+    )
+
+
 def ai_log_section(week: int) -> str:
     """Return the body of the Week N section of ai_log.md."""
     text = read("ai_log.md") or ""
@@ -133,9 +167,7 @@ def week1() -> None:
     gi = read(".gitignore") or ""
     check(1, ".gitignore covers .venv and .env", ".venv" in gi and ".env" in gi, "add them")
     check(1, ".env.example present", (ROOT / ".env.example").is_file(), "create it (names only)")
-    check(
-        1, "ai_log.md Week 1 filled in", len(ai_log_section(1)) > 80, "section empty or untouched"
-    )
+    check_ai_log(1)
 
 
 def week2() -> None:
@@ -174,9 +206,7 @@ def week2() -> None:
         any(k in uc for k in ("graph", "flowchart")),
         "no graph/flowchart",
     )
-    check(
-        2, "ai_log.md Week 2 filled in", len(ai_log_section(2)) > 80, "section empty or untouched"
-    )
+    check_ai_log(2)
 
 
 def week3() -> None:
@@ -204,9 +234,7 @@ def week3() -> None:
 
     notes = read("week03/model_notes.md") or ""
     check(3, "model_notes.md ≥400 chars", len(notes.strip()) >= 400, f"{len(notes.strip())} chars")
-    check(
-        3, "ai_log.md Week 3 filled in", len(ai_log_section(3)) > 80, "section empty or untouched"
-    )
+    check_ai_log(3)
 
 
 def week4() -> None:
@@ -229,9 +257,7 @@ def week4() -> None:
     check(
         4, "week04/design.md ≥300 chars", len(design.strip()) >= 300, f"{len(design.strip())} chars"
     )
-    check(
-        4, "ai_log.md Week 4 filled in", len(ai_log_section(4)) > 80, "section empty or untouched"
-    )
+    check_ai_log(4)
 
 
 CHECKS = {1: week1, 2: week2, 3: week3, 4: week4}
