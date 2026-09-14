@@ -364,6 +364,13 @@ def week3() -> None:
         f"{len(notes.strip())} chars",
         DEADLINE,
     )
+    check(
+        3,
+        "model_notes.md shows the raw HTTP call",
+        "11434" in notes or "api/generate" in notes,
+        "paste the curl command and what came back",
+        DEADLINE,
+    )
     check_ai_log(3)
 
 
