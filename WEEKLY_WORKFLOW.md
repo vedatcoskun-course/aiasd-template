@@ -13,7 +13,7 @@ Come back here when you are stuck.
 | When | What you do | Points |
 |------|-------------|--------|
 | Before the session | Read the assignment | — |
-| During the session (3 h) | Set `WEEK`, work, push | 5 |
+| During the session (3 h) | Work, and push often | 5 |
 | End of the session | One last push — I freeze the state | ↑ same 5 |
 | By Saturday 23:59 | Finish the rest, write `ai_log.md` | 5 |
 
@@ -43,17 +43,11 @@ it and those 20 minutes will mean nothing to you.
 
 ## 2. During the session
 
-### First, set the `WEEK` file
+### There is no switch to flip
 
-The `WEEK` file at the repository root tells the automated checker which week to look
-at. Update it when you start the week:
-
-```bash
-echo 3 > WEEK        # for Week 3
-```
-
-Forget this and the checks never look at that week's files — your score at the end of
-the session will read zero.
+The checker asks the course which week it is on, every time it runs. You cannot forget
+to set it, and you cannot be checked against the wrong week. The `WEEK` file at the
+repository root caches that number for when you are offline; it updates itself.
 
 ### Work, and push often
 
@@ -251,11 +245,9 @@ record the exchange in `ai_log.md`. That is precisely what this course is about.
 ## Command summary
 
 ```bash
-# starting the week
-echo N > WEEK
-
 # while working
 python .github/check_deliverables.py     # show me what is missing
+AIASD_WEEK=2 python .github/check_deliverables.py   # just one week, if you want
 ruff check . --fix                       # clean the code
 git add . && git commit -m "weekNN: ..." && git push
 

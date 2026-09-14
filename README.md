@@ -82,15 +82,19 @@ number and name.
 Every push runs the same checks your instructor runs. You see a green tick or a red
 cross on your commit in GitHub, and you can see exactly which check failed.
 
-The `WEEK` file at the repo root tells the checker which week you are submitting.
-It starts at `0`. **Set it to the week number when you start that week:**
-
-```bash
-echo 1 > WEEK      # Week 1
-```
+**There is nothing for you to switch on.** The checker asks the course which week it
+is on, every time it runs, so what you see is always what is being run against you.
+The `WEEK` file at the repo root is just a cache of that number — it updates itself,
+and you never need to touch it.
 
 Weeks are checked cumulatively — Week 3 also re-checks Weeks 1 and 2. If a later
 change breaks something earlier, you want to hear about it from CI, not in December.
+
+To look at one week on its own, say to confirm Week 2 still passes:
+
+```bash
+AIASD_WEEK=2 python .github/check_deliverables.py
+```
 
 Run the checks locally before you push:
 

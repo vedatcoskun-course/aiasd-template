@@ -2,20 +2,30 @@
 """
 Checks this week's deliverables — the same checks the instructor runs.
 
-Read the WEEK file at the repo root, then verify every week from 1 up to that
-number. Earlier weeks keep being checked on purpose: a change that breaks Week 3
-should not pass silently in Week 7.
+Every week from 1 up to the current one is verified, not just the latest. That is
+deliberate: a change that breaks Week 3 should not pass silently in Week 7.
+
+Which week is "current" is not yours to set. It is published by the course and
+read from there on every run, so the checks you see are always the checks being
+run against you. The WEEK file is only a cache of that number, refreshed
+automatically, so this still works on a train with no signal.
 
 Run it locally before you push:
     python .github/check_deliverables.py
+
+To look at one specific week — say, to confirm Week 2 still passes:
+    AIASD_WEEK=2 python .github/check_deliverables.py
 """
 
 from __future__ import annotations
 
 import ast
 import json
+import os
 import re
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -52,7 +62,9 @@ def ai_log_evidence(week: int) -> str:
     """
     text = read("ai_log.md") or ""
     match = re.search(
-        rf"^##\s*Week\s*{week}\b(.*?)(?=^##\s*Week\s|\Z)", text, re.MULTILINE | re.DOTALL
+        rf"^##\s*Week\s*{week}\b(.*?)(?=^##\s*Week\s|\Z)",
+        text,
+        re.MULTILINE | re.DOTALL,
     )
     if not match:
         return ""
@@ -109,15 +121,27 @@ def check_identity() -> None:
 
     fields = ("student_id", "first_name", "last_name", "nickname")
     missing = [f for f in fields if not str(data.get(f, "")).strip()]
-    check(1, "student.json fully filled in", not missing, f"empty: {', '.join(missing)}")
+    check(
+        1, "student.json fully filled in", not missing, f"empty: {', '.join(missing)}"
+    )
     if missing:
         return
 
     sid = str(data["student_id"]).strip()
-    check(1, "student_id looks like a number", sid.isdigit() and len(sid) >= 5, f"got {sid!r}")
+    check(
+        1,
+        "student_id looks like a number",
+        sid.isdigit() and len(sid) >= 5,
+        f"got {sid!r}",
+    )
 
     nick = str(data["nickname"]).strip()
-    check(1, "nickname is 2-20 characters", 2 <= len(nick) <= 20, f"{len(nick)} characters")
+    check(
+        1,
+        "nickname is 2-20 characters",
+        2 <= len(nick) <= 20,
+        f"{len(nick)} characters",
+    )
     check(
         1,
         "nickname has no spaces or odd characters",
@@ -125,18 +149,31 @@ def check_identity() -> None:
         "use letters, digits, - and _ only",
     )
 
-    check(1, "nickname is not the student id", nick != sid, "the board would not be anonymous")
+    check(
+        1,
+        "nickname is not the student id",
+        nick != sid,
+        "the board would not be anonymous",
+    )
 
 
 def week1() -> None:
     check_identity()
     proof = read("week01/setup_proof.md")
     check(
-        1, "week01/setup_proof.md present", bool(proof and len(proof) > 80), "missing or too short"
+        1,
+        "week01/setup_proof.md present",
+        bool(proof and len(proof) > 80),
+        "missing or too short",
     )
 
     src = read("week01/hello.py")
-    check(1, "week01/hello.py parses", parses("week01/hello.py"), "missing or has a syntax error")
+    check(
+        1,
+        "week01/hello.py parses",
+        parses("week01/hello.py"),
+        "missing or has a syntax error",
+    )
     if src:
         try:
             tree = ast.parse(src)
@@ -148,7 +185,9 @@ def week1() -> None:
             has_list = any(isinstance(n, (ast.List, ast.ListComp)) for n in nodes)
             has_for = any(isinstance(n, (ast.For, ast.comprehension)) for n in nodes)
             has_input = any(
-                isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "input"
+                isinstance(n, ast.Call)
+                and isinstance(n.func, ast.Name)
+                and n.func.id == "input"
                 for n in nodes
             )
             check(1, "hello.py uses an f-string", has_fstring, "no f-string found")
@@ -165,15 +204,35 @@ def week1() -> None:
     )
 
     gi = read(".gitignore") or ""
-    check(1, ".gitignore covers .venv and .env", ".venv" in gi and ".env" in gi, "add them")
-    check(1, ".env.example present", (ROOT / ".env.example").is_file(), "create it (names only)")
+    check(
+        1,
+        ".gitignore covers .venv and .env",
+        ".venv" in gi and ".env" in gi,
+        "add them",
+    )
+    check(
+        1,
+        ".env.example present",
+        (ROOT / ".env.example").is_file(),
+        "create it (names only)",
+    )
     check_ai_log(1)
 
 
 def week2() -> None:
     prd = read("week02/PRD.md") or ""
-    for heading in ("Problem Statement", "Target Audience", "Core Features", "Out of Scope"):
-        check(2, f"PRD.md has '{heading}'", heading.lower() in prd.lower(), "heading missing")
+    for heading in (
+        "Problem Statement",
+        "Target Audience",
+        "Core Features",
+        "Out of Scope",
+    ):
+        check(
+            2,
+            f"PRD.md has '{heading}'",
+            heading.lower() in prd.lower(),
+            "heading missing",
+        )
 
     srs = read("week02/SRS.md") or ""
     check(2, "week02/SRS.md filled in", len(srs) > 400, "missing or too short")
@@ -187,17 +246,33 @@ def week2() -> None:
         except json.JSONDecodeError as exc:
             check(2, "requirements.json is valid JSON", False, str(exc))
         else:
-            items = data.get("functional_requirements", data) if isinstance(data, dict) else data
+            items = (
+                data.get("functional_requirements", data)
+                if isinstance(data, dict)
+                else data
+            )
             if isinstance(data, dict):
                 items = (data.get("functional_requirements") or []) + (
                     data.get("non_functional_requirements") or []
                 )
-            check(2, "requirements.json has ≥5 entries", len(items) >= 5, f"{len(items)} found")
+            check(
+                2,
+                "requirements.json has ≥5 entries",
+                len(items) >= 5,
+                f"{len(items)} found",
+            )
             ids = [i.get("id", "") for i in items if isinstance(i, dict)]
             bad = [i for i in ids if not re.fullmatch(r"REQ-\d{3}", i)]
             check(2, "IDs follow REQ-NNN", not bad and bool(ids), f"bad IDs: {bad[:3]}")
-            missing = [i for i in items if isinstance(i, dict) and "description" not in i]
-            check(2, "every entry has a description", not missing, f"{len(missing)} without one")
+            missing = [
+                i for i in items if isinstance(i, dict) and "description" not in i
+            ]
+            check(
+                2,
+                "every entry has a description",
+                not missing,
+                f"{len(missing)} without one",
+            )
 
     uc = read("week02/use_cases/use_case_diagram.mmd") or ""
     check(
@@ -211,21 +286,38 @@ def week2() -> None:
 
 def week3() -> None:
     for mod in ("llm_client", "embedder", "chatbot"):
-        check(3, f"week03/{mod}.py parses", parses(f"week03/{mod}.py"), "missing or syntax error")
+        check(
+            3,
+            f"week03/{mod}.py parses",
+            parses(f"week03/{mod}.py"),
+            "missing or syntax error",
+        )
 
     emb = read("week03/embedder.py") or ""
     if emb:
         try:
-            names = {n.name for n in ast.walk(ast.parse(emb)) if isinstance(n, ast.FunctionDef)}
+            names = {
+                n.name
+                for n in ast.walk(ast.parse(emb))
+                if isinstance(n, ast.FunctionDef)
+            }
         except SyntaxError:
             names = set()
         check(3, "embedder defines encode()", "encode" in names, "function not found")
-        check(3, "embedder defines cosine_similarity()", "cosine_similarity" in names, "not found")
+        check(
+            3,
+            "embedder defines cosine_similarity()",
+            "cosine_similarity" in names,
+            "not found",
+        )
 
     bot = read("week03/chatbot.py") or ""
     check(3, "chatbot imports streamlit", "streamlit" in bot, "not imported")
     check(
-        3, "chatbot keeps history in session_state", "session_state" in bot, "history not persisted"
+        3,
+        "chatbot keeps history in session_state",
+        "session_state" in bot,
+        "history not persisted",
     )
 
     prompts = read("week03/prompts.md") or ""
@@ -233,7 +325,12 @@ def week3() -> None:
     check(3, "prompts.md has ≥5 prompts", n >= 5, f"{n} sections found")
 
     notes = read("week03/model_notes.md") or ""
-    check(3, "model_notes.md ≥400 chars", len(notes.strip()) >= 400, f"{len(notes.strip())} chars")
+    check(
+        3,
+        "model_notes.md ≥400 chars",
+        len(notes.strip()) >= 400,
+        f"{len(notes.strip())} chars",
+    )
     check_ai_log(3)
 
 
@@ -243,7 +340,12 @@ def week4() -> None:
     check(4, "app.py imports streamlit", "streamlit" in app, "not imported")
 
     seq = read("week04/sequence/sequence_diagram.mmd") or ""
-    check(4, "sequence diagram is Mermaid", "sequenceDiagram" in seq, "no sequenceDiagram keyword")
+    check(
+        4,
+        "sequence diagram is Mermaid",
+        "sequenceDiagram" in seq,
+        "no sequenceDiagram keyword",
+    )
 
     arch = read("week04/architecture/architecture_diagram.mmd") or ""
     check(
@@ -255,7 +357,10 @@ def week4() -> None:
 
     design = read("week04/design.md") or ""
     check(
-        4, "week04/design.md ≥300 chars", len(design.strip()) >= 300, f"{len(design.strip())} chars"
+        4,
+        "week04/design.md ≥300 chars",
+        len(design.strip()) >= 300,
+        f"{len(design.strip())} chars",
     )
     check_ai_log(4)
 
@@ -308,13 +413,57 @@ def check_secrets() -> bool:
 # ── main ─────────────────────────────────────────────────────────────
 
 
-def main() -> int:
+COURSE_WEEK_URL = (
+    "https://raw.githubusercontent.com/vedatcoskun-course/aiasd-template"
+    "/main/CURRENT_WEEK"
+)
+
+
+def cached_week() -> int:
     raw = (read("WEEK") or "0").strip().splitlines()
     try:
-        current = int(raw[0]) if raw and raw[0].strip() else 0
+        return int(raw[0]) if raw and raw[0].strip() else 0
     except ValueError:
-        print("WEEK must contain a single number, e.g. 3")
-        return 1
+        return 0
+
+
+def published_week() -> int | None:
+    """The week the course says it is on. None if it cannot be reached."""
+    try:
+        with urllib.request.urlopen(COURSE_WEEK_URL, timeout=5) as response:
+            return int(response.read().decode("utf-8").strip().splitlines()[0])
+    except (urllib.error.URLError, ValueError, IndexError, OSError, TimeoutError):
+        return None
+
+
+def resolve_week() -> tuple[int, str]:
+    """Decide which week to check, and say where the number came from.
+
+    Order matters. The published number wins over the local file, because the
+    failure this prevents is a stale local file quietly checking Week 1 all
+    through Week 5 and showing you a green tick you have not earned.
+    """
+    override = os.environ.get("AIASD_WEEK", "").strip()
+    if override:
+        try:
+            return int(override), "AIASD_WEEK"
+        except ValueError:
+            print(f"AIASD_WEEK must be a number, not {override!r}")
+            raise SystemExit(1) from None
+
+    published = published_week()
+    if published is not None:
+        if published != cached_week():
+            try:
+                (ROOT / "WEEK").write_text(f"{published}\n", encoding="utf-8")
+            except OSError:
+                pass  # read-only checkout; the number is still correct
+        return published, "published by the course"
+    return cached_week(), "cached — the course could not be reached"
+
+
+def main() -> int:
+    current, source = resolve_week()
 
     print("=" * 64)
     print("  Secret scan")
@@ -327,9 +476,13 @@ def main() -> int:
     )
 
     if current < 1:
-        print("WEEK is 0 — nothing to check yet.")
-        print("Set WEEK to the week you are submitting (for example: 1) and push again.")
+        print(f"Week 0 ({source}) — nothing to check yet.")
+        print(
+            "The course has not started checking deliverables. Nothing for you to do."
+        )
         return 0 if secrets_ok else 1
+
+    print(f"Checking weeks 1-{current}  ({source})\n")
 
     for week in range(1, current + 1):
         if week in CHECKS:
@@ -348,7 +501,10 @@ def main() -> int:
 
     failed = [r for r in results if r[2] != PASS]
     print("\n" + "-" * 64)
-    print(f"  {len(results) - len(failed)} passed, {len(failed)} failed  (WEEK = {current})")
+    print(
+        f"  {len(results) - len(failed)} passed, {len(failed)} failed  "
+        f"(weeks 1-{current}, {source})"
+    )
     print("-" * 64)
 
     if not secrets_ok:
