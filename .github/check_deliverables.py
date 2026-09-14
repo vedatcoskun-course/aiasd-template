@@ -23,19 +23,44 @@ import ast
 import json
 import os
 import re
+import subprocess
 import sys
+import tempfile
 import urllib.error
 import urllib.request
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+# Normally the repository this file sits in. AIASD_ROOT overrides it, which is
+# how the self-update below keeps pointing at your repository while running a
+# freshly downloaded copy of itself from a temporary file.
+ROOT = (
+    Path(os.environ["AIASD_ROOT"]).resolve()
+    if os.environ.get("AIASD_ROOT")
+    else Path(__file__).resolve().parent.parent
+)
+
+# A string the published checker must contain for us to trust and run it. If a
+# proxy or a captive portal hands back an HTML error page, it will not have this.
+MARKER = "AIASD-CHECKER-v1"  # AIASD-CHECKER-v1
 
 PASS, FAIL = "PASS", "FAIL"
-results: list[tuple[str, str, str]] = []
+
+# When a deliverable is due. Work that belongs in the lab, where you can still
+# ask, is SESSION; work that is genuinely done alone afterwards — writing,
+# diagrams, reflection — is DEADLINE.
+#
+# This is not cosmetic. Half the week's mark is taken at the end of the session,
+# so checking for a diagram you were told to draw at home would mark everyone
+# down for following the instructions.
+SESSION, DEADLINE = "session", "deadline"
+
+results: list[tuple[str, str, str, str]] = []
 
 
-def check(week: int, name: str, ok: bool, detail: str = "") -> None:
-    results.append((f"W{week}", name, PASS if ok else f"{FAIL} — {detail}"))
+def check(
+    week: int, name: str, ok: bool, detail: str = "", slot: str = SESSION
+) -> None:
+    results.append((f"W{week}", name, PASS if ok else f"{FAIL} — {detail}", slot))
 
 
 def read(path: str) -> str | None:
@@ -74,12 +99,17 @@ def ai_log_evidence(week: int) -> str:
 
 
 def check_ai_log(week: int) -> None:
-    """Every week: a filled-in reflection, and the exchange that backs it up."""
+    """Every week: a filled-in reflection, and the exchange that backs it up.
+
+    Due at the deadline, not at the end of the session: the honest version of
+    this is written once the week's work has actually happened.
+    """
     check(
         week,
         f"ai_log.md Week {week} filled in",
         len(ai_log_section(week)) > 80,
         "section empty or untouched",
+        DEADLINE,
     )
     evidence = ai_log_evidence(week)
     check(
@@ -87,6 +117,7 @@ def check_ai_log(week: int) -> None:
         f"ai_log.md Week {week} evidence pasted",
         len(evidence) >= 80,
         f"{len(evidence)} characters in the code block — paste the real exchange",
+        DEADLINE,
     )
 
 
@@ -201,6 +232,7 @@ def week1() -> None:
         "week01/llm_notes.md ~300 words",
         len(notes.split()) >= 250,
         f"{len(notes.split())} words",
+        DEADLINE,
     )
 
     gi = read(".gitignore") or ""
@@ -330,14 +362,43 @@ def week3() -> None:
         "model_notes.md ≥400 chars",
         len(notes.strip()) >= 400,
         f"{len(notes.strip())} chars",
+        DEADLINE,
     )
     check_ai_log(3)
 
 
 def week4() -> None:
+    """Prototype and peer round in the lab; diagrams and write-up afterwards.
+
+    The clickable prototype comes before the diagrams on purpose. It is the
+    cheapest place to find out the flow is wrong — cheaper than discovering it
+    after the architecture is drawn, when the temptation is to bend the
+    prototype to fit the picture rather than the other way round.
+    """
     check(4, "week04/app.py parses", parses("week04/app.py"), "missing or syntax error")
     app = read("week04/app.py") or ""
     check(4, "app.py imports streamlit", "streamlit" in app, "not imported")
+    check(
+        4,
+        "app.py has more than one page or view",
+        len(re.findall(r"st\.(tabs|sidebar|page_link|radio|selectbox)", app)) >= 1,
+        "a prototype people can click needs somewhere to click to",
+    )
+
+    feedback = read("week04/feedback.md") or ""
+    check(
+        4,
+        "week04/feedback.md present",
+        len(feedback.strip()) >= 200,
+        "what three people told you when they clicked your prototype",
+    )
+    check(
+        4,
+        "feedback.md records what you changed",
+        bool(re.search(r"chang|fix|mov|renam|remov|add", feedback, re.IGNORECASE)),
+        "say what you changed, and what you deliberately did not",
+        DEADLINE,
+    )
 
     seq = read("week04/sequence/sequence_diagram.mmd") or ""
     check(
@@ -345,6 +406,7 @@ def week4() -> None:
         "sequence diagram is Mermaid",
         "sequenceDiagram" in seq,
         "no sequenceDiagram keyword",
+        DEADLINE,
     )
 
     arch = read("week04/architecture/architecture_diagram.mmd") or ""
@@ -353,6 +415,7 @@ def week4() -> None:
         "architecture diagram is Mermaid",
         any(k in arch for k in ("graph", "flowchart")),
         "no graph/flowchart",
+        DEADLINE,
     )
 
     design = read("week04/design.md") or ""
@@ -361,6 +424,7 @@ def week4() -> None:
         "week04/design.md ≥300 chars",
         len(design.strip()) >= 300,
         f"{len(design.strip())} chars",
+        DEADLINE,
     )
     check_ai_log(4)
 
@@ -413,6 +477,66 @@ def check_secrets() -> bool:
 # ── main ─────────────────────────────────────────────────────────────
 
 
+CHECKER_URL = (
+    "https://raw.githubusercontent.com/vedatcoskun-course/aiasd-template"
+    "/main/.github/check_deliverables.py"
+)
+
+
+def maybe_update() -> None:
+    """Run the current published checker instead of this frozen copy.
+
+    A student repository is created from the template once and never updated
+    again, so the copy sitting in it is the one from the week they started. By
+    Week 8 it would be checking Week 1 and showing a green tick for work it does
+    not know how to look at. The grade would still be right — that is computed
+    with the instructor's own copy — but the feedback would be silently empty,
+    which is worse than no feedback.
+
+    So: fetch the published checker, and if it differs from this one, hand over
+    to it. Anything that goes wrong — no network, a captive portal, a truncated
+    file, a syntax error — means carrying on with the local copy.
+    """
+    if os.environ.get("AIASD_NO_SELFUPDATE"):
+        return  # we are already the downloaded copy
+    if os.environ.get("AIASD_WEEK") or os.environ.get("AIASD_SLOT"):
+        return  # the instructor is grading, and grading runs its own copy
+
+    try:
+        with urllib.request.urlopen(CHECKER_URL, timeout=6) as response:
+            published = response.read().decode("utf-8")
+    except (urllib.error.URLError, OSError, TimeoutError, UnicodeDecodeError):
+        return
+
+    mine = Path(__file__).read_text(encoding="utf-8", errors="replace")
+    if published == mine:
+        return
+    if MARKER not in published or len(published) < 4000:
+        return
+    try:
+        compile(published, "check_deliverables.py", "exec")
+    except SyntaxError:
+        return
+
+    tmp = Path(tempfile.gettempdir()) / "aiasd_check_deliverables.py"
+    try:
+        tmp.write_text(published, encoding="utf-8")
+    except OSError:
+        return
+
+    print("  (using the current checker published by the course)\n")
+    env = {
+        **os.environ,
+        "AIASD_NO_SELFUPDATE": "1",
+        "AIASD_ROOT": str(ROOT),
+    }
+    raise SystemExit(
+        subprocess.run(
+            [sys.executable, str(tmp), *sys.argv[1:]], env=env, check=False
+        ).returncode
+    )
+
+
 COURSE_WEEK_URL = (
     "https://raw.githubusercontent.com/vedatcoskun-course/aiasd-template"
     "/main/CURRENT_WEEK"
@@ -463,17 +587,19 @@ def resolve_week() -> tuple[int, str]:
 
 
 def main() -> int:
+    maybe_update()
     current, source = resolve_week()
 
     print("=" * 64)
     print("  Secret scan")
     print("=" * 64)
     secrets_ok = check_secrets()
-    print(
-        "  no API keys found\n"
-        if secrets_ok
-        else "  KEYS FOUND — remove them and rotate them NOW\n"
-    )
+    if secrets_ok:
+        print("  no API keys found\n")
+    else:
+        print("  KEYS FOUND — remove them and rotate them NOW")
+        print("  This is an automatic 10-point deduction. Remove the key, rotate it")
+        print("  at the provider, and never commit one again.\n")
 
     if current < 1:
         print(f"Week 0 ({source}) — nothing to check yet.")
@@ -488,30 +614,69 @@ def main() -> int:
         if week in CHECKS:
             CHECKS[week]()
 
-    width = max(len(name) for _, name, _ in results) if results else 0
-    current_week = None
-    for wk, name, status in results:
-        if wk != current_week:
-            print("=" * 64)
-            print(f"  Week {wk[1:]}")
-            print("=" * 64)
-            current_week = wk
-        mark = "✓" if status == PASS else "✗"
-        print(f"  {mark}  {name.ljust(width)}   {status}")
+    # Which slots this run is scored on. The instructor's end-of-session capture
+    # passes AIASD_SLOT=session and is therefore blind to work that was never
+    # due yet; the Saturday capture passes deadline and sees everything.
+    scored = os.environ.get("AIASD_SLOT", "").strip().lower()
+    if scored == SESSION:
+        slots = [SESSION]
+    elif scored == DEADLINE:
+        slots = [SESSION, DEADLINE]
+    else:
+        slots = None  # a student's own run: show both, score the session
 
-    failed = [r for r in results if r[2] != PASS]
-    print("\n" + "-" * 64)
-    print(
-        f"  {len(results) - len(failed)} passed, {len(failed)} failed  "
-        f"(weeks 1-{current}, {source})"
-    )
+    def show(rows: list[tuple[str, str, str, str]], heading: str) -> None:
+        if not rows:
+            return
+        width = max(len(name) for _, name, _, _ in rows)
+        print("=" * 64)
+        print(f"  {heading}")
+        print("=" * 64)
+        seen = None
+        for wk, name, status, _ in rows:
+            if wk != seen:
+                print(f"  -- Week {wk[1:]} " + "-" * (58 - len(wk)))
+                seen = wk
+            mark = "✓" if status == PASS else "✗"
+            print(f"  {mark}  {name.ljust(width)}   {status}")
+        print()
+
+    session_rows = [r for r in results if r[3] == SESSION]
+    deadline_rows = [r for r in results if r[3] == DEADLINE]
+
+    if slots is not None:
+        rows = [r for r in results if r[3] in slots]
+        show(rows, f"Weeks 1-{current}")
+        failed = [r for r in rows if r[2] != PASS]
+        print("-" * 64)
+        print(
+            f"  {len(rows) - len(failed)} passed, {len(failed)} failed  "
+            f"(weeks 1-{current}, {scored})"
+        )
+        print("-" * 64)
+        return 0 if (not failed and secrets_ok) else 1
+
+    show(session_rows, "Due at the end of the session")
+    show(deadline_rows, "Due by Saturday 23:59")
+
+    s_bad = [r for r in session_rows if r[2] != PASS]
+    d_bad = [r for r in deadline_rows if r[2] != PASS]
     print("-" * 64)
-
-    if not secrets_ok:
-        print("\nA secret was found in the repository. This is an automatic 10-point")
-        print("deduction. Remove it, rotate the key, and never commit it again.")
-
-    return 0 if (not failed and secrets_ok) else 1
+    print(
+        f"  In the lab:     {len(session_rows) - len(s_bad)} of {len(session_rows)} done"
+    )
+    print(
+        f"  By Saturday:    {len(deadline_rows) - len(d_bad)} of {len(deadline_rows)} done"
+    )
+    print(f"  (weeks 1-{current}, {source})")
+    print("-" * 64)
+    if d_bad and not s_bad:
+        print(
+            f"\n  {len(d_bad)} still to do before Saturday 23:59. Those do not fail "
+            "this run —\n  they are not due yet. The lab items are what the "
+            "end-of-session mark reads."
+        )
+    return 0 if (not s_bad and secrets_ok) else 1
 
 
 if __name__ == "__main__":

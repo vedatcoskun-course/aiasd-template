@@ -29,7 +29,7 @@ Each week you also update `ai_log.md` with a reflection on how you used AI.
 
 **New here?** The whole weekly routine — what to do before, during and after each
 session, how the marks are split, and what to try when you are stuck — is written out
-step by step in [`WEEKLY_WORKFLOW.md`](WEEKLY_WORKFLOW.md).
+step by step in [`WEEKLY_WORKFLOW_STUDENT.md`](WEEKLY_WORKFLOW_STUDENT.md).
 
 ---
 
@@ -86,6 +86,18 @@ cross on your commit in GitHub, and you can see exactly which check failed.
 is on, every time it runs, so what you see is always what is being run against you.
 The `WEEK` file at the repo root is just a cache of that number — it updates itself,
 and you never need to touch it.
+
+The output comes in two parts, because the week has two deadlines:
+
+```
+In the lab:     11 of 13 done
+By Saturday:     2 of  8 done
+```
+
+**In the lab** is what the end-of-session snapshot reads — five of the week's ten
+points. **By Saturday** is everything else: the write-ups, the diagrams, `ai_log.md`.
+Items in the second group do not fail the run while the week is still open; they are
+not due yet. Nothing in the first group is something you should be doing at home.
 
 Weeks are checked cumulatively — Week 3 also re-checks Weeks 1 and 2. If a later
 change breaks something earlier, you want to hear about it from CI, not in December.
