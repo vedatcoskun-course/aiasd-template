@@ -27,9 +27,9 @@ You create it from the template on Week 1 and commit to it every week.
 
 Each week you also update `ai_log.md` with a reflection on how you used AI.
 
-**Yeni başlıyorsanız:** haftalık akışın tamamı — derse gelmeden, derste ve ders
-sonrasında ne yapacağınız, puanların nasıl dağıldığı, takıldığınızda ne yapmanız
-gerektiği — [`HAFTALIK_AKIS.md`](HAFTALIK_AKIS.md) dosyasında adım adım anlatılıyor.
+**New here?** The whole weekly routine — what to do before, during and after each
+session, how the marks are split, and what to try when you are stuck — is written out
+step by step in [`WEEKLY_WORKFLOW.md`](WEEKLY_WORKFLOW.md).
 
 ---
 

@@ -13,17 +13,21 @@ buraya dönün.
 | Ne zaman | Ne yaparsınız | Kaç puan |
 |----------|---------------|----------|
 | Dersten önce | Ödev metnini okursunuz | — |
-| Derste (3 saat) | `WEEK` dosyasını ayarlar, çalışır, push edersiniz | 3 |
-| Ders sonunda | Son bir push — hoca o anki durumu dondurur | ↑ aynı 3 puan |
-| Ders bitiminden sonraki 24 saat | Kalanları bitirir, `ai_log.md`'yi yazarsınız | 4 |
+| Derste (3 saat) | `WEEK` dosyasını ayarlar, çalışır, push edersiniz | 2 |
+| Ders sonunda | Son bir push — o anki durumu dondururum | ↑ aynı 2 puan |
+| Cumartesi 23:59'a kadar | Kalanları bitirir, `ai_log.md`'yi yazarsınız | 3 |
 | Her hafta | `ai_log.md` kalitesi ve commit düzeni | 3 |
 
 Haftalık toplam **10 puan**. Haftalık notlarınızın ortalaması dönem notunun
 **%70'ini** oluşturur; kalan %30 final projesidir.
 
-**Teslim süresi ders bitiminden sonraki 24 saattir** — bir sonraki hafta değil.
-Bu süre bilerek kısa: işin büyük kısmı derste, soru sorabildiğiniz ortamda bitsin;
-akşam kalan boşlukları kapatmak için, sıfırdan başlamak için değil.
+Puanın yarısı otomatik kontrollerden, yarısı benim okumamdan geliyor. Bu bilinçli:
+otomatik kısım işin **var olduğunu** kanıtlar, anladığınızı yalnızca insan görebilir.
+
+**Teslim saati her hafta aynı: Cumartesi 23:59.** Hesaplanacak bir şey yok —
+cumartesi gece yarısı reponuzda ne varsa o notlandırılır. İşin büyük kısmı derste,
+soru sorabildiğiniz ortamda bitsin; sonraki günler kalan boşlukları kapatmak için,
+sıfırdan başlamak için değil.
 
 ---
 
@@ -65,7 +69,7 @@ git push
 
 ### Kontrolleri kendiniz çalıştırın
 
-Push etmeden önce, hocanın çalıştıracağı kontrollerin **aynısını** çalıştırabilirsiniz:
+Push etmeden önce, benim çalıştıracağım kontrollerin **aynısını** çalıştırabilirsiniz:
 
 ```bash
 python .github/check_deliverables.py
@@ -75,17 +79,17 @@ python .github/check_deliverables.py
 
 ### Ders bitmeden son push'unuzu yapın
 
-Ders sonunda hoca bütün repoları o anki hâliyle dondurur ve kontrolleri çalıştırır.
+Ders sonunda bütün repoları o anki hâliyle dondurur ve kontrolleri çalıştırırım.
 O anda push edilmemiş çalışma **görünmez** — bilgisayarınızda durur ama sayılmaz.
 
 Sonuç, isimsiz bir tabloyla sınıfta yansıtılır; kendi satırınızı `student.json`
-içindeki takma adınızdan bulursunuz. Bu tablo **3 puanlıktır**.
+içindeki takma adınızdan bulursunuz. Bu tablo **2 puanlıktır**.
 
 ---
 
-## 3. Ders bittikten sonra — 24 saat
+## 3. Ders bittikten sonra — Cumartesi 23:59'a kadar
 
-Haftanın kalan işlerini **ders bitiminden sonraki 24 saat içinde** bitirin. Bu süre dolduğunda hoca ikinci bir anlık görüntü alır; o andaki hâliniz 4 puanlık kısmı belirler.
+Haftanın kalan işlerini **cumartesi 23:59'a kadar** bitirin. Pazar sabahı ikinci bir anlık görüntü alırım; cumartesi gece yarısındaki hâliniz 3 puanlık kısmı belirler.
 
 ### `ai_log.md` — atlamayın
 
@@ -95,7 +99,19 @@ zorunda kaldınız**, ne öğrendiniz.
 
 Bu dosya 2 puanlık ve insan tarafından okunuyor. "AI çok yardımcı oldu" yazan bir
 kayıt puan getirmez. Somut bir hata ve onu nasıl fark edip düzelttiğiniz gerekir.
-Dersin asıl öğrettiği şey bu.
+
+**Kanıt bölümü zorunlu.** İddianızın altına o alışverişin kendisini yapıştırın:
+sorduğunuz prompt ve aldığınız yanlış cevap, kod bloğunun içine. Tüm sohbeti değil —
+hatayı gösteren on beş satırı. Kanıtsız bir iddia puan getirmez.
+
+Neden: "AI hata yaptı, düzelttim" cümlesini herkes yazar. Gerçek bir model çıktısını
+uydurmak zordur; uydurulmuş dökümler fazla düzgün okunur ve hataları fazla kolay
+yakalanır olur. Uzun bir sohbetin hangi kısmının kanıt olduğunu seçmek de zaten
+ölçülmek istenen becerinin kendisi.
+
+İsterseniz tam dökümü `weekNN/transcript.md` olarak repoya koyabilirsiniz. Varsayılan
+olarak okumuyorum, ama kaydınızda tutmayan bir şey olursa isteme hakkımı saklı
+tutuyorum.
 
 ### Kontroller yeşil yanana kadar devam edin
 
@@ -107,7 +123,23 @@ git push
 ```
 
 GitHub'da reponuzun **Actions** sekmesinde her push'un sonucunu görürsünüz. Yeşil
-tik, o haftanın otomatik kısmının tamam olduğu anlamına gelir — 4 puan.
+tik, o haftanın otomatik kısmının tamam olduğu anlamına gelir — 3 puan.
+
+---
+
+### Otomatikleşmeyen 5 puan
+
+Haftalık 10 puanın yarısı kontrol script'inin göremediği şeylerden geliyor.
+
+**Önceki haftalarla tutarlılık (2 puan).** Bu haftaki işiniz, önceki haftalarda
+yazdığınız gereksinimleri ve tasarımı gerçekten takip ediyor mu? Fikrinizi
+değiştirmeniz normaldir — ama değişiklik görünür olmalı. Sessizce terk edilen bir
+gereksinim puan kaybettirir; `ai_log.md`'de tek cümleyle gerekçelendirilen bir
+değişiklik hiçbir şey kaybettirmez. Mühendislik zaten budur.
+
+**`ai_log.md` kalitesi (2 puan).** Somut bir AI hatası, yapıştırılmış kanıtı ve onu nasıl yakaladığınız.
+
+**Commit düzeni (1 puan).** Anlamlı mesajlar, işin haftaya yayılmış olması.
 
 ---
 
