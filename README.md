@@ -27,6 +27,38 @@ You create it from the template on Week 1 and commit to it every week.
 
 Each week you also update `ai_log.md` with a reflection on how you used AI.
 
+### What is in here now, and what is not
+
+Right now this repository holds the files that live here all term, plus `week01/`.
+There is no `week02/` folder and there should not be — **you create each week's folder
+when that week's assignment tells you to.** Putting the file in the right place is part
+of the work, and the checker names the exact path it is looking for when you get it
+wrong.
+
+At the root, and staying there all term:
+
+| | |
+|---|---|
+| `app.py` | Your application. Empty for now; by Week 7 it is the whole thing |
+| `ai_log.md` | One section per week, written every week. Not a Week 1 file |
+| `student.json` | Who you are. Fill it in once, in Week 1 |
+| `requirements.txt`, `requirements/` | Dependencies, arriving week by week |
+| `.github/` | The checks that run on every push |
+| `WEEK`, `CURRENT_WEEK` | Bookkeeping the checker manages. Do not edit them |
+
+A few weeks hand you a scaffold rather than making you build it from nothing. When
+that happens the assignment opens with one command, and you run it **before** you
+create anything in that folder:
+
+```bash
+git remote add template https://github.com/vedatcoskun-course/aiasd-template.git
+git fetch template
+git checkout template/main -- week06
+```
+
+The first line is only needed once, ever. If you run this after you have already
+written files in that folder, it overwrites them — so run it first, or not at all.
+
 **New here?** The whole weekly routine — what to do before, during and after each
 session, how the marks are split, and what to try when you are stuck — is written out
 step by step in [`WEEKLY_WORKFLOW_STUDENT.md`](WEEKLY_WORKFLOW_STUDENT.md).
