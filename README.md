@@ -44,7 +44,7 @@ At the root, and staying there all term:
 | `student.json` | Who you are. Fill it in once, in Week 1 |
 | `requirements.txt`, `requirements/` | Dependencies, arriving week by week |
 | `.github/` | The checks that run on every push |
-| `WEEK`, `CURRENT_WEEK` | Bookkeeping the checker manages. Do not edit them |
+| `CURRENT_WEEK` | Bookkeeping the checker manages. Do not edit it. A `WEEK` file appears next to it the first time you run the checker — that is its offline cache, it is not tracked by git, and you can ignore it |
 
 A few weeks hand you a scaffold rather than making you build it from nothing. When
 that happens the assignment opens with one command, and you run it **before** you

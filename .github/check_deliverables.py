@@ -658,10 +658,19 @@ def main() -> int:
         print("  at the provider, and never commit one again.\n")
 
     if current < 1:
-        print(f"Week 0 ({source}) — nothing to check yet.")
-        print(
-            "The course has not started checking deliverables. Nothing for you to do."
-        )
+        if source.startswith("cached"):
+            print("Cannot tell which week it is.")
+            print(
+                "The course could not be reached and there is no cached week number\n"
+                "yet — this is the first run on this machine, offline. Connect once\n"
+                "and run it again; after that it works without a network."
+            )
+        else:
+            print(f"Week 0 ({source}) — nothing to check yet.")
+            print(
+                "The course has not started checking deliverables. "
+                "Nothing for you to do."
+            )
         return 0 if secrets_ok else 1
 
     print(f"Checking weeks 1-{current}  ({source})\n")
