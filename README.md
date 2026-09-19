@@ -95,9 +95,14 @@ Fill this in on Week 1, at the repo root:
   "student_id": "20210042",
   "first_name": "Ayşe",
   "last_name": "Yılmaz",
-  "nickname": "kaplumbaga"
+  "nickname": "kaplumbaga",
+  "section": "en"
 }
 ```
+
+Your **section** is `en` if you are in the English section, `tr` if you are in the
+Turkish one. Get this wrong and the checker will test you against the other section's
+week, so check it before you push.
 
 Your **nickname** is what appears on the class board projected at the end of each
 session, so you can find your own row at a glance. Letters, digits, `-` and `_`,

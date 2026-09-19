@@ -31,6 +31,65 @@ gaps, not for starting.
 
 ---
 
+## 0. Before Week 1 — once, and never again
+
+Three things have to be true before the first session starts, and none of them are
+the course: a GitHub account, your repository, and a computer that is allowed to
+push to it. Do these at home. If they are not done when you walk in, you will spend
+the session watching other people work.
+
+**1. Create your repository.** Open the template, click **Use this template** →
+**Create a new repository**, name it `aiasd-project`, and leave it **Private**. Then
+**Settings → Collaborators → Add people** and add your instructor.
+
+**2. Let your computer talk to GitHub.** A private repository will not clone until
+GitHub knows who you are, and passwords have not worked for this since 2021. Two ways,
+either is fine.
+
+*If you can install software on your machine* — the short way:
+
+```bash
+brew install gh        # Windows: winget install GitHub.cli
+gh auth login
+```
+
+Answer: `GitHub.com` → `HTTPS` → `Y` → `Login with a web browser`. It configures git
+for you, and you never think about this again.
+
+*If you cannot install anything* — a token instead. On GitHub: **Settings → Developer
+settings → Personal access tokens → Tokens (classic) → Generate new token (classic)**.
+Name it, set an expiry that outlasts the term, and tick exactly one box: **`repo`**.
+Copy the token — the page will not show it to you twice. Then:
+
+```bash
+git clone https://github.com/<your-username>/aiasd-project.git
+```
+
+Username is your GitHub username; when it asks for a password, paste the token. Your
+system keychain remembers it.
+
+> Treat that token like a password to your whole account, because that is what it is.
+> Do not paste it into a file, a chat, or an AI assistant. Never commit it.
+
+**3. Say who you are.** Fill in `student.json` at the repository root, then push:
+
+```bash
+git add student.json
+git commit -m "week01: student identity"
+git push
+```
+
+If that push succeeds, everything is set up correctly. That is the whole test.
+
+**Stuck?** Ask an AI assistant — but be careful with this particular topic. Git
+authentication changed in 2021 and the internet is still full of advice from before
+then. If you are told to use your GitHub password, or to run
+`git config credential.helper store`, that advice is out of date; ignore it and come
+back to this page. Anything it tells you to do involving your token is worth a second
+thought.
+
+---
+
 ## 1. Before the session
 
 Read the assignment on the LMS. It lists exactly which files that week requires.
