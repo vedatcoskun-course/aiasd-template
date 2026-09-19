@@ -75,7 +75,7 @@ should say what you did:
 
 ```bash
 git add .
-git commit -m "week03: ollama backend of llm_client working"
+git commit -m "week01: hello.py reads a name and prints the list"
 git push
 ```
 
@@ -102,13 +102,29 @@ The result is projected as an anonymised table; find your row by the nickname in
 
 ### If you cannot be there
 
-Illness and emergencies happen and they should not cost you half a week's mark. If you
-have a documented reason for missing a session, tell me, do the session's work, and
-**push it within 24 hours**. I will give you those 5 points by hand.
+Illness and emergencies happen and they should not cost you half a week's mark. There
+is a procedure, and it has two deadlines.
 
-What this does not cover is the work itself. You still produce it, and still quickly —
-the 24 hours is the point. Missing the room costs you the room: the chance to ask while
-you are stuck, which is the part I cannot give back afterwards.
+**Within 2 hours of the end of the session**, email me at
+`vedat.coskun@atlas.edu.tr` explaining why you were not there, with the supporting
+documents attached. Not the next morning, not when you feel better — within two hours
+of when the session ended.
+
+**Within 24 hours**, do the session's work and push it.
+
+If I accept the case, I will grade that session's work as though you had been in the
+room, and enter those 5 points by hand. If I do not accept it, or the email does not
+arrive in time, the session is marked on what was in your repository when I took the
+snapshot — which, if you were not there, is nothing.
+
+Two things this does not do. It does not excuse the work: you still produce it, and
+still quickly, which is what the 24 hours is for. And it does not give you the room
+back — the chance to ask while you are stuck is the part I cannot hand over
+afterwards, whatever I do with the marks.
+
+The short deadline is not bureaucracy. A reason given two hours after the fact is a
+reason; the same reason given on Friday is a reconstruction, and I cannot tell the
+difference between the two.
 
 ---
 
@@ -144,7 +160,7 @@ This file is worth 2 points and a person reads it.
 ```bash
 python .github/check_deliverables.py
 git add .
-git commit -m "week03: model_notes completed"
+git commit -m "week01: llm_notes written up"
 git push
 ```
 

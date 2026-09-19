@@ -150,7 +150,7 @@ def check_identity() -> None:
         check(1, "student.json is valid JSON", False, str(exc))
         return
 
-    fields = ("student_id", "first_name", "last_name", "nickname")
+    fields = ("student_id", "first_name", "last_name", "nickname", "section")
     missing = [f for f in fields if not str(data.get(f, "")).strip()]
     check(
         1, "student.json fully filled in", not missing, f"empty: {', '.join(missing)}"
@@ -185,6 +185,14 @@ def check_identity() -> None:
         "nickname is not the student id",
         nick != sid,
         "the board would not be anonymous",
+    )
+
+    section = str(data.get("section", "")).strip().lower()
+    check(
+        1,
+        "section is 'en' or 'tr'",
+        section in ("en", "tr"),
+        f"got {section!r} — this is how your repo knows which week to check",
     )
 
 
@@ -558,11 +566,52 @@ def cached_week() -> int:
         return 0
 
 
+def my_section() -> str:
+    """The section this student is in, from their own student.json."""
+    raw = read("student.json")
+    if not raw:
+        return ""
+    try:
+        return str(json.loads(raw).get("section", "")).strip().lower()
+    except (json.JSONDecodeError, AttributeError):
+        return ""
+
+
+def parse_published(text: str, section: str) -> int | None:
+    """Read the published week for one section.
+
+    The file carries a line per section — `en=3`, `tr=2` — because two sections
+    drift apart the first time a holiday lands on one of their days. A bare
+    number is the older single-section format and applies to everyone.
+    """
+    weeks: dict[str, int] = {}
+    only = None
+    for line in text.splitlines():
+        line = line.split("#", 1)[0].strip()
+        if not line:
+            continue
+        if "=" in line:
+            key, _, value = line.partition("=")
+            if value.strip().isdigit():
+                weeks[key.strip().lower()] = int(value.strip())
+        elif line.isdigit():
+            only = int(line)
+    if section and section in weeks:
+        return weeks[section]
+    if only is not None:
+        return only
+    if weeks and len(set(weeks.values())) == 1:
+        # No section declared, but the sections happen to be in step, so the
+        # answer is the same either way.
+        return next(iter(weeks.values()))
+    return None
+
+
 def published_week() -> int | None:
     """The week the course says it is on. None if it cannot be reached."""
     try:
         with urllib.request.urlopen(COURSE_WEEK_URL, timeout=5) as response:
-            return int(response.read().decode("utf-8").strip().splitlines()[0])
+            return parse_published(response.read().decode("utf-8"), my_section())
     except (urllib.error.URLError, ValueError, IndexError, OSError, TimeoutError):
         return None
 
