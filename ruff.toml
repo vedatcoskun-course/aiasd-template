@@ -6,7 +6,9 @@
 line-length = 100
 target-version = "py312"
 
-exclude = [".venv", "__pycache__", "faiss_index", "chroma_db"]
+# .github holds the course's own checker, not your code. It is excluded so that
+# a change I make there can never turn your CI red.
+exclude = [".venv", "__pycache__", "faiss_index", "chroma_db", ".github"]
 
 [lint]
 select = [

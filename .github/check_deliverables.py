@@ -57,9 +57,7 @@ SESSION, DEADLINE = "session", "deadline"
 results: list[tuple[str, str, str, str]] = []
 
 
-def check(
-    week: int, name: str, ok: bool, detail: str = "", slot: str = SESSION
-) -> None:
+def check(week: int, name: str, ok: bool, detail: str = "", slot: str = SESSION) -> None:
     results.append((f"W{week}", name, PASS if ok else f"{FAIL} — {detail}", slot))
 
 
@@ -152,9 +150,7 @@ def check_identity() -> None:
 
     fields = ("student_id", "first_name", "last_name", "nickname", "section")
     missing = [f for f in fields if not str(data.get(f, "")).strip()]
-    check(
-        1, "student.json fully filled in", not missing, f"empty: {', '.join(missing)}"
-    )
+    check(1, "student.json fully filled in", not missing, f"empty: {', '.join(missing)}")
     if missing:
         return
 
@@ -224,9 +220,7 @@ def week1() -> None:
             has_list = any(isinstance(n, (ast.List, ast.ListComp)) for n in nodes)
             has_for = any(isinstance(n, (ast.For, ast.comprehension)) for n in nodes)
             has_input = any(
-                isinstance(n, ast.Call)
-                and isinstance(n.func, ast.Name)
-                and n.func.id == "input"
+                isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "input"
                 for n in nodes
             )
             check(1, "hello.py uses an f-string", has_fstring, "no f-string found")
@@ -286,11 +280,7 @@ def week2() -> None:
         except json.JSONDecodeError as exc:
             check(2, "requirements.json is valid JSON", False, str(exc))
         else:
-            items = (
-                data.get("functional_requirements", data)
-                if isinstance(data, dict)
-                else data
-            )
+            items = data.get("functional_requirements", data) if isinstance(data, dict) else data
             if isinstance(data, dict):
                 items = (data.get("functional_requirements") or []) + (
                     data.get("non_functional_requirements") or []
@@ -304,9 +294,7 @@ def week2() -> None:
             ids = [i.get("id", "") for i in items if isinstance(i, dict)]
             bad = [i for i in ids if not re.fullmatch(r"REQ-\d{3}", i)]
             check(2, "IDs follow REQ-NNN", not bad and bool(ids), f"bad IDs: {bad[:3]}")
-            missing = [
-                i for i in items if isinstance(i, dict) and "description" not in i
-            ]
+            missing = [i for i in items if isinstance(i, dict) and "description" not in i]
             check(
                 2,
                 "every entry has a description",
@@ -336,11 +324,7 @@ def week3() -> None:
     emb = read("week03/embedder.py") or ""
     if emb:
         try:
-            names = {
-                n.name
-                for n in ast.walk(ast.parse(emb))
-                if isinstance(n, ast.FunctionDef)
-            }
+            names = {n.name for n in ast.walk(ast.parse(emb)) if isinstance(n, ast.FunctionDef)}
         except SyntaxError:
             names = set()
         check(3, "embedder defines encode()", "encode" in names, "function not found")
@@ -546,15 +530,12 @@ def maybe_update() -> None:
         "AIASD_ROOT": str(ROOT),
     }
     raise SystemExit(
-        subprocess.run(
-            [sys.executable, str(tmp), *sys.argv[1:]], env=env, check=False
-        ).returncode
+        subprocess.run([sys.executable, str(tmp), *sys.argv[1:]], env=env, check=False).returncode
     )
 
 
 COURSE_WEEK_URL = (
-    "https://raw.githubusercontent.com/vedatcoskun-course/aiasd-template"
-    "/main/CURRENT_WEEK"
+    "https://raw.githubusercontent.com/vedatcoskun-course/aiasd-template/main/CURRENT_WEEK"
 )
 
 
@@ -667,10 +648,7 @@ def main() -> int:
             )
         else:
             print(f"Week 0 ({source}) — nothing to check yet.")
-            print(
-                "The course has not started checking deliverables. "
-                "Nothing for you to do."
-            )
+            print("The course has not started checking deliverables. Nothing for you to do.")
         return 0 if secrets_ok else 1
 
     print(f"Checking weeks 1-{current}  ({source})\n")
@@ -727,12 +705,8 @@ def main() -> int:
     s_bad = [r for r in session_rows if r[2] != PASS]
     d_bad = [r for r in deadline_rows if r[2] != PASS]
     print("-" * 64)
-    print(
-        f"  In the lab:     {len(session_rows) - len(s_bad)} of {len(session_rows)} done"
-    )
-    print(
-        f"  By Saturday:    {len(deadline_rows) - len(d_bad)} of {len(deadline_rows)} done"
-    )
+    print(f"  In the lab:     {len(session_rows) - len(s_bad)} of {len(session_rows)} done")
+    print(f"  By Saturday:    {len(deadline_rows) - len(d_bad)} of {len(deadline_rows)} done")
     print(f"  (weeks 1-{current}, {source})")
     print("-" * 64)
     if d_bad and not s_bad:
