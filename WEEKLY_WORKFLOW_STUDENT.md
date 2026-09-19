@@ -62,17 +62,20 @@ it and those 20 minutes will mean nothing to you.
 ### There is no switch to flip
 
 The checker asks the course which week it is on, every time it runs. You cannot forget
-to set it, and you cannot be checked against the wrong week. The `WEEK` file at the
-repository root caches that number for when you are offline; it updates itself.
+to set it, and you cannot be checked against the wrong week. It keeps the answer in a
+`WEEK` file that appears at the repository root after your first run — that is only an
+offline cache, git ignores it, and you never need to touch it.
 
 ### Know which half you are working on
 
 Run the checker and it answers in two parts:
 
 ```
-In the lab:     11 of 13 done
-By Saturday:     2 of  8 done
+In the lab:     11 of 14 done
+By Saturday:     0 of  3 done
 ```
+
+The two numbers change from week to week; what matters is which line you are reading.
 
 **In the lab** is what I read at the end of the session — half the week's mark. These
 are the things worth doing while you are in a room with me and twenty-nine other
