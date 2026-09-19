@@ -59,6 +59,10 @@ git checkout template/main -- week06
 The first line is only needed once, ever. If you run this after you have already
 written files in that folder, it overwrites them — so run it first, or not at all.
 
+**Start here:** [`SETUP_CARD.md`](SETUP_CARD.md) — every command you will run all
+term, on one page, plus what the common errors mean. Do its four setup steps before
+Week 1.
+
 **New here?** The whole weekly routine — what to do before, during and after each
 session, how the marks are split, and what to try when you are stuck — is written out
 step by step in [`WEEKLY_WORKFLOW_STUDENT.md`](WEEKLY_WORKFLOW_STUDENT.md).
