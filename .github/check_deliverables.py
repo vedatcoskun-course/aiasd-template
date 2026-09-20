@@ -228,12 +228,13 @@ def week1() -> None:
             check(1, "hello.py uses a for-loop", has_for, "no for-loop found")
             check(1, "hello.py reads input()", has_input, "input() is never called")
 
-    notes = read("week01/llm_notes.md") or ""
+    notes = prose_words(read("week01/llm_notes.md") or "")
     check(
         1,
         "week01/llm_notes.md ~300 words",
-        len(notes.split()) >= 250,
-        f"{len(notes.split())} words",
+        notes >= 250,
+        f"{notes} words of your own — headings, instructions and pasted blocks do "
+        "not count",
         DEADLINE,
     )
 
@@ -545,6 +546,26 @@ def cached_week() -> int:
         return int(raw[0]) if raw and raw[0].strip() else 0
     except ValueError:
         return 0
+
+
+def prose_words(md: str) -> int:
+    """Count only what the student wrote themselves.
+
+    A scaffold with headings, instructions and HTML comments can be hundreds of
+    words before anyone has typed anything, and pasted model output is evidence,
+    not prose. Counting the raw file would let a word-count check pass on an
+    untouched template — so headings, quoted instructions, comments and fenced
+    blocks are all removed before counting.
+    """
+    md = re.sub(r"<!--.*?-->", " ", md, flags=re.DOTALL)
+    md = re.sub(r"```.*?```", " ", md, flags=re.DOTALL)
+    kept = []
+    for line in md.splitlines():
+        s = line.strip()
+        if not s or s.startswith((">", "#", "|", "---", "***")):
+            continue
+        kept.append(s)
+    return len(" ".join(kept).split())
 
 
 def my_section() -> str:
