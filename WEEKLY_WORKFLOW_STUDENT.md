@@ -14,7 +14,8 @@ repository is the current one as long as you keep pulling.
 > beside them. Both disappear in the version after, so anything marked is new to you.
 
 This document describes the routine that does not change. The *content* of each week
-differs — the assignment is posted on the LMS — but the *rhythm* is always the same.
+differs — each week's assignment arrives in that week's folder — but the *rhythm* is
+always the same.
 Come back here when you are stuck.
 
 ---
@@ -23,13 +24,16 @@ Come back here when you are stuck.
 
 | When | What you do | Points |
 |------|-------------|--------|
-| Before the session | Read the assignment | — |
-| During the session (3 h) | Work, and push often | 5 |
-| End of the session | One last push — I freeze the state | ↑ same 5 |
-| By Saturday 23:59 | Finish the rest, write `ai_log_NN.md` | 5 |
+| Before the session | Read `weekNN/ASSIGNMENT.md` | — |
+| During the session (3 h) | Work, and push often | — |
+| End of the session | One last push — I freeze the state | 5 |
+| After the session | Finish the rest, write `ai_log_NN.md` | — |
+| By Saturday 23:59 | **Push again.** I freeze the state a second time | 5 |
 
 Ten points a week, split evenly between two moments: **five measured at the end of the
-session, five at the Saturday deadline.**
+session, five at the Saturday deadline.** Both are read from GitHub, so both need a
+push. Work that is finished but not pushed scores exactly the same as work that was
+never done.
 
 Half the week's mark riding on the session is deliberate. This is where the work
 belongs — in the room, while you can still ask. The other half rests on finishing, and
@@ -42,44 +46,38 @@ gaps, not for starting.
 
 ---
 
-## 0. Before Week 1 — once, and never again
+## Once, and never again
 
 Three things have to be true before the first session starts, and none of them are the
-course: a GitHub account, your repository, and a computer that is allowed to push to
-it. The commands are on the [**Setup Card**](SETUP_CARD.md) — four steps, and the last
+course: (a) a GitHub account, (b) your repository, and (c) a computer that is allowed to push to
+it. The required commands are on the [**Setup Card**](SETUP_CARD.md) — four steps, and the last
 one tells you whether the other three worked.
 
-Do them at home. If they are not done when you walk in, you will spend the session
-watching other people work, and none of it is anything I can teach you in a room with
-forty other people in it.
-
 The card also carries a table of the errors you are most likely to hit and what each
-one actually means. Keep it open; it is the only page you need for the mechanics.
+one actually means. Keep it open; probably it is the only page you need for the mechanics.
 
 ---
 
-## 1. Before the session
+## 1. Before the lecture of that week
 
-Read the assignment on the LMS. It lists exactly which files that week requires.
+Read `weekNN/ASSIGNMENT.md` — it comes down with the rest of the week's folder and
+lists exactly which files that week requires. 
 
-If there is pre-reading — Week 1 has two documents — read it before you arrive. The
-20 minutes I spend lecturing is a summary of that material. Turn up without having read
-it and those 20 minutes will mean nothing to you.
+If there is pre-reading, read it before you arrive. 
 
 ---
 
-## 2. During the session
-
-### There is no switch to flip
-
-The checker asks the course which week it is on, every time it runs. You cannot forget
-to set it, and you cannot be checked against the wrong week. It keeps the answer in a
-`WEEK_NO.md` file that appears at the repository root after your first run — that is
-only an offline cache, git ignores it, and you never need to touch it.
+## 2. During the lecture
 
 ### Know which half you are working on
 
-Run the checker and it answers in two parts:
+From the root of your repository, run:
+
+```bash
+python .github/check_deliverables.py
+```
+
+It answers in two parts:
 
 ```
 In the lab:     11 of 14 done
@@ -113,14 +111,14 @@ Messages like "update", "fix" or "asdf" cost you the commit-hygiene point.
 
 ### Run the checks yourself
 
-Before pushing, run exactly the checks I will run:
+The same command, as often as you like:
 
 ```bash
 python .github/check_deliverables.py
 ```
 
-The output lists what is missing, one line at a time. It is not a grade; it is a
-to-do list.
+These are exactly the checks I will run. The output lists what is missing, one line at
+a time. It is not a grade; it is a to-do list, and running it costs nothing.
 
 ### Push once more before the session ends
 

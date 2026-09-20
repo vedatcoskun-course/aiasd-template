@@ -40,6 +40,7 @@ At the root, and staying there all term:
 | | |
 |---|---|
 | `app.py` | Your application. Empty for now; by Week 7 it is the whole thing |
+| `week01/ASSIGNMENT.md` | What this week asks for. It arrives with the week's folder and is the only place the tasks are written |
 | `week01/ai_log_01.md` | This week's AI log, in this week's folder. Every week has one, and it arrives with the week |
 | `student.json` | Who you are. Fill it in once, in Week 1 |
 | `requirements.txt`, `requirements/` | Dependencies, arriving week by week |
