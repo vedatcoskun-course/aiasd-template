@@ -120,15 +120,15 @@ does not fit it:
   and it is the part I read most carefully.
 
 A fluent, correct, general essay about transformers earns fewer marks than a rougher
-one that is visibly about *your* twenty minutes. In Week 12 you will sit down and
-answer questions about what you built and what you learned. Everything you write
-between now and then is a promise you make to that conversation.
+one that is visibly about *your* twenty minutes. The term ends with a project
+defence. Everything you write between now and then is a promise you make to that
+conversation.
 
 While you are there, ask one of your questions **twice**: once vaguely, once with the
 context and the constraints spelled out. Put both answers in `llm_notes.md` and say in
 a sentence what changed. You are not being taught prompting techniques this week — you
 are being asked to notice that the question shapes the answer. We come back to this
-properly in Week 3, when you write the system prompts for your own chatbot.
+properly later in the term.
 
 ### 6. Find one thing the model got wrong
 Ask both assistants the same factual question about a topic you know well.

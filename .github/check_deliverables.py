@@ -7,7 +7,7 @@ deliberate: a change that breaks Week 3 should not pass silently in Week 7.
 
 Which week is "current" is not yours to set. It is published by the course and
 read from there on every run, so the checks you see are always the checks being
-run against you. The WEEK_NO.md file is only a cache of that number, refreshed
+run against you. The CURRENT_WEEK_CACHE.txt file is only a cache of that number, refreshed
 automatically, so this still works on a train with no signal.
 
 Run it locally before you push:
@@ -535,12 +535,12 @@ def maybe_update() -> None:
 
 
 COURSE_WEEK_URL = (
-    "https://raw.githubusercontent.com/vedatcoskun-course/aiasd-template/main/CURRENT_WEEK"
+    "https://raw.githubusercontent.com/vedatcoskun-course/aiasd-template/main/CURRENT_WEEK.txt"
 )
 
 
 def cached_week() -> int:
-    raw = (read("WEEK_NO.md") or "0").strip().splitlines()
+    raw = (read("CURRENT_WEEK_CACHE.txt") or "0").strip().splitlines()
     try:
         return int(raw[0]) if raw and raw[0].strip() else 0
     except ValueError:
@@ -636,7 +636,7 @@ def resolve_week() -> tuple[int, str]:
     if published is not None:
         if published != cached_week():
             try:
-                (ROOT / "WEEK_NO.md").write_text(f"{published}\n", encoding="utf-8")
+                (ROOT / "CURRENT_WEEK_CACHE.txt").write_text(f"{published}\n", encoding="utf-8")
             except OSError:
                 pass  # read-only checkout; the number is still correct
         return published, "published by the course"

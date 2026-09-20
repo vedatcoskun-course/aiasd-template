@@ -45,7 +45,7 @@ At the root, and staying there all term:
 | `student.json` | Who you are. Fill it in once, in Week 1 |
 | `requirements.txt`, `requirements/` | Dependencies, arriving week by week |
 | `.github/` | The checks that run on every push |
-| `CURRENT_WEEK` | Bookkeeping the checker manages. Do not edit it. A `WEEK_NO.md` file appears next to it the first time you run the checker — that is its offline cache, it is not tracked by git, and you can ignore it |
+| `CURRENT_WEEK.txt` | Bookkeeping the checker manages. Do not edit it. A `CURRENT_WEEK_CACHE.txt` file appears next to it the first time you run the checker — that is its offline cache, it is not tracked by git, and you can ignore it |
 
 A few weeks hand you a scaffold rather than making you build it from nothing. When
 that happens the assignment opens with one command, and you run it **before** you
@@ -126,7 +126,7 @@ cross on your commit in GitHub, and you can see exactly which check failed.
 
 **There is nothing for you to switch on.** The checker asks the course which week it
 is on, every time it runs, so what you see is always what is being run against you.
-The `WEEK_NO.md` file at the repo root is just a cache of that number — it updates itself,
+The `CURRENT_WEEK_CACHE.txt` file at the repo root is just a cache of that number — it updates itself,
 and you never need to touch it.
 
 The output comes in two parts, because the week has two deadlines:

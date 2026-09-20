@@ -30,7 +30,7 @@ env/
 # The checker's local cache of the published week. Deliberately not tracked:
 # it is rewritten on every run, and a tracked copy would show up as a change
 # in every student's working tree and collide when the template updates.
-WEEK
+CURRENT_WEEK_CACHE.txt
 
 # OS
 .DS_Store
