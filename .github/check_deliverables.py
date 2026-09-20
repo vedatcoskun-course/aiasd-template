@@ -169,25 +169,17 @@ def check_identity() -> None:
         f"got {sid!r}",
     )
 
+    # One check, not three. Length and character set are the same requirement seen
+    # from two angles, and a nickname that fails either fails for the same reason:
+    # it cannot go on the board. Splitting it inflated a five-minute task into
+    # three of the week's marks.
     nick = str(data["nickname"]).strip()
+    usable = 2 <= len(nick) <= 20 and bool(re.fullmatch(r"[A-Za-z0-9_\-]+", nick))
     check(
         1,
-        "nickname is 2-20 characters",
-        2 <= len(nick) <= 20,
-        f"{len(nick)} characters",
-    )
-    check(
-        1,
-        "nickname has no spaces or odd characters",
-        bool(re.fullmatch(r"[A-Za-z0-9_\-]+", nick)),
-        "use letters, digits, - and _ only",
-    )
-
-    check(
-        1,
-        "nickname is not the student id",
-        nick != sid,
-        "the board would not be anonymous",
+        "nickname is usable on the class board",
+        usable,
+        f"{len(nick)} characters; use 2-20 of letters, digits, - and _",
     )
 
     section = str(data.get("section", "")).strip().lower()

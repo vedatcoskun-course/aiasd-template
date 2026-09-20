@@ -17,7 +17,7 @@ import sys
 
 
 def main() -> None:
-    print(f"Python {sys.version.split()[0]}")
+    print("Python " + sys.version.split()[0])
 
     # TODO: read a name with input()
     # TODO: build a list of something — greetings, courses, languages, your choice

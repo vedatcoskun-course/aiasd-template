@@ -111,8 +111,8 @@ week, so check it before you push.
 
 Your **nickname** is what appears on the class board projected at the end of each
 lecture, so you can find your own row at a glance. Letters, digits, `-` and `_`,
-2–20 characters. Choose whatever you like — just not your student number, and pick
-something you will still recognise in December.
+2–20 characters. Choose whatever you like, and pick something you will still
+recognise in December.
 
 Keep this repository **private** while the course runs. It carries your student
 number and name.

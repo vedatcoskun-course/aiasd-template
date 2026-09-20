@@ -130,12 +130,9 @@ The result is projected as an anonymised table; find your row by the nickname in
 
 ### Attendance, and what happens if you are not here
 
-**Bring your laptop every week**, with its charger and whatever cable it needs. This is
-a three-hour lab, not a talk you sit through. Five of the week's ten points are read from
-what you pushed during the lecture: no machine means nothing pushed, and nothing pushed
-means nothing to mark.
+**Bring your laptop every week**, with its charger and whatever cable it needs. This is a three-hour hands-on study opportunity.
 
-**Attendance is mandatory.** The university allows you three weeks of absence across the
+**Attendance is mandatory.** The university allows you some weeks of absence across the
 term, and that allowance already covers everything — illness, work, family, anything at
 all. There is no second category on top of it, and there is no make-up procedure.
 
@@ -148,21 +145,17 @@ What stays open is the other half. Do the lecture's work in your own time, push 
 before Saturday midnight, and you earn those five exactly as everyone else does. Missing
 a lecture costs you that lecture, not the week.
 
-The part I genuinely cannot give back is not the marks. It is the three hours in a room
-where you could have asked.
-
 ---
 
 ## 3. After the lecture — until Saturday 23:59
 
-Finish the rest of the week's work by Saturday midnight. I take a second snapshot on
-Sunday morning; your state at the deadline decides the other 5 points.
+Finish the rest of the week's work by Saturday midnight. I take a second snapshot at that time; your state at the deadline decides the other 5 points.
 
 ### `ai_log_NN.md` — do not skip it
 
-One file per week, inside that week's folder — `week03/ai_log_03.md` and so on. It
-arrives with the rest of the week. Fill in: which assistant you used, what it got right, **what you had to
-correct**, and what you learned.
+One file per week, inside that week's folder — `week01/ai_log_01.md` and so on. It
+arrives with the rest of the documents in the week folder. Fill in: which assistant you used, what it got right, what you had to
+correct, and what you learned.
 
 **The Evidence block is required.** Paste the actual exchange under your claim — the
 prompt you sent and the wrong answer you got — inside the code fence. Not the whole
@@ -175,10 +168,10 @@ are conveniently easy to spot. And choosing which part of a long conversation co
 evidence is itself the skill being assessed.
 
 If you would rather keep the whole conversation, save it as `weekNN/transcript.md`. I do
-not read those by default, but I reserve the right to ask when a log entry does not add
+not read those by default, but I will read it when a log entry does not add
 up.
 
-This file is worth 2 points and a person reads it.
+This file is worth 2 points.
 
 ### Keep going until the checks are green
 
@@ -207,53 +200,6 @@ you noticed.
 An LLM can produce every file an assignment asks for. What it cannot do is make those
 files agree with the ten weeks around them, or notice its own mistakes on your behalf.
 That is what is actually being assessed.
-
----
-
-## The final project, and why it matters from Week 1
-
-The weekly marks are 70% of your grade. The remaining 30% is the final project, and it
-is worth knowing now how those marks are split — because it changes how you should work
-all term.
-
-| Criterion | Points |
-|-----------|--------|
-| Functionality — runs end to end, on desktop and phone | 8 |
-| Traceability — requirement → code → test | 6 |
-| Oral defence — five minutes of questions | 6 |
-| Code quality — readable, `ruff` clean, no secrets, usable at phone width | 4 |
-| Design documents — accurate to the code as built | 3 |
-| your AI logs across the term | 3 |
-
-Traceability and the defence together are worth more than functionality. That is
-deliberate: **a working application you cannot account for is a weaker result than a
-modest one you understand completely.**
-
-### The oral defence
-
-In Week 12 I will ask you three questions about your own project, with your repository
-open, for about five minutes. I am not testing your memory. I am finding out whether you
-supervised this build or assembled its output — those two look identical on GitHub and
-completely different in conversation.
-
-I will not publish the questions, but here are the categories they come from:
-
-- **A decision and its alternative.** Why this way, and what did you reject?
-- **A failure and how you diagnosed it.** Not the fix — the path to finding the cause.
-- **An AI error you caught.** How did you know it was wrong?
-- **Trade-offs and limits.** What does your application do badly?
-- **Change one thing.** With two more weeks, what would you fix first?
-
-Notice that four of those five are answerable only from your own AI logs and your
-own debugging history. If you keep that log honestly every week, you have already
-prepared. If you fill it in from memory in December, you will not have.
-
-### Traceability
-
-I will pick three requirements from your Week 2 SRS at random and ask you to show me the
-code that implements each one and the test that covers it. This is why the consistency
-marks exist every week: the habit that earns them is the same habit that makes this
-question easy.
 
 ---
 

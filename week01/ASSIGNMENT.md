@@ -57,7 +57,7 @@ all required:
 
 The **nickname** is what appears on the class board projected at the end of each
 lecture, so you can find your own row at a glance. Letters, digits, `-` and `_` only,
-2–20 characters, and not your student number. Beyond that it is your choice — pick
+2–20 characters. Beyond that it is your choice — pick
 something you will still recognise in December.
 
 **`section`** is `en` or `tr`, whichever section you are enrolled in. Your repository
