@@ -25,7 +25,7 @@ You create it from the template on Week 1 and commit to it every week.
 | 11 | Deployment diagram, Dockerfile or deploy config |
 | 12 | Final app + demo video + peer review |
 
-Each week you also update `ai_log.md` with a reflection on how you used AI.
+Most weeks also ask for an AI log — `weekNN/ai_log_NN.md`, inside that week's folder.
 
 ### What is in here now, and what is not
 
@@ -40,11 +40,11 @@ At the root, and staying there all term:
 | | |
 |---|---|
 | `app.py` | Your application. Empty for now; by Week 7 it is the whole thing |
-| `ai_log.md` | One section per week, written every week. Not a Week 1 file |
+| `week01/ai_log_01.md` | This week's AI log, in this week's folder. Every week has one, and it arrives with the week |
 | `student.json` | Who you are. Fill it in once, in Week 1 |
 | `requirements.txt`, `requirements/` | Dependencies, arriving week by week |
 | `.github/` | The checks that run on every push |
-| `CURRENT_WEEK` | Bookkeeping the checker manages. Do not edit it. A `WEEK` file appears next to it the first time you run the checker — that is its offline cache, it is not tracked by git, and you can ignore it |
+| `CURRENT_WEEK` | Bookkeeping the checker manages. Do not edit it. A `WEEK_NO.md` file appears next to it the first time you run the checker — that is its offline cache, it is not tracked by git, and you can ignore it |
 
 A few weeks hand you a scaffold rather than making you build it from nothing. When
 that happens the assignment opens with one command, and you run it **before** you
@@ -125,7 +125,7 @@ cross on your commit in GitHub, and you can see exactly which check failed.
 
 **There is nothing for you to switch on.** The checker asks the course which week it
 is on, every time it runs, so what you see is always what is being run against you.
-The `WEEK` file at the repo root is just a cache of that number — it updates itself,
+The `WEEK_NO.md` file at the repo root is just a cache of that number — it updates itself,
 and you never need to touch it.
 
 The output comes in two parts, because the week has two deadlines:
@@ -136,7 +136,7 @@ By Saturday:     2 of  8 done
 ```
 
 **In the lab** is what the end-of-session snapshot reads — five of the week's ten
-points. **By Saturday** is everything else: the write-ups, the diagrams, `ai_log.md`.
+points. **By Saturday** is everything else: the write-ups, the diagrams, `ai_log_NN.md`.
 Items in the second group do not fail the run while the week is still open; they are
 not due yet. Nothing in the first group is something you should be doing at home.
 
@@ -167,7 +167,7 @@ remember that a committed key is an automatic 10-point deduction.
 ## Repository rules
 
 - Commit **at minimum once per week**, before the session.
-- `ai_log.md` must be updated every week — this is graded.
+- Fill in that week's `ai_log_NN.md` when the assignment asks for one — this is graded.
 - Do **not** commit `.venv/`, `__pycache__/`, or API keys.
 - Run `ruff check .` before committing — it is part of the Week 9 grade and catches the unused imports AI tends to leave behind.
 - Use `.env` for secrets and keep it in `.gitignore`.

@@ -2,6 +2,17 @@
 
 **AI-Assisted Software Development · Atlas University · Fall 2026–2027**
 
+**Version 1 · 20 September 2026** — this document is revised during the term. It comes
+down with the rest of each week's files when you fetch them, so the copy in your
+repository is the current one as long as you keep pulling.
+
+> [!IMPORTANT]
+> **What changed in this version**
+>
+> Nothing yet — this is the first version. When I revise this document, this box
+> lists what moved and the headings that changed carry a **`↻ changed in v2`** mark
+> beside them. Both disappear in the version after, so anything marked is new to you.
+
 This document describes the routine that does not change. The *content* of each week
 differs — the assignment is posted on the LMS — but the *rhythm* is always the same.
 Come back here when you are stuck.
@@ -15,7 +26,7 @@ Come back here when you are stuck.
 | Before the session | Read the assignment | — |
 | During the session (3 h) | Work, and push often | 5 |
 | End of the session | One last push — I freeze the state | ↑ same 5 |
-| By Saturday 23:59 | Finish the rest, write `ai_log.md` | 5 |
+| By Saturday 23:59 | Finish the rest, write `ai_log_NN.md` | 5 |
 
 Ten points a week, split evenly between two moments: **five measured at the end of the
 session, five at the Saturday deadline.**
@@ -63,8 +74,8 @@ it and those 20 minutes will mean nothing to you.
 
 The checker asks the course which week it is on, every time it runs. You cannot forget
 to set it, and you cannot be checked against the wrong week. It keeps the answer in a
-`WEEK` file that appears at the repository root after your first run — that is only an
-offline cache, git ignores it, and you never need to touch it.
+`WEEK_NO.md` file that appears at the repository root after your first run — that is
+only an offline cache, git ignores it, and you never need to touch it.
 
 ### Know which half you are working on
 
@@ -81,11 +92,11 @@ The two numbers change from week to week; what matters is which line you are rea
 are the things worth doing while you are in a room with me and twenty-nine other
 people who are stuck on the same thing.
 
-**By Saturday** is the rest: the write-ups, the diagrams, `ai_log.md`. Work that is
+**By Saturday** is the rest: the write-ups, the diagrams, `ai_log_NN.md`. Work that is
 genuinely done alone. It does not fail the run during the week, because it is not due
 yet — but it is half the mark too, and the snapshot on Sunday does read it.
 
-If you find yourself writing `ai_log.md` during the lab, you have the week backwards.
+If you find yourself writing `ai_log_NN.md` during the lab, you have the week backwards.
 
 ### Work, and push often
 
@@ -119,31 +130,28 @@ Work you have not pushed is invisible — it sits on your laptop and does not co
 The result is projected as an anonymised table; find your row by the nickname in your
 `student.json`. That table is worth **5 points — half the week**.
 
-### If you cannot be there
+### Attendance, and what happens if you are not here
 
-Illness and emergencies happen and they should not cost you half a week's mark. There
-is a procedure, and it has two deadlines.
+**Bring your laptop every week**, with its charger and whatever cable it needs. This is
+a three-hour lab, not a lecture you watch. Five of the week's ten points are read from
+what you pushed during the session: no machine means nothing pushed, and nothing pushed
+means nothing to mark.
 
-**Within 2 hours of the end of the session**, email me at
-`vedat.coskun@atlas.edu.tr` explaining why you were not there, with the supporting
-documents attached. Not the next morning, not when you feel better — within two hours
-of when the session ended.
+**Attendance is mandatory.** The university allows you three weeks of absence across the
+term, and that allowance already covers everything — illness, work, family, anything at
+all. There is no second category on top of it, and there is no make-up procedure.
 
-**Within 24 hours**, do the session's work and push it.
+**A session you miss is a session I cannot mark.** Whatever the reason, those 5 points
+are gone. I am not weighing reasons against each other, and that is deliberate: with
+over a hundred students, a process for judging excuses turns into a process for judging
+who explains themselves best.
 
-If I accept the case, I will grade that session's work as though you had been in the
-room, and enter those 5 points by hand. If I do not accept it, or the email does not
-arrive in time, the session is marked on what was in your repository when I took the
-snapshot — which, if you were not there, is nothing.
+What stays open is the other half. Do the session's work in your own time, push it
+before Saturday midnight, and you earn those five exactly as everyone else does. Missing
+a session costs you the session, not the week.
 
-Two things this does not do. It does not excuse the work: you still produce it, and
-still quickly, which is what the 24 hours is for. And it does not give you the room
-back — the chance to ask while you are stuck is the part I cannot hand over
-afterwards, whatever I do with the marks.
-
-The short deadline is not bureaucracy. A reason given two hours after the fact is a
-reason; the same reason given on Friday is a reconstruction, and I cannot tell the
-difference between the two.
+The part I genuinely cannot give back is not the marks. It is the three hours in a room
+where you could have asked.
 
 ---
 
@@ -152,10 +160,10 @@ difference between the two.
 Finish the rest of the week's work by Saturday midnight. I take a second snapshot on
 Sunday morning; your state at the deadline decides the other 5 points.
 
-### `ai_log.md` — do not skip it
+### `ai_log_NN.md` — do not skip it
 
-One file at the repository root, with a section already prepared for all twelve weeks.
-Fill in that week's: which assistant you used, what it got right, **what you had to
+One file per week, inside that week's folder — `week03/ai_log_03.md` and so on. It
+arrives with the rest of the week. Fill in: which assistant you used, what it got right, **what you had to
 correct**, and what you learned.
 
 **The Evidence block is required.** Paste the actual exchange under your claim — the
@@ -193,9 +201,9 @@ from the requirements and design you wrote in previous weeks, and does your comm
 history show work spread across the week rather than one last-minute dump? Changing your
 mind is normal and healthy — but the change must be visible. A silently abandoned
 requirement costs the mark; a requirement dropped with a one-line justification in
-`ai_log.md` costs nothing. That is what engineering looks like.
+`ai_log_NN.md` costs nothing. That is what engineering looks like.
 
-**`ai_log.md` quality — 2 points.** A concrete AI error, the pasted evidence, and how
+**`ai_log_NN.md` quality — 2 points.** A concrete AI error, the pasted evidence, and how
 you noticed.
 
 An LLM can produce every file an assignment asks for. What it cannot do is make those
@@ -217,7 +225,7 @@ all term.
 | Oral defence — five minutes of questions | 6 |
 | Code quality — readable, `ruff` clean, no secrets, usable at phone width | 4 |
 | Design documents — accurate to the code as built | 3 |
-| `ai_log.md` across the term | 3 |
+| your AI logs across the term | 3 |
 
 Traceability and the defence together are worth more than functionality. That is
 deliberate: **a working application you cannot account for is a weaker result than a
@@ -238,7 +246,7 @@ I will not publish the questions, but here are the categories they come from:
 - **Trade-offs and limits.** What does your application do badly?
 - **Change one thing.** With two more weeks, what would you fix first?
 
-Notice that four of those five are answerable only from your own `ai_log.md` and your
+Notice that four of those five are answerable only from your own AI logs and your
 own debugging history. If you keep that log honestly every week, you have already
 prepared. If you fill it in from memory in December, you will not have.
 
@@ -302,7 +310,7 @@ git checkout -- file.py     # restore one file to the last commit
 ```
 
 **Still stuck?** Ask in the session, or ask an AI — but verify what it tells you, and
-record the exchange in `ai_log.md`. That is precisely what this course is about.
+record the exchange in `ai_log_NN.md`. That is precisely what this course is about.
 
 ---
 

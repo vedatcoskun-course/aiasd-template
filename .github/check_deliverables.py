@@ -7,7 +7,7 @@ deliberate: a change that breaks Week 3 should not pass silently in Week 7.
 
 Which week is "current" is not yours to set. It is published by the course and
 read from there on every run, so the checks you see are always the checks being
-run against you. The WEEK file is only a cache of that number, refreshed
+run against you. The WEEK_NO.md file is only a cache of that number, refreshed
 automatically, so this still works on a train with no signal.
 
 Run it locally before you push:
@@ -77,21 +77,26 @@ def parses(path: str) -> bool:
     return True
 
 
+def ai_log_path(week: int) -> str:
+    """Where this week's log lives.
+
+    One file per week, inside the week's own folder, rather than one file at the
+    root with twelve sections. A student's repository freezes the day they create
+    it: a twelve-week scaffold written in Week 1 can never be changed afterwards,
+    while a per-week file arrives with its week and can take whatever shape that
+    week needs — including not existing, for a week that does not ask for one.
+    """
+    return f"week{week:02d}/ai_log_{week:02d}.md"
+
+
 def ai_log_evidence(week: int) -> str:
     """The pasted exchange backing this week's claim — a fenced block with content.
 
     An untouched template block holds only an HTML comment, which is stripped here,
     so the placeholder does not count as evidence.
     """
-    text = read("ai_log.md") or ""
-    match = re.search(
-        rf"^##\s*Week\s*{week}\b(.*?)(?=^##\s*Week\s|\Z)",
-        text,
-        re.MULTILINE | re.DOTALL,
-    )
-    if not match:
-        return ""
-    blocks = re.findall(r"```[^\n]*\n(.*?)```", match.group(1), re.DOTALL)
+    text = read(ai_log_path(week)) or ""
+    blocks = re.findall(r"```[^\n]*\n(.*?)```", text, re.DOTALL)
     cleaned = [re.sub(r"<!--.*?-->", "", b, flags=re.DOTALL).strip() for b in blocks]
     return "\n".join(c for c in cleaned if c).strip()
 
@@ -104,7 +109,7 @@ def check_ai_log(week: int) -> None:
     """
     check(
         week,
-        f"ai_log.md Week {week} filled in",
+        f"{ai_log_path(week)} filled in",
         len(ai_log_section(week)) > 80,
         "section empty or untouched",
         DEADLINE,
@@ -112,7 +117,7 @@ def check_ai_log(week: int) -> None:
     evidence = ai_log_evidence(week)
     check(
         week,
-        f"ai_log.md Week {week} evidence pasted",
+        f"{ai_log_path(week)} evidence pasted",
         len(evidence) >= 80,
         f"{len(evidence)} characters in the code block — paste the real exchange",
         DEADLINE,
@@ -120,15 +125,17 @@ def check_ai_log(week: int) -> None:
 
 
 def ai_log_section(week: int) -> str:
-    """Return the body of the Week N section of ai_log.md."""
-    text = read("ai_log.md") or ""
-    pattern = rf"^##\s*Week\s*{week}\b(.*?)(?=^##\s*Week\s|\Z)"
-    match = re.search(pattern, text, re.MULTILINE | re.DOTALL)
-    if not match:
-        return ""
-    body = re.sub(r"<!--.*?-->", "", match.group(1), flags=re.DOTALL)
-    # Drop the template's own bold prompt labels — an untouched section is empty.
-    body = re.sub(r"^\s*\*\*.*?:\*\*\s*$", "", body, flags=re.MULTILINE)
+    """What the student actually wrote in this week's log."""
+    body = read(ai_log_path(week)) or ""
+    body = re.sub(r"<!--.*?-->", "", body, flags=re.DOTALL)
+    body = re.sub(r"```.*?```", "", body, flags=re.DOTALL)  # evidence is checked apart
+    # Drop the template's own headings and bold prompt labels — an untouched file
+    # is then empty, which is what "not filled in" has to mean.
+    body = re.sub(r"^\s*#.*$", "", body, flags=re.MULTILINE)
+    # A line that is nothing but a bold label — with or without a colon — is the
+    # template's own prompt, not an answer.
+    body = re.sub(r"^\s*\*\*[^*]+\*\*:?\s*$", "", body, flags=re.MULTILINE)
+    body = re.sub(r"^\s*>.*$", "", body, flags=re.MULTILINE)
     return body.strip()
 
 
@@ -541,7 +548,7 @@ COURSE_WEEK_URL = (
 
 
 def cached_week() -> int:
-    raw = (read("WEEK") or "0").strip().splitlines()
+    raw = (read("WEEK_NO.md") or "0").strip().splitlines()
     try:
         return int(raw[0]) if raw and raw[0].strip() else 0
     except ValueError:
@@ -637,7 +644,7 @@ def resolve_week() -> tuple[int, str]:
     if published is not None:
         if published != cached_week():
             try:
-                (ROOT / "WEEK").write_text(f"{published}\n", encoding="utf-8")
+                (ROOT / "WEEK_NO.md").write_text(f"{published}\n", encoding="utf-8")
             except OSError:
                 pass  # read-only checkout; the number is still correct
         return published, "published by the course"
