@@ -70,6 +70,37 @@ streamlit run app.py
 
 ---
 
+## Two remotes, two very different commands
+
+Your repository has `origin` — your own copy on GitHub. Some weeks also hand you a
+starter folder from the course template, and for that you add a second remote called
+`template`. They are not interchangeable.
+
+| | |
+|---|---|
+| `git pull` | From `origin`. Your own repository, on another machine or after an edit in the browser. Normal, everyday, safe. |
+| `git pull template main` | **Never.** |
+
+The template is a separate repository with no history in common with yours — your copy
+was created from it, not cloned from it. Merging the two tries to reconcile every file
+at once: your filled-in `student.json` against the blank one, your finished `hello.py`
+against the stub, your work against the scaffold. You would spend the session
+untangling conflicts, and a `git pull` that once succeeded keeps trying to do it again
+every time.
+
+Take the one path you actually want instead:
+
+```bash
+git remote add template https://github.com/vedatcoskun-course/aiasd-template.git   # once, ever
+git fetch template
+git checkout template/main -- week06
+```
+
+That copies exactly the path you name and touches nothing else. Run it **before** you
+write anything in that folder — run it afterwards and it overwrites your work.
+
+---
+
 ## When something goes wrong
 
 > **Read the LAST line of an error, not the first.** Git prints the diagnosis at the
@@ -85,6 +116,7 @@ streamlit run app.py
 | `index.lock ... File exists` | A git command was interrupted. `rm -f .git/index.lock` and retry. |
 | Checker says *Cannot tell which week it is* | First run, with no network. Connect once and run it again; after that it works offline. |
 | `command not found: python` | Try `python3` instead. On macOS that is usually the one that exists. |
+| `refusing to merge unrelated histories` | You pulled from `template` instead of `origin`. Do not pass `--allow-unrelated-histories`; see the section above. |
 
 ---
 
