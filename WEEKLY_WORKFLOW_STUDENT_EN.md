@@ -50,7 +50,7 @@ gaps, not for starting.
 
 Three things have to be true before the first lecture starts, and none of them are the
 course: (a) a GitHub account, (b) your repository, and (c) a computer that is allowed to push to
-it. The required commands are on the [**Setup Card**](SETUP_CARD.md) — four steps, and the last
+it. The required commands are on the [**Setup Card**](SETUP_CARD_EN.md) — four steps, and the last
 one tells you whether the other three worked.
 
 The card also carries a table of the errors you are most likely to hit and what each
