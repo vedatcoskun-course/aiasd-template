@@ -24,18 +24,18 @@ Come back here when you are stuck.
 
 | When | What you do | Points |
 |------|-------------|--------|
-| Before the session | Read `weekNN/ASSIGNMENT.md` | — |
-| During the session (3 h) | Work, and push often | — |
-| End of the session | One last push — I freeze the state | 5 |
-| After the session | Finish the rest, write `ai_log_NN.md` | — |
+| Before the lecture | Read `weekNN/ASSIGNMENT.md` | — |
+| During the lecture (3 h) | Work, and push often | — |
+| End of the lecture | One last push — I freeze the state | 5 |
+| After the lecture | Finish the rest, write `ai_log_NN.md` | — |
 | By Saturday 23:59 | **Push again.** I freeze the state a second time | 5 |
 
 Ten points a week, split evenly between two moments: **five measured at the end of the
-session, five at the Saturday deadline.** Both are read from GitHub, so both need a
+lecture, five at the Saturday deadline.** Both are read from GitHub, so both need a
 push. Work that is finished but not pushed scores exactly the same as work that was
 never done.
 
-Half the week's mark riding on the session is deliberate. This is where the work
+Half the week's mark riding on the lecture is deliberate. This is where the work
 belongs — in the room, while you can still ask. The other half rests on finishing, and
 on the two things a checker cannot see.
 
@@ -48,7 +48,7 @@ gaps, not for starting.
 
 ## Once, and never again
 
-Three things have to be true before the first session starts, and none of them are the
+Three things have to be true before the first lecture starts, and none of them are the
 course: (a) a GitHub account, (b) your repository, and (c) a computer that is allowed to push to
 it. The required commands are on the [**Setup Card**](SETUP_CARD.md) — four steps, and the last
 one tells you whether the other three worked.
@@ -86,7 +86,7 @@ By Saturday:     0 of  3 done
 
 The two numbers change from week to week; what matters is which line you are reading.
 
-**In the lab** is what I read at the end of the session — half the week's mark. These
+**In the lab** is what I read at the end of the lecture — half the week's mark. These
 are the things worth doing while you are in a room with me and twenty-nine other
 people who are stuck on the same thing.
 
@@ -120,9 +120,9 @@ python .github/check_deliverables.py
 These are exactly the checks I will run. The output lists what is missing, one line at
 a time. It is not a grade; it is a to-do list, and running it costs nothing.
 
-### Push once more before the session ends
+### Push once more before the lecture ends
 
-At the end of the session I freeze every repository as it stands and run the checks.
+At the end of the lecture I freeze every repository as it stands and run the checks.
 Work you have not pushed is invisible — it sits on your laptop and does not count.
 
 The result is projected as an anonymised table; find your row by the nickname in your
@@ -131,29 +131,29 @@ The result is projected as an anonymised table; find your row by the nickname in
 ### Attendance, and what happens if you are not here
 
 **Bring your laptop every week**, with its charger and whatever cable it needs. This is
-a three-hour lab, not a lecture you watch. Five of the week's ten points are read from
-what you pushed during the session: no machine means nothing pushed, and nothing pushed
+a three-hour lab, not a talk you sit through. Five of the week's ten points are read from
+what you pushed during the lecture: no machine means nothing pushed, and nothing pushed
 means nothing to mark.
 
 **Attendance is mandatory.** The university allows you three weeks of absence across the
 term, and that allowance already covers everything — illness, work, family, anything at
 all. There is no second category on top of it, and there is no make-up procedure.
 
-**A session you miss is a session I cannot mark.** Whatever the reason, those 5 points
+**A lecture you miss is a lecture I cannot mark.** Whatever the reason, those 5 points
 are gone. I am not weighing reasons against each other, and that is deliberate: with
 over a hundred students, a process for judging excuses turns into a process for judging
 who explains themselves best.
 
-What stays open is the other half. Do the session's work in your own time, push it
+What stays open is the other half. Do the lecture's work in your own time, push it
 before Saturday midnight, and you earn those five exactly as everyone else does. Missing
-a session costs you the session, not the week.
+a lecture costs you that lecture, not the week.
 
 The part I genuinely cannot give back is not the marks. It is the three hours in a room
 where you could have asked.
 
 ---
 
-## 3. After the session — until Saturday 23:59
+## 3. After the lecture — until Saturday 23:59
 
 Finish the rest of the week's work by Saturday midnight. I take a second snapshot on
 Sunday morning; your state at the deadline decides the other 5 points.
@@ -307,7 +307,7 @@ git diff                    # what has changed right now
 git checkout -- file.py     # restore one file to the last commit
 ```
 
-**Still stuck?** Ask in the session, or ask an AI — but verify what it tells you, and
+**Still stuck?** Ask in the lecture, or ask an AI — but verify what it tells you, and
 record the exchange in `ai_log_NN.md`. That is precisely what this course is about.
 
 ---

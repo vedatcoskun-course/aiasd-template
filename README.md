@@ -65,7 +65,7 @@ term, on one page, plus what the common errors mean. Do its four setup steps bef
 Week 1.
 
 **New here?** The whole weekly routine — what to do before, during and after each
-session, how the marks are split, and what to try when you are stuck — is written out
+lecture, how the marks are split, and what to try when you are stuck — is written out
 step by step in [`WEEKLY_WORKFLOW_STUDENT.md`](WEEKLY_WORKFLOW_STUDENT.md).
 
 ---
@@ -110,7 +110,7 @@ Turkish one. Get this wrong and the checker will test you against the other sect
 week, so check it before you push.
 
 Your **nickname** is what appears on the class board projected at the end of each
-session, so you can find your own row at a glance. Letters, digits, `-` and `_`,
+lecture, so you can find your own row at a glance. Letters, digits, `-` and `_`,
 2–20 characters. Choose whatever you like — just not your student number, and pick
 something you will still recognise in December.
 
@@ -136,7 +136,7 @@ In the lab:     11 of 13 done
 By Saturday:     2 of  8 done
 ```
 
-**In the lab** is what the end-of-session snapshot reads — five of the week's ten
+**In the lab** is what the end-of-lecture snapshot reads — five of the week's ten
 points. **By Saturday** is everything else: the write-ups, the diagrams, `ai_log_NN.md`.
 Items in the second group do not fail the run while the week is still open; they are
 not due yet. Nothing in the first group is something you should be doing at home.
@@ -167,7 +167,7 @@ remember that a committed key is an automatic 10-point deduction.
 
 ## Repository rules
 
-- Commit **at minimum once per week**, before the session.
+- Commit **at minimum once per week**, before the lecture.
 - Fill in that week's `ai_log_NN.md` when the assignment asks for one — this is graded.
 - Do **not** commit `.venv/`, `__pycache__/`, or API keys.
 - Run `ruff check .` before committing — it is part of the Week 9 grade and catches the unused imports AI tends to leave behind.

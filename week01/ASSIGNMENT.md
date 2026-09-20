@@ -2,7 +2,7 @@
 
 **Due:** Saturday 23:59 · Commit to your project repository
 
-> **Before the session** read both pre-reading documents: *AI Technical Background*
+> **Before the lecture** read both pre-reading documents: *AI Technical Background*
 > (concepts) and *Development Environment and Tools* (environment and tools).
 > The lecture is a 20-minute summary of exactly that material.
 
@@ -32,7 +32,7 @@ you. Without this your repository is invisible to me and the week counts as not
 submitted.
 
 Adding me sends an invitation that I have to accept, so there is a short gap before I
-can actually see anything. You do not need to do anything else — but if the end-of-session
+can actually see anything. You do not need to do anything else — but if the end-of-lecture
 board shows nothing for you, this is the first thing we check.
 
 The repository is private on purpose: it carries your student number and name, and
@@ -56,7 +56,7 @@ all required:
 ```
 
 The **nickname** is what appears on the class board projected at the end of each
-session, so you can find your own row at a glance. Letters, digits, `-` and `_` only,
+lecture, so you can find your own row at a glance. Letters, digits, `-` and `_` only,
 2–20 characters, and not your student number. Beyond that it is your choice — pick
 something you will still recognise in December.
 
@@ -182,7 +182,7 @@ Which means two things carry the whole week, and both are in task 1 and task 2: 
 to be a Collaborator, and your student number in `student.json` has to be correct. Get
 either wrong and your work is invisible to me, however good it is.
 
-If the board at the end of the session shows nothing for you, say so in the room. It is
+If the board at the end of the lecture shows nothing for you, say so in the room. It is
 almost always one of those two, and both take a minute to fix.
 
 ---
@@ -205,12 +205,12 @@ almost always one of those two, and both take a minute to fix.
 
 The ten points are split evenly between two moments.
 
-**At the end of this session — 5 points.** I take a snapshot of every repository and
+**At the end of this lecture — 5 points.** I take a snapshot of every repository and
 run the checks. Whatever passes at that moment earns its share of those 5 points. An
 anonymised board is shown in class, so you can see where you stand without anyone
 being named.
 
-Half the week's mark riding on the session is deliberate. This is where the work
+Half the week's mark riding on the lecture is deliberate. This is where the work
 belongs: in the room, while you can still ask.
 
 **At Saturday 23:59 — 5 points.** Passing all the checks on your final state is worth

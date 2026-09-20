@@ -84,7 +84,7 @@ starter folder from the course template, and for that you add a second remote ca
 The template is a separate repository with no history in common with yours — your copy
 was created from it, not cloned from it. Merging the two tries to reconcile every file
 at once: your filled-in `student.json` against the blank one, your finished `hello.py`
-against the stub, your work against the scaffold. You would spend the session
+against the stub, your work against the scaffold. You would spend the lecture
 untangling conflicts, and a `git pull` that once succeeded keeps trying to do it again
 every time.
 
@@ -126,5 +126,5 @@ you are told to use your GitHub password, or to run `git config credential.helpe
 store`, that advice is out of date. Ignore it and come back to this card.
 
 The full weekly routine — what the marks are for, what happens at the end of each
-session, what to do if you cannot be there — is in
+lecture, what to do if you cannot be there — is in
 [`WEEKLY_WORKFLOW_STUDENT.md`](WEEKLY_WORKFLOW_STUDENT.md).
