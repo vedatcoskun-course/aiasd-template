@@ -10,20 +10,10 @@
 This is your personal project repository for the entire 12-week course.
 You create it from the template on Week 1 and commit to it every week.
 
-| Week | Deliverables |
-|------|-------------|
-| 1 | `week01/setup_proof.md`, `week01/hello.py`, `week01/llm_notes.md` |
-| 2 | `week02/PRD.md`, `week02/SRS.md`, `week02/requirements.json`, use case diagram |
-| 3 | Local models + chatbot: `llm_client.py`, `embedder.py`, `chatbot.py`, `model_notes.md`, `prompts.md` |
-| 4 | `design.md`, sequence diagram, architecture diagram, Streamlit skeleton |
-| 5 | Working prototype (core feature) |
-| 6 | Data flow diagram, RAG pipeline |
-| 7 | UI completion + full integration |
-| 8 | Activity diagram, debugging + refactoring |
-| 9 | Tests + `ruff` clean + Ragas evaluation |
-| 10 | Selenium UI tests + GitHub Actions CI |
-| 11 | Deployment diagram, Dockerfile or deploy config |
-| 12 | Final app + demo video + peer review |
+Each week arrives with its own assignment, in its own folder, telling you exactly
+what to build and hand in — this repository does not list the term ahead of you.
+The term builds one application from requirements through to a working, deployed
+product, and ends with a project defence.
 
 Most weeks also ask for an AI log — `weekNN/ai_log_NN.md`, inside that week's folder.
 
@@ -39,7 +29,7 @@ At the root, and staying there all term:
 
 | | |
 |---|---|
-| `app.py` | Your application. Empty for now; by Week 7 it is the whole thing |
+| `app.py` | Your application. Empty for now; it grows week by week into the whole thing |
 | `week01/ASSIGNMENT_EN.md` | What this week asks for. It arrives with the week's folder and is the only place the tasks are written |
 | `week01/ai_log_01.md` | This week's AI log, in this week's folder. Every week has one, and it arrives with the week |
 | `student.json` | Who you are. Fill it in once, in Week 1 |
