@@ -32,7 +32,8 @@ Come back here when you are stuck.
 
 Ten points a week, split evenly between two moments: **five measured at the end of the
 lecture, five at the Saturday deadline.** Both are read from GitHub, so both need a
-push. Work that is finished but not pushed scores exactly the same as work that was
+push. **Week 1 is the one exception:** nothing is read at the end of the first lecture;
+all ten points are read from your repository at Saturday 23:59. Work that is finished but not pushed scores exactly the same as work that was
 never done.
 
 Half the week's mark riding on the lecture is deliberate. This is where the work
@@ -92,7 +93,7 @@ people who are stuck on the same thing.
 
 **By Saturday** is the rest: the write-ups, the diagrams, `ai_log_NN.md`. Work that is
 genuinely done alone. It does not fail the run during the week, because it is not due
-yet — but it is half the mark too, and the snapshot on Sunday does read it.
+yet — but it is half the mark too, and the Saturday snapshot does read it.
 
 If you find yourself writing `ai_log_NN.md` during the lab, you have the week backwards.
 
@@ -189,13 +190,24 @@ tick on your Saturday state is worth **2 points**.
 
 **Consistency and commit discipline — 1 point.** Does this week's work actually follow
 from the requirements and design you wrote in previous weeks, and does your commit
-history show work spread across the week rather than one last-minute dump? Changing your
+history show work spread across the week rather than one last-minute dump? Did a
+change of plan get a dated line in `PROPOSAL.md`'s change log? Changing your
 mind is normal and healthy — but the change must be visible. A silently abandoned
 requirement costs the mark; a requirement dropped with a one-line justification in
 `ai_log_NN.md` costs nothing. That is what engineering looks like.
 
-**`ai_log_NN.md` quality — 2 points.** A concrete AI error, the pasted evidence, and how
-you noticed.
+**Human involvement — 2 points.** Proof that people, not only models, did this week's
+work. Your own part is shown in `weekNN/ai_log_NN.md`: a concrete AI error, the pasted
+evidence, and what you changed by hand. From Week 2, two classmates help you every week in
+the role the assignment names — stakeholder, design reviewer, tester — and you record them
+in `weekNN/contributors_NN.json` with one sentence each on what they did, plus evidence
+(their notes, their bug list, a dated paragraph in your log). Two names and nothing behind
+them is a list, not evidence. The burden of proof is yours; without it neither these two
+points nor your contributors' bonus is paid.
+
+**Contributors earn a bonus.** A classmate who helps you earns 10% of your mark for that
+week, for at most two contributions a week; the same for you when you help them. The
+names rotate: at least one new person every week. Week 1 has no contributors.
 
 An LLM can produce every file an assignment asks for. What it cannot do is make those
 files agree with the ten weeks around them, or notice its own mistakes on your behalf.

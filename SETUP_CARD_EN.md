@@ -9,8 +9,8 @@ Keep this one open. Everything you need to run, all term, is on this page.
 ## Once, before Week 1
 
 **1 · Create your repository.** On the course template, click **Use this template →
-Create a new repository**. Name it `aiasd-project`. Leave it **Private**. Then
-**Settings → Collaborators** and add your instructor.
+Create a new repository**. Name it `aiasd-project`. Set it to **Private** — the form
+opens on Public. Then **Settings → Collaborators → Add people** and add `VedatCOSKUN`.
 
 **2 · Let your computer talk to GitHub.** Passwords stopped working for this in 2021.
 Do it once and never again:
