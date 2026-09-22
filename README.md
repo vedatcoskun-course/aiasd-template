@@ -59,6 +59,11 @@ Week 1.
 lecture, how the marks are split, and what to try when you are stuck — is written out
 step by step in [`WEEKLY_WORKFLOW_STUDENT_EN.md`](WEEKLY_WORKFLOW_STUDENT_EN.md).
 
+**Read before Week 1** — the three pre-readings and the paper are in [`docs/`](docs/):
+`Week01_Doc2` AI Technical Background, `Week01_Doc3` Development Environment and Tools,
+`Week01_Doc4` Working with AI Tools, and `Week01_Doc1`, the Transformer paper. The lecture
+is a twenty-minute summary of them. Later weeks' readings arrive in `docs/` with their week.
+
 Every document in this repository ends in `_EN` or `_TR`. Both sections receive the same
 files; read the one in your language and ignore the other. Folder and file names the
 checker looks for (`week01/`, `hello.py`, `student.json`) are the same for everyone.
