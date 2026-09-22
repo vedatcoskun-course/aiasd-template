@@ -182,7 +182,7 @@ Which means two things carry the whole week, and both are in task 1 and task 2: 
 to be a Collaborator, and your student number in `student.json` has to be correct. Get
 either wrong and your work is invisible to me, however good it is.
 
-If the board at the end of the lecture shows nothing for you, say so in the room. It is
+If the board shown in Week 2 has nothing for you, say so in the room. It is
 almost always one of those two, and both take a minute to fix.
 
 ---
@@ -203,20 +203,19 @@ almost always one of those two, and both take a minute to fix.
 
 ## How this week is graded
 
-The ten points are split evenly between two moments.
+This week is the exception to the usual rhythm. From Week 2 on, five points are read from
+your repository at the end of each lecture and five at Saturday 23:59. In Week 1 nothing is
+captured at the end of the lecture — most of you will not have a working environment yet,
+and setup is not graded work. **All ten points are read from your repository at Saturday
+23:59:**
 
-**At the end of this lecture — 5 points.** I take a snapshot of every repository and
-run the checks. Whatever passes at that moment earns its share of those 5 points. An
-anonymised board is shown in class, so you can see where you stand without anyone
-being named.
-
-Half the week's mark riding on the lecture is deliberate. This is where the work
-belongs: in the room, while you can still ask.
-
-**At Saturday 23:59 — 5 points.** Passing all the checks on your final state is worth
-**2**. Consistency with the requirements and design you wrote in earlier weeks, together
-with a commit history that shows work spread across the week, is worth **1**. Your
-`ai_log_NN.md` entry and the evidence behind it is worth **2**.
+- **6** — the automated checks: repository from the template, private, I am a Collaborator,
+  `student.json` complete, `setup_proof.md`, `hello.py` meeting its three requirements,
+  `llm_notes.md` in your own words, `.gitignore` and `.env.example`, checks green.
+- **2** — commit discipline: at least three commits spread across the week, not one push on
+  Saturday night.
+- **2** — your `week01/ai_log_01.md`: a real session, a real model error, the pasted exchange.
+  I read this one myself.
 
 The deadline is the same every week, so there is nothing to work out: whatever is in
 your repository at Saturday midnight is what I grade.

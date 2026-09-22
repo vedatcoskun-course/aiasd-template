@@ -11,9 +11,10 @@ This is your personal project repository for the entire 12-week course.
 You create it from the template on Week 1 and commit to it every week.
 
 Each week arrives with its own assignment, in its own folder, telling you exactly
-what to build and hand in — this repository does not list the term ahead of you.
-The term builds one application from requirements through to a working, deployed
-product, and ends with a project defence.
+what to build and hand in. The whole term on two pages — what each week teaches, what you
+push and when — is [`SKELETON.md`](SKELETON.md). The term builds one product, yours: a
+mobile client, a web client and a server, published on a public app store, defended in
+Week 12 from the store-installed app.
 
 Most weeks also ask for an AI log — `weekNN/ai_log_NN.md`, inside that week's folder.
 
@@ -30,7 +31,7 @@ At the root, and staying there all term:
 | | |
 |---|---|
 | `app.py` | Your application. Empty for now; it grows week by week into the whole thing |
-| `week01/ASSIGNMENT_EN.md` | What this week asks for. It arrives with the week's folder and is the only place the tasks are written |
+| `week01/ASSIGNMENT_01_EN.md` | What this week asks for. It arrives with the week's folder and is the only place the tasks are written |
 | `week01/ai_log_01.md` | This week's AI log, in this week's folder. Every week has one, and it arrives with the week |
 | `student.json` | Who you are. Fill it in once, in Week 1 |
 | `requirements.txt`, `requirements/` | Dependencies, arriving week by week |

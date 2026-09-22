@@ -24,7 +24,7 @@ Come back here when you are stuck.
 
 | When | What you do | Points |
 |------|-------------|--------|
-| Before the lecture | Read `weekNN/ASSIGNMENT_EN.md` | — |
+| Before the lecture | Read `weekNN/ASSIGNMENT_NN_EN.md` | — |
 | During the lecture (3 h) | Work, and push often | — |
 | End of the lecture | One last push — I freeze the state | 5 |
 | After the lecture | Finish the rest, write `ai_log_NN.md` | — |
@@ -60,7 +60,7 @@ one actually means. Keep it open; probably it is the only page you need for the 
 
 ## 1. Before the lecture of that week
 
-Read `weekNN/ASSIGNMENT_EN.md` — it comes down with the rest of the week's folder and
+Read `weekNN/ASSIGNMENT_NN_EN.md` — it comes down with the rest of the week's folder and
 lists exactly which files that week requires. 
 
 If there is pre-reading, read it before you arrive. 
