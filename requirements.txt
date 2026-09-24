@@ -1,5 +1,5 @@
 # Week 1 — the minimum needed to start.
-# Heavier dependencies arrive per week: see requirements/weekNN.txt
+# Heavier dependencies arrive per week: see weekNN/requirements.txt
 #
 #   pip install -r requirements.txt
 

@@ -1,6 +1,6 @@
 # Week 9 — testing and code quality.
 #
-#   pip install -r requirements/week09.txt
+#   pip install -r week09/requirements.txt
 
 -r week06.txt
 

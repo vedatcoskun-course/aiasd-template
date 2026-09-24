@@ -1,7 +1,7 @@
 # Week 3 — local models, cloud APIs and embeddings.
 # Install on top of the root requirements.txt:
 #
-#   pip install -r requirements.txt -r requirements/week03.txt
+#   pip install -r requirements.txt -r week03/requirements.txt
 #
 # Heads up: sentence-transformers pulls in PyTorch (~2 GB) and the BGE-M3
 # model downloads a further ~2.2 GB on first use. Use a good connection.

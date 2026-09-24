@@ -1,6 +1,6 @@
 # Week 6 — RAG pipeline: vector indexing on top of the Week 3 stack.
 #
-#   pip install -r requirements/week06.txt
+#   pip install -r week06/requirements.txt
 
 -r week03.txt
 

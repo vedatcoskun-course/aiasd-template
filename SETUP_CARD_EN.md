@@ -64,7 +64,7 @@ often as you like — it is a to-do list, not a grade, and running it costs noth
 Two more, when a week needs them:
 
 ```bash
-pip install -r requirements/week03.txt
+pip install -r week03/requirements.txt
 streamlit run app.py
 ```
 

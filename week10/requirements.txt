@@ -1,6 +1,6 @@
 # Week 10 — browser-driven interface testing.
 #
-#   pip install -r requirements/week10.txt
+#   pip install -r week10/requirements.txt
 
 -r week09.txt
 

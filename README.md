@@ -34,7 +34,7 @@ At the root, and staying there all term:
 | `week01/ASSIGNMENT_01_EN.md` | What this week asks for. It arrives with the week's folder and is the only place the tasks are written |
 | `week01/ai_log_01.md` | This week's AI log, in this week's folder. Every week has one, and it arrives with the week |
 | `student.json` | Who you are. Fill it in once, in Week 1 |
-| `requirements.txt`, `requirements/` | Dependencies, arriving week by week |
+| `requirements.txt`, `weekNN/requirements.txt` | Dependencies, arriving week by week |
 | `.github/` | The checks that run on every push |
 | `CURRENT_WEEK.txt` | Bookkeeping the checker manages. Do not edit it. A `CURRENT_WEEK_CACHE.txt` file appears next to it the first time you run the checker — that is its offline cache, it is not tracked by git, and you can ignore it |
 
@@ -83,10 +83,10 @@ Dependencies arrive week by week so you are not downloading gigabytes in Week 1.
 The root `requirements.txt` is the minimum; heavier weeks have their own file:
 
 ```bash
-pip install -r requirements/week03.txt   # Ollama, APIs, embeddings
-pip install -r requirements/week06.txt   # + FAISS
-pip install -r requirements/week09.txt   # + pytest, ruff, ragas
-pip install -r requirements/week10.txt   # + Selenium
+pip install -r week03/requirements.txt   # Ollama, APIs, embeddings
+pip install -r week06/requirements.txt   # + FAISS
+pip install -r week09/requirements.txt   # + pytest, ruff, ragas
+pip install -r week10/requirements.txt   # + Selenium
 ```
 
 ---
