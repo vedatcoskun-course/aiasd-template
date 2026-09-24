@@ -16,7 +16,7 @@ end of this file, the way you log changes to your own proposal.
   models you run yourself — BGE-M3 for embeddings, Qwen via Ollama for answers — over your
   own documents and data, reachable from both clients. No cloud model APIs for this feature.
 - **10 points a week**: 5 read from your repository at the end of the lecture, 5 at Saturday
-  23:59. Week 1: all 10 on Saturday. Final project: 30.
+  23:59. Week 1 is worth 5, all read on Saturday. Final project: 30.
 - **Two people help you every week** from Week 2, in the role that week names, and you record
   them in `weekNN/contributors_NN.json`. They earn a bonus from your mark; you earn one from
   theirs. Rotate: at least one new name each week.
@@ -37,7 +37,7 @@ in `GRADING.md`.
 
 | Week | Content | In class | After class | Notes |
 |---|---|---|---|---|
-| 1 | Course intro; tools; Git; first contact with LLMs | • The assignment is explained step by step<br>• nothing is built yet | Install tools, create the private repo from the template, add the Collaborator, fill in student.json, write hello.py, explore two LLMs | • All 10 pts on Saturday (6 auto · 2 commits · 2 human via the AI log)<br>• No contributors this week |
+| 1 | Course intro; tools; Git; first contact with LLMs | • The assignment is explained step by step<br>• nothing is built yet | Install tools, create the private repo from the template, add the Collaborator, fill in student.json, write hello.py, explore two LLMs | • Worth 5 pts, all on Saturday (3 auto · 1 commits · 1 AI log)<br>• No contributors this week |
 | 2 | Proposal Part A + Requirements (SRS) | • Write problem and solution<br>• interview two stakeholders<br>• start the requirement list | • Finish proposal Part A<br>• write the SRS with its diagrams | • Proposal lives at the root, revisable any week with a change-log line<br>• Role: stakeholder |
 | 3 | Design + Proposal Part B | • Architecture<br>• market and competitors<br>• design reviewed by two | • Design document with its diagrams and the data model<br>• commercial potential<br>• technical risks incl. store choice | • S0: proposal §12 names store, fee, lead time<br>• Role: design-reviewer |
 | 4 | Clickable prototype | • Build the main flow<br>• two testers walk it | • Complete the screen flow<br>• register the developer account | • S1: register today, verification takes days<br>• Role: prototype-tester |
@@ -56,7 +56,7 @@ All `_EN`/`_TR` suffixes omitted. The lecture deck is not a file in the reposito
 
 | Week | Handed out (arrives in `weekNN/`, or root) | Pushed by end of lecture (5) | Pushed by Saturday (5) |
 |---|---|---|---|
-| 1 | • Doc 0–4 pre-reading (root or `week01/`, tbd)<br>• `week01/ASSIGNMENT_01`<br>• scaffolds `llm_notes.md`, `ai_log_01.md`<br>• root: `student.json`, `README`, `SETUP_CARD`, `WEEKLY_WORKFLOW_STUDENT` | — | • `student.json`<br>• `week01/setup_proof.md`<br>• `hello.py`<br>• `llm_notes.md`<br>• `ai_log_01.md` (all 10 pts) |
+| 1 | • Doc 0–4 pre-reading (root or `week01/`, tbd)<br>• `week01/ASSIGNMENT_01`<br>• scaffolds `llm_notes.md`, `ai_log_01.md`<br>• root: `student.json`, `README`, `SETUP_CARD`, `WEEKLY_WORKFLOW_STUDENT` | — | • `student.json`<br>• `week01/setup_proof.md`<br>• `hello.py`<br>• `llm_notes.md`<br>• `ai_log_01.md` (all 5 pts) |
 | 2 | • `week02/ASSIGNMENT_02`<br>• root `PROPOSAL.md` scaffold<br>• `week02/SRS.md` scaffold<br>• `requirements.json` scaffold<br>• `contributors_02.json`<br>• `ai_log_02.md`<br>• Ref1/Ref2 SDLC references | • `PROPOSAL.md` §1–§4<br>• `week02/requirements.json` first list<br>• `contributors_02.json` | • `PROPOSAL.md` §5–§7<br>• `week02/SRS.md` + diagrams<br>• `requirements.json` final<br>• `ai_log_02.md` |
 | 3 | • `week03/ASSIGNMENT_03`<br>• `DESIGN.md` scaffold<br>• `contributors_03.json`<br>• `ai_log_03.md` | • `week03/DESIGN.md` architecture + diagram<br>• `PROPOSAL.md` §8–§10<br>• `contributors_03.json` | • `week03/DESIGN.md` diagrams + data model<br>• `PROPOSAL.md` §11–§12 + change log<br>• `ai_log_03.md` |
 | 4 | • `week04/ASSIGNMENT_04`<br>• `store/store.json` scaffold<br>• `contributors_04.json`<br>• `ai_log_04.md` | • prototype link/file<br>• `contributors_04.json` | • full screen flow<br>• tester feedback log<br>• `week04/store/store.json` S1<br>• `ai_log_04.md` |

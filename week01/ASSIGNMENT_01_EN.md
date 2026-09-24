@@ -207,15 +207,15 @@ almost always one of those two, and both take a minute to fix.
 This week is the exception to the usual rhythm. From Week 2 on, five points are read from
 your repository at the end of each lecture and five at Saturday 23:59. In Week 1 nothing is
 captured at the end of the lecture — most of you will not have a working environment yet,
-and setup is not graded work. **All ten points are read from your repository at Saturday
-23:59:**
+and setup is not graded work. **This week is worth five points, all read from your
+repository at Saturday 23:59:**
 
-- **6** — the automated checks: repository from the template, private, I am a Collaborator,
+- **3** — the automated checks: repository from the template, private, I am a Collaborator,
   `student.json` complete, `setup_proof.md`, `hello.py` meeting its three requirements,
   `llm_notes.md` in your own words, `.gitignore` and `.env.example`, checks green.
-- **2** — commit discipline: at least three commits spread across the week, not one push on
+- **1** — commit discipline: at least three commits spread across the week, not one push on
   Saturday night.
-- **2** — your `week01/ai_log_01.md`: a real session, a real model error, the pasted exchange.
+- **1** — your `week01/ai_log_01.md`: a real session, a real model error, the pasted exchange.
   I read this one myself.
 
 The deadline is the same every week, so there is nothing to work out: whatever is in

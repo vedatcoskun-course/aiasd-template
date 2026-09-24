@@ -32,8 +32,8 @@ Come back here when you are stuck.
 
 Ten points a week, split evenly between two moments: **five measured at the end of the
 lecture, five at the Saturday deadline.** Both are read from GitHub, so both need a
-push. **Week 1 is the one exception:** nothing is read at the end of the first lecture;
-all ten points are read from your repository at Saturday 23:59. Work that is finished but not pushed scores exactly the same as work that was
+push. **Week 1 is the one exception:** it is worth five points, nothing is read at the end
+of the first lecture, and all five are read from your repository at Saturday 23:59. Work that is finished but not pushed scores exactly the same as work that was
 never done.
 
 Half the week's mark riding on the lecture is deliberate. This is where the work
