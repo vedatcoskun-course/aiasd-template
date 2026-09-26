@@ -127,5 +127,5 @@ anlatıyor. Size GitHub şifrenizi kullanmanız ya da `git config credential.hel
 çalıştırmanız söyleniyorsa o tavsiye eskimiştir. Görmezden gelin ve bu karta dönün.
 
 Haftalık rutinin tamamı — puanlar neye verilir, her dersin sonunda ne olur, derse
-gelemezseniz ne yaparsınız — [`WEEKLY_WORKFLOW_STUDENT_TR.md`](WEEKLY_WORKFLOW_STUDENT_TR.md)
+gelemezseniz ne yaparsınız — [`AI_WEEKLY_WORKFLOW_STUDENT_TR.md`](AI_WEEKLY_WORKFLOW_STUDENT_TR.md)
 dosyasında.

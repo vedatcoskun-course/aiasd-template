@@ -1,4 +1,4 @@
-# Haftalık İş Akışı — Her Hafta Ne Yaparsınız
+# Haftalık İş Akışı
 
 **AI-Assisted Software Development · Atlas Üniversitesi · Güz 2026–2027**
 
@@ -25,9 +25,9 @@ Takıldığınızda buraya dönün.
 |------|-------------|--------|
 | Dersten önce | `weekNN/ASSIGNMENT_NN_TR.md` dosyasını okuyun | — |
 | Ders sırasında (3 saat) | Çalışın ve sık push edin | — |
-| Ders sonunda | Son bir push — durumu donduruyorum | 5 |
+| Ders sonunda | Son bir push | 5 |
 | Dersten sonra | Kalanı bitirin, `ai_log_NN.md` yazın | — |
-| Cumartesi 23:59'a kadar | **Yeniden push edin.** Durumu ikinci kez donduruyorum | 5 |
+| Cumartesi 23:59'a kadar | **Yeniden push edin.** | 5 |
 
 Haftada on puan, iki ana eşit bölünmüş: **beşi dersin sonunda, beşi Cumartesi teslim
 saatinde ölçülür.** İkisi de GitHub'dan okunur, dolayısıyla ikisi de push ister.
@@ -50,7 +50,7 @@ kapatmak içindir.
 
 İlk ders başlamadan üç şey doğru olmalı ve hiçbiri dersin kendisi değil: (a) bir GitHub
 hesabı, (b) deponuz ve (c) ona push etmesine izin verilen bir bilgisayar. Gerekli
-komutlar [**Kurulum Kartı**](SETUP_CARD_TR.md)'nda — dört adım, ve sonuncusu diğer
+komutlar [**Kurulum Kartı**](AI_SETUP_CARD_TR.md)'nda — dört adım, ve sonuncusu diğer
 üçünün çalışıp çalışmadığını söyler.
 
 Kart ayrıca en çok karşılaşacağınız hataların ve her birinin gerçekte ne anlama

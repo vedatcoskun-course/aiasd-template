@@ -2,6 +2,8 @@
 
 **AI-Assisted Software Development · Atlas University · Fall 2026–2027 · Prof. Dr. Vedat Coşkun**
 
+*Türkçesi: [`AI_SKELETON_TR.md`](AI_SKELETON_TR.md)*
+
 This is the whole term on two pages: what each week teaches, what you do in the room, what
 you finish by Saturday, and what arrives in your repository. It is shown in the first lecture
 and lives in your repository. It may change during the term; every change is logged at the
@@ -11,7 +13,8 @@ end of this file, the way you log changes to your own proposal.
 
 - You build **one project, alone, for the whole term**: a mobile client, a web client and a
   server, with login by e-mail code and/or OTP, **published on a public app store** by the
-  end. The defence in Week 12 is run from the store-installed app.
+  end — which store, and native or hybrid, is your choice (`docs/Week02_Doc5`). The defence
+  in Week 12 is run from the store-installed app.
 - **Your project includes a chatbot about itself**, built in Weeks 6–7 with open-weight
   models you run yourself — BGE-M3 for embeddings, Qwen via Ollama for answers — over your
   own documents and data, reachable from both clients. No cloud model APIs for this feature.
@@ -29,7 +32,7 @@ end of this file, the way you log changes to your own proposal.
 - **Every diagram is Mermaid**, inside the markdown file. GitHub draws it; the checker reads it.
 
 How the points are computed, what the checker looks for, and the fine print of the bonus are
-in `GRADING.md`.
+in `AI_WEEKLY_WORKFLOW_STUDENT_EN.md` / `_TR.md`.
 
 ## Weekly plan
 
@@ -52,12 +55,12 @@ in `GRADING.md`.
 
 ### File flow — what the student receives and what she pushes
 
-All `_EN`/`_TR` suffixes omitted. The lecture deck is not a file in the repository; its link is in `docs/DECKS.md`.
+Assignments come as `_EN` and `_TR`; the suffix is omitted below. Readings in `docs/` are English. The lecture deck is not a file in the repository.
 
 | Week | Handed out (arrives in `weekNN/`, or root) | Pushed by end of lecture (5) | Pushed by Saturday (5) |
 |---|---|---|---|
-| 1 | • Doc 0–4 pre-reading (root or `week01/`, tbd)<br>• `week01/ASSIGNMENT_01`<br>• scaffolds `llm_notes.md`, `ai_log_01.md`<br>• root: `student.json`, `README`, `SETUP_CARD`, `WEEKLY_WORKFLOW_STUDENT` | — | • `student.json`<br>• `week01/setup_proof.md`<br>• `hello.py`<br>• `llm_notes.md`<br>• `ai_log_01.md` (all 5 pts) |
-| 2 | • `week02/ASSIGNMENT_02`<br>• root `PROPOSAL.md` scaffold<br>• `week02/SRS.md` scaffold<br>• `requirements.json` scaffold<br>• `contributors_02.json`<br>• `ai_log_02.md`<br>• Ref1/Ref2 SDLC references | • `PROPOSAL.md` §1–§4<br>• `week02/requirements.json` first list<br>• `contributors_02.json` | • `PROPOSAL.md` §5–§7<br>• `week02/SRS.md` + diagrams<br>• `requirements.json` final<br>• `ai_log_02.md` |
+| 1 | • `docs/` Doc 1–4 pre-reading<br>• `week01/ASSIGNMENT_01`<br>• scaffolds `llm_notes.md`, `ai_log_01.md`<br>• root: `student.json`, `README`, `SETUP_CARD`, `WEEKLY_WORKFLOW_STUDENT` | — | • `student.json`<br>• `week01/setup_proof.md`<br>• `hello.py`<br>• `llm_notes.md`<br>• `ai_log_01.md` (all 5 pts) |
+| 2 | • `week02/ASSIGNMENT_02`<br>• root `PROPOSAL.md` scaffold<br>• `week02/SRS.md` scaffold<br>• `requirements.json` scaffold<br>• `contributors_02.json`<br>• `ai_log_02.md`<br>• `docs/` Ref1/Ref2 SDLC references, Doc 5 Platforms and Stores | • `PROPOSAL.md` §1–§4<br>• `week02/requirements.json` first list<br>• `contributors_02.json` | • `PROPOSAL.md` §5–§7<br>• `week02/SRS.md` + diagrams<br>• `requirements.json` final<br>• `ai_log_02.md` |
 | 3 | • `week03/ASSIGNMENT_03`<br>• `DESIGN.md` scaffold<br>• `contributors_03.json`<br>• `ai_log_03.md` | • `week03/DESIGN.md` architecture + diagram<br>• `PROPOSAL.md` §8–§10<br>• `contributors_03.json` | • `week03/DESIGN.md` diagrams + data model<br>• `PROPOSAL.md` §11–§12 + change log<br>• `ai_log_03.md` |
 | 4 | • `week04/ASSIGNMENT_04`<br>• `store/store.json` scaffold<br>• `contributors_04.json`<br>• `ai_log_04.md` | • prototype link/file<br>• `contributors_04.json` | • full screen flow<br>• tester feedback log<br>• `week04/store/store.json` S1<br>• `ai_log_04.md` |
 | 5 | • `week05/ASSIGNMENT_05`<br>• `contributors_05.json`<br>• `ai_log_05.md` | • revised prototype<br>• server skeleton<br>• `contributors_05.json` | • login working<br>• revision log<br>• `ai_log_05.md` |
@@ -72,3 +75,4 @@ All `_EN`/`_TR` suffixes omitted. The lecture deck is not a file in the reposito
 ## Change log
 
 - 21 Sep 2026 — v2, first version shown.
+- 26 Sep 2026 — store choice is the student's (any of four stores; native or hybrid), Doc 5 added to Week 2; Week 1 readings are in `docs/`; `GRADING.md` reference replaced by the student workflow.

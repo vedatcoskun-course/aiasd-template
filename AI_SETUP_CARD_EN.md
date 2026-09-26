@@ -127,4 +127,4 @@ store`, that advice is out of date. Ignore it and come back to this card.
 
 The full weekly routine — what the marks are for, what happens at the end of each
 lecture, what to do if you cannot be there — is in
-[`WEEKLY_WORKFLOW_STUDENT_EN.md`](WEEKLY_WORKFLOW_STUDENT_EN.md).
+[`AI_WEEKLY_WORKFLOW_STUDENT_EN.md`](AI_WEEKLY_WORKFLOW_STUDENT_EN.md).
