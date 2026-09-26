@@ -60,13 +60,13 @@ yapılır, puanlar nasıl bölünür, takıldığınızda ne denersiniz — adı
 [`AI_WEEKLY_WORKFLOW_STUDENT_TR.md`](AI_WEEKLY_WORKFLOW_STUDENT_TR.md) /
 [`AI_WEEKLY_WORKFLOW_STUDENT_EN.md`](AI_WEEKLY_WORKFLOW_STUDENT_EN.md) dosyasında.
 
-**1. Hafta'dan önce okuyun** — üç ön okuma ve makale [`docs/`](docs/) altında: `Week01_Doc2`
-AI Technical Background, `Week01_Doc3` Development Environment and Tools, `Week01_Doc4`
-Working with AI Tools ve `Week01_Doc1`, Transformer makalesi. Ders bunların yirmi dakikalık
-özetidir. Sonraki haftaların okumaları `docs/` altına haftalarıyla gelir.
+**1. Hafta'dan önce okuyun** — üç ön okuma ve makale kökte: `AI_Doc2` AI Technical
+Background, `AI_Doc3` Development Environment and Tools, `AI_Doc4` Working with AI Tools
+ve `AI_Doc1`, Transformer makalesi. Ders bunların yirmi dakikalık özetidir. Sonraki
+okumalar aynı biçimde, sırayla numaralanmış olarak gelir.
 
 İki şube de aynı dosyaları alır. Ödevler, kurulum kartı ve iş akışı iki dilde gelir, `_EN`
-ve `_TR` — kendinizinkini okuyun, diğerini yok sayın. `docs/` altındaki okumalar
+ve `_TR` — kendinizinkini okuyun, diğerini yok sayın. Okumalar (`AI_DocN`)
 İngilizcedir. Denetleyicinin aradığı klasör ve dosya adları (`week01/`, `hello.py`,
 `student.json`) herkes için aynıdır.
 

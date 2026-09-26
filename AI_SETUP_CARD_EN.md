@@ -70,6 +70,14 @@ streamlit run app.py
 
 ---
 
+## Course files arrive by themselves
+
+Every time you run `python .github/check_deliverables.py` it also brings the course's
+files into your repository: a new week's folder when the week is published, and any
+course document (`AI_*`) that changed at the root. It never touches a file you already
+have in a week folder. What arrives is untracked until you `git add .` — the checker
+lists it. The section below is the manual way, for when you are offline.
+
 ## Two remotes, two very different commands
 
 Your repository has `origin` — your own copy on GitHub. Some weeks also hand you a

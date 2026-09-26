@@ -18,7 +18,7 @@ Modern AI applications — ChatGPT, coding assistants, document Q&A systems, AI-
 
 The figure below shows the conceptual progression this document follows — from the neural network foundation to the full application stack you will build in this course.
 
-![](Week01_Doc2_media/image1.png)
+![](AI_Doc2_media/image1.png)
 
 *Figure 1 — From foundational architectures to modern AI applications*
 
@@ -26,7 +26,7 @@ The figure below shows the conceptual progression this document follows — from
 
 An Artificial Neural Network (ANN) is a computational model inspired loosely by biological neural networks. It consists of layers of interconnected units called neurons. Each neuron applies a weighted sum to its inputs followed by an activation function.
 
-![](Week01_Doc2_media/image2.png)
+![](AI_Doc2_media/image2.png)
 
 *Figure 2 — A single neuron applies a weighted sum then an activation function*
 
@@ -66,7 +66,7 @@ The Transformer architecture (Vaswani et al., 2017 — "Attention Is All You Nee
 
 > **"Attention Is All You Need" — Vaswani et al., NeurIPS 2017. If you read one AI paper in your life, read this one. Sections 1 and 3 are sufficient for this course.**
 
-![](Week01_Doc2_media/image3.png)
+![](AI_Doc2_media/image3.png)
 
 *Figure 3 — Simplified Transformer pipeline: tokens flow through attention and feed-forward layers, repeated N times*
 
@@ -84,7 +84,7 @@ Attention(Q, K, V) = softmax(QKᵀ / √dₖ) · V
 
 You do not need to memorise this formula. The key intuition: attention computes which pieces of information should influence each other, and by how much.
 
-![](Week01_Doc2_media/image4.png)
+![](AI_Doc2_media/image4.png)
 
 *Figure 4 — "cat" attends to all other tokens; thicker lines indicate higher attention weight*
 
@@ -102,7 +102,7 @@ Before a language model can process text, the text must be converted into tokens
 
 - Numbers and special characters are tokenised in model-specific ways.
 
-![](Week01_Doc2_media/image5.png)
+![](AI_Doc2_media/image5.png)
 
 *Figure 5 — "unbelievable" splits into 3 tokens, each mapped to a numerical ID*
 
@@ -118,7 +118,7 @@ An embedding is a learned numerical vector that represents an object — a word,
 
 ### Why are embeddings important?
 
-![](Week01_Doc2_media/image6.png)
+![](AI_Doc2_media/image6.png)
 
 *Figure 6 — Similar concepts cluster together in embedding space (2 of ~1024 dimensions shown)*
 
@@ -160,7 +160,7 @@ LLMs generate text autoregressively: predict the next token, append it, predict 
 
 Which token is selected? The model outputs a probability distribution over its entire vocabulary. Depending on the sampling strategy (temperature, top-p), the selected token may be the most probable one or a sample from the distribution.
 
-![](Week01_Doc2_media/image7.png)
+![](AI_Doc2_media/image7.png)
 
 *Figure 7 — Each step the LLM predicts the next token; the prediction is appended and the process repeats*
 
@@ -223,7 +223,7 @@ So far everything described here runs on somebody else's computer. When you call
 
 There is another option. A smaller model can run on your own laptop, with no internet connection and no API key. Ollama is the program that makes this practical: you install it once, download a model, and it exposes a local server at localhost:11434 that your Python code talks to exactly as it would talk to a cloud API.
 
-![](Week01_Doc2_media/image8.png)
+![](AI_Doc2_media/image8.png)
 
 *Figure 10 — The same Python code, two very different paths: cloud API versus local inference*
 
@@ -286,7 +286,7 @@ RAG solves this by adding a retrieval step before generation:
 
 - The LLM generates an answer grounded in the retrieved content.
 
-![](Week01_Doc2_media/image9.png)
+![](AI_Doc2_media/image9.png)
 
 *Figure 8 — RAG has two phases: indexing (done once) and querying (every user question)*
 
@@ -304,7 +304,7 @@ User Interface → Application Logic → Retrieval + Tools → Embedding Model +
 
 The model is one component in a larger software system — and designing that system is exactly the engineering challenge this course addresses.
 
-![](Week01_Doc2_media/image10.png)
+![](AI_Doc2_media/image10.png)
 
 *Figure 9 — A modern AI application is a stack of components; the LLM sits in the middle, not at the top*
 

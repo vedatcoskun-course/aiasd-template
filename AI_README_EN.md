@@ -62,14 +62,14 @@ lecture, how the marks are split, and what to try when you are stuck — is writ
 step by step in [`AI_WEEKLY_WORKFLOW_STUDENT_EN.md`](AI_WEEKLY_WORKFLOW_STUDENT_EN.md) /
 [`AI_WEEKLY_WORKFLOW_STUDENT_TR.md`](AI_WEEKLY_WORKFLOW_STUDENT_TR.md).
 
-**Read before Week 1** — the three pre-readings and the paper are in [`docs/`](docs/):
-`Week01_Doc2` AI Technical Background, `Week01_Doc3` Development Environment and Tools,
-`Week01_Doc4` Working with AI Tools, and `Week01_Doc1`, the Transformer paper. The lecture
-is a twenty-minute summary of them. Later weeks' readings arrive in `docs/` with their week.
+**Read before Week 1** — the three pre-readings and the paper are at the root:
+`AI_Doc2` AI Technical Background, `AI_Doc3` Development Environment and Tools,
+`AI_Doc4` Working with AI Tools, and `AI_Doc1`, the Transformer paper. The lecture
+is a twenty-minute summary of them. Later readings arrive the same way, numbered in order.
 
 Both sections receive the same files. The assignments, the setup card and the workflow
-come in two languages, `_EN` and `_TR` — read yours and ignore the other. The readings in
-`docs/` are in English. Folder and file names the checker looks for (`week01/`, `hello.py`,
+come in two languages, `_EN` and `_TR` — read yours and ignore the other. The readings (`AI_DocN`)
+are in English. Folder and file names the checker looks for (`week01/`, `hello.py`,
 `student.json`) are the same for everyone.
 
 ---

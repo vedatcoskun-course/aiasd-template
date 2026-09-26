@@ -2,7 +2,7 @@
 
 **Due:** Saturday 23:59 · Commit to your project repository
 
-> **Before the lecture** read the three pre-reading documents in `docs/`: *AI Technical
+> **Before the lecture** read the three pre-reading documents at the root of your repository (`AI_Doc2`, `AI_Doc3`, `AI_Doc4`): *AI Technical
 > Background* (concepts), *Development Environment and Tools* (environment and tools) and
 > *Working with AI Tools* (what the tools cost and how to use them well).
 > The lecture is a 20-minute summary of exactly that material.

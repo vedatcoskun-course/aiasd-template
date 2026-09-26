@@ -2,7 +2,7 @@
 
 **Teslim:** Cumartesi 23:59 · Proje deponuza commit edin
 
-> **Dersten önce** `docs/` altındaki üç ön okuma belgesini okuyun: *AI Technical
+> **Dersten önce** reponuzun kökündeki üç ön okuma belgesini okuyun (`AI_Doc2`, `AI_Doc3`, `AI_Doc4`): *AI Technical
 > Background* (kavramlar), *Development Environment and Tools* (ortam ve araçlar) ve
 > *Working with AI Tools* (araçların maliyeti ve iyi kullanımı).
 > Ders, tam olarak bu malzemenin 20 dakikalık bir özetidir.

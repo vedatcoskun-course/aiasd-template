@@ -72,6 +72,14 @@ streamlit run app.py
 
 ---
 
+## Ders dosyaları kendiliğinden gelir
+
+`python .github/check_deliverables.py` her çalıştığında dersin dosyalarını da reponuza
+getirir: yayınlandığında yeni haftanın klasörü ve kökte değişen her ders belgesi
+(`AI_*`). Bir hafta klasöründe zaten olan bir dosyanıza asla dokunmaz. Gelenler siz
+`git add .` yapana kadar izlenmez — denetleyici listeler. Aşağıdaki bölüm, çevrimdışı
+olduğunuzda elle yapmanın yolu.
+
 ## İki remote, birbirinden çok farklı iki komut
 
 Deponuzda `origin` var — GitHub'daki kendi kopyanız. Bazı haftalar ders şablonundan

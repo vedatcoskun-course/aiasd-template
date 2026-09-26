@@ -21,12 +21,14 @@ from __future__ import annotations
 
 import ast
 import json
+import hashlib
 import os
 import re
 import subprocess
 import sys
 import tempfile
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -729,9 +731,81 @@ def resolve_week() -> tuple[int, str]:
     return cached_week(), "cached — the course could not be reached"
 
 
+MANIFEST_URL = (
+    "https://raw.githubusercontent.com/vedatcoskun-course/aiasd-template/main/AI_MANIFEST.txt"
+)
+RAW_BASE = "https://raw.githubusercontent.com/vedatcoskun-course/aiasd-template/main/"
+
+
+def sync_course_files(current: int) -> None:
+    """Bring the course's files into this repository, so nobody has to fetch the template.
+
+    The template publishes AI_MANIFEST.txt: one line per file, `sha256  path`. Two
+    kinds of entry, treated differently:
+
+    - course documents at the root (`AI_*`, `AI_Doc2_media/…`): the course owns them,
+      so a missing or changed one is (re)written here;
+    - a week's folder (`weekNN/…`) and the `PROPOSAL.md` scaffold: yours once you have
+      them, so a file is written only if it does not exist yet — never overwritten —
+      and only for weeks the course has published (NN <= current).
+
+    Whatever arrives is untracked until you `git add .`; the run says so. Offline,
+    or under CI, nothing happens. Anything that goes wrong means carrying on.
+    """
+    if os.environ.get("GITHUB_ACTIONS") or os.environ.get("AIASD_WEEK") or os.environ.get("AIASD_SLOT"):
+        return
+    try:
+        with urllib.request.urlopen(MANIFEST_URL, timeout=6) as response:
+            manifest = response.read().decode("utf-8")
+    except (urllib.error.URLError, OSError, TimeoutError, UnicodeDecodeError):
+        return
+    fetched: list[str] = []
+    for line in manifest.splitlines():
+        parts = line.strip().split("  ", 1)
+        if len(parts) != 2 or ".." in parts[1] or parts[1].startswith("/"):
+            continue
+        digest, rel = parts
+        target = ROOT / rel
+        if rel.startswith("week"):
+            m = re.match(r"week(\d{2})/", rel)
+            if not m or int(m.group(1)) > current or target.exists():
+                continue
+        elif rel == "PROPOSAL.md":
+            if current < 2 or target.exists():
+                continue
+        elif rel.startswith("AI_"):
+            if target.exists():
+                try:
+                    if hashlib.sha256(target.read_bytes()).hexdigest() == digest:
+                        continue
+                except OSError:
+                    continue
+        else:
+            continue
+        try:
+            with urllib.request.urlopen(RAW_BASE + urllib.parse.quote(rel), timeout=10) as response:
+                data = response.read()
+        except (urllib.error.URLError, OSError, TimeoutError):
+            continue
+        if hashlib.sha256(data).hexdigest() != digest:
+            continue
+        try:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+            fetched.append(rel)
+        except OSError:
+            continue
+    if fetched:
+        print("  Course files brought into this repository (add them with `git add .`):")
+        for rel in fetched:
+            print(f"    + {rel}")
+        print()
+
+
 def main() -> int:
     maybe_update()
     current, source = resolve_week()
+    sync_course_files(current)
 
     print("=" * 64)
     print("  Secret scan")

@@ -13,7 +13,7 @@ dosyanın sonunda kaydedilir.
 
 - **Tek bir projeyi, yalnız, dönem boyunca** yaparsınız: bir mobil istemci, bir web istemcisi
   ve bir sunucu; e-posta kodu ve/veya OTP ile giriş; dönem sonunda **bir public mağazada
-  yayınlanmış** — hangi mağaza, native mi hybrid mi, sizin seçiminiz (`docs/Week02_Doc5`).
+  yayınlanmış** — hangi mağaza, native mi hybrid mi, sizin seçiminiz (`AI_PLATFORMS_AND_STORES_EN/TR.md`).
   13–14. Haftalardaki savunma mağazadan yüklenmiş uygulamadan yapılır.
 - **Projeniz kendisi hakkında bir sohbet botu içerir**; 6–7. Haftalarda, kendi çalıştırdığınız
   açık ağırlıklı modellerle — gömme için BGE-M3, yanıt için Ollama üzerinden Qwen — kendi
@@ -57,12 +57,12 @@ Puanların nasıl hesaplandığı, denetleyicinin neye baktığı ve bonusun ayr
 
 ### Dosya akışı — öğrencinin aldığı ve push ettiği
 
-Ödevler `_EN` ve `_TR` olarak gelir; aşağıda ek atlanmıştır. `docs/` altındaki okumalar İngilizcedir. Ders sunumu depoda bir dosya değildir.
+Ödevler `_EN` ve `_TR` olarak gelir; aşağıda ek atlanmıştır. Okumalar (`AI_DocN`) İngilizcedir. Ders sunumu depoda bir dosya değildir.
 
 | Hafta | Verilen (`weekNN/` ya da köke gelir) | Ders sonuna kadar push (5) | Cumartesi'ye kadar push (5) |
 |---|---|---|---|
-| 1 | • `docs/` Doc 1–4 ön okuma<br>• `week01/ASSIGNMENT_01`<br>• iskeletler `llm_notes.md`, `ai_log_01.md`<br>• kök: `student.json`, `README`, `AI_SETUP_CARD`, `AI_WEEKLY_WORKFLOW_STUDENT` | — | • `student.json`<br>• `week01/setup_proof.md`<br>• `hello.py`<br>• `llm_notes.md`<br>• `ai_log_01.md` (5 puanın tamamı) |
-| 2 | • `week02/ASSIGNMENT_02`<br>• kök `PROPOSAL.md` iskeleti<br>• `week02/SRS.md` iskeleti<br>• `requirements.json` iskeleti<br>• `contributors_02.json`<br>• `ai_log_02.md`<br>• `docs/` Ref1/Ref2 SDLC referansları, Doc 5 Platforms and Stores | • `PROPOSAL.md` §1–§4<br>• `week02/requirements.json` ilk liste<br>• `contributors_02.json` | • `PROPOSAL.md` §5–§7<br>• `week02/SRS.md` + diyagramlar<br>• `requirements.json` son hâli<br>• `ai_log_02.md` |
+| 1 | • `AI_Doc1`–`AI_Doc4` ön okuma (kök)<br>• `week01/ASSIGNMENT_01`<br>• iskeletler `llm_notes.md`, `ai_log_01.md`<br>• kök: `student.json`, `README`, `AI_SETUP_CARD`, `AI_WEEKLY_WORKFLOW_STUDENT` | — | • `student.json`<br>• `week01/setup_proof.md`<br>• `hello.py`<br>• `llm_notes.md`<br>• `ai_log_01.md` (5 puanın tamamı) |
+| 2 | • `week02/ASSIGNMENT_02`<br>• kök `PROPOSAL.md` iskeleti<br>• `week02/SRS.md` iskeleti<br>• `requirements.json` iskeleti<br>• `contributors_02.json`<br>• `ai_log_02.md`<br>| • `PROPOSAL.md` §1–§4<br>• `week02/requirements.json` ilk liste<br>• `contributors_02.json` | • `PROPOSAL.md` §5–§7<br>• `week02/SRS.md` + diyagramlar<br>• `requirements.json` son hâli<br>• `ai_log_02.md` |
 | 3 | • `week03/ASSIGNMENT_03`<br>• `DESIGN.md` iskeleti<br>• `contributors_03.json`<br>• `ai_log_03.md` | • `week03/DESIGN.md` mimari + diyagram<br>• `PROPOSAL.md` §8–§10<br>• `contributors_03.json` | • `week03/DESIGN.md` diyagramlar + veri modeli<br>• `PROPOSAL.md` §11–§12 + değişiklik günlüğü<br>• `ai_log_03.md` |
 | 4 | • `week04/ASSIGNMENT_04`<br>• `store/store.json` iskeleti<br>• `contributors_04.json`<br>• `ai_log_04.md` | • prototip bağlantısı/dosyası<br>• `contributors_04.json` | • tam ekran akışı<br>• testçi geri bildirim günlüğü<br>• `week04/store/store.json` S1<br>• `ai_log_04.md` |
 | 5 | • `week05/ASSIGNMENT_05`<br>• `contributors_05.json`<br>• `ai_log_05.md` | • revize prototip<br>• sunucu iskeleti<br>• `contributors_05.json` | • giriş çalışıyor<br>• revizyon günlüğü<br>• `ai_log_05.md` |
@@ -78,4 +78,4 @@ Puanların nasıl hesaplandığı, denetleyicinin neye baktığı ve bonusun ayr
 
 - 21 Eyl 2026 — v2, gösterilen ilk sürüm.
 - 26 Eyl 2026 — dönem notu syllabus'a göre (60 · 15 · 15 · 40, final sınavı); savunma 13–14. Hafta'ya taşındı.
-- 26 Eyl 2026 — mağaza seçimi öğrencinin (dört mağazadan biri; native ya da hybrid), 2. Hafta'ya Doc 5 eklendi; 1. Hafta okumaları `docs/` altında; `GRADING.md` atfı yerine öğrenci iş akışı.
+- 26 Eyl 2026 — mağaza seçimi öğrencinin (dört mağazadan biri; native ya da hybrid), kökte Platforms and Stores el kitabı (`AI_PLATFORMS_AND_STORES_EN/TR.md`); 1. Hafta okumaları kökte `AI_Doc1–4`; `GRADING.md` atfı yerine öğrenci iş akışı.
