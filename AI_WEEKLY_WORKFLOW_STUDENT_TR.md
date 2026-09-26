@@ -253,7 +253,7 @@ Aynı çıktı yerelde `python .github/check_deliverables.py` ile gelir.
 dosya. `git status` çalıştırın.
 
 **`ruff` yerelde temiz, CI'da değil.** Sürüm uyuşmazlığı. Elinizdeki herhangi bir sürümü
-değil, `week09/requirements.txt` içinde sabitlenmiş sürümü kurun.
+değil, o haftanın `requirements.txt` dosyasında sabitlenmiş sürümü kurun.
 
 **Ollama çalışmıyor / model inmiyor.** Daha küçük bir modele geçin. Hiçbiri çalışmıyorsa
 bulut arka ucunu kullanın ve nedenini `model_notes.md` içine yazın — bu kabul edilebilir

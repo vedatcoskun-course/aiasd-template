@@ -88,7 +88,7 @@ The root `requirements.txt` is the minimum; a heavier week has its own
 `weekNN/requirements.txt`, and that week's assignment tells you when to install it:
 
 ```bash
-pip install -r week03/requirements.txt
+pip install -r weekNN/requirements.txt
 ```
 
 ---

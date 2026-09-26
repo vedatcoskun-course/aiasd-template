@@ -86,7 +86,7 @@ Bağımlılıklar hafta hafta gelir; 1. Hafta'da gigabaytlarca şey indirmezsini
 olur ve o haftanın ödevi ne zaman kurulacağını söyler:
 
 ```bash
-pip install -r week03/requirements.txt
+pip install -r weekNN/requirements.txt
 ```
 
 ---

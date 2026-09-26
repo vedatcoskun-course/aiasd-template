@@ -1,7 +1,0 @@
-# Week 10 — browser-driven interface testing.
-#
-#   pip install -r week10/requirements.txt
-
--r week09.txt
-
-selenium==4.27.1

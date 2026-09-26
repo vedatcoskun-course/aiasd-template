@@ -251,7 +251,7 @@ from `python .github/check_deliverables.py` locally.
 `git status`.
 
 **`ruff` is clean locally but not in CI.** A version mismatch. Install the version
-pinned in `week09/requirements.txt`, not whichever one you happen to have.
+pinned in that week's `requirements.txt`, not whichever one you happen to have.
 
 **Ollama will not run / the model will not download.** Drop to a smaller model. If none
 of them work, use the cloud backend and write down why in `model_notes.md` — that is an
