@@ -253,62 +253,148 @@ def week1() -> None:
     check_ai_log(1)
 
 
-def week2() -> None:
-    prd = read("week02/PRD.md") or ""
-    for heading in (
-        "Problem Statement",
-        "Target Audience",
-        "Core Features",
-        "Out of Scope",
-    ):
-        check(
-            2,
-            f"PRD.md has '{heading}'",
-            heading.lower() in prd.lower(),
-            "heading missing",
-        )
+PROPOSAL_SECTIONS = {  # number -> title start, as in the scaffold
+    1: "Title", 2: "One-paragraph summary", 3: "Problem", 4: "Solution",
+    5: "How it works", 6: "Technologies", 7: "Success criteria",
+    8: "Market", 9: "Competitors", 10: "Comparison", 11: "Commercial potential",
+    12: "Technical risks",
+}
 
-    srs = read("week02/SRS.md") or ""
-    check(2, "week02/SRS.md filled in", len(srs) > 400, "missing or too short")
+
+def proposal_sections() -> dict[int, dict]:
+    """PROPOSAL.md split by its numbered `### N. Title (about L characters …)` headings.
+
+    For each section: the character limit the heading declares, the prose under it
+    (comments and fenced blocks removed) and whether a mermaid block sits under it.
+    """
+    text = read("PROPOSAL.md") or ""
+    heads = list(re.finditer(r"^### (\d+)\. ([^(\n]+?)\s*\(about ([\d,]+) characters[^)]*\)", text, re.M))
+    out: dict[int, dict] = {}
+    for k, m in enumerate(heads):
+        end = heads[k + 1].start() if k + 1 < len(heads) else len(text)
+        body = text[m.end():end]
+        body = re.sub(r"^---\s*$|^## .*$", "", body, flags=re.M)  # part separators
+        mermaid = any("%% EXAMPLE" not in blk for blk in re.findall(r"```mermaid\n(.*?)```", body, re.DOTALL))
+        prose = re.sub(r"<!--.*?-->", "", body, flags=re.DOTALL)
+        prose = re.sub(r"```.*?```", "", prose, flags=re.DOTALL)
+        out[int(m.group(1))] = {
+            "title": m.group(2).strip(),
+            "limit": int(m.group(3).replace(",", "")),
+            "chars": len(prose.strip()),
+            "text": prose,
+            "mermaid": mermaid,
+        }
+    return out
+
+
+def check_proposal(week: int, numbers: range, slot: str) -> None:
+    secs = proposal_sections()
+    if not secs:
+        check(week, "PROPOSAL.md at the root", False, "file missing or headings changed", slot)
+        return
+    for n in numbers:
+        sec = secs.get(n)
+        label = f"PROPOSAL.md §{n} {PROPOSAL_SECTIONS.get(n, '')}".rstrip()
+        if sec is None:
+            check(week, f"{label} present", False, "heading missing or altered", slot)
+            continue
+        floor = 60 if n > 1 else 3
+        if sec["chars"] < floor:
+            check(week, f"{label} filled in", False, f"{sec['chars']} characters — still the scaffold", slot)
+        else:
+            over = sec["chars"] > sec["limit"] * 1.2
+            check(week, f"{label} within ~{sec['limit']} characters", not over,
+                  f"{sec['chars']} characters, limit {sec['limit']} (+20%)", slot)
+
+
+def contributors(week: int) -> list[dict] | None:
+    raw = read(f"week{week:02d}/contributors_{week:02d}.json")
+    if raw is None:
+        return None
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return None
+    items = data.get("contributors", data) if isinstance(data, dict) else data
+    return items if isinstance(items, list) else None
+
+
+def check_contributors(week: int, role: str, slot: str = SESSION) -> None:
+    path = f"week{week:02d}/contributors_{week:02d}.json"
+    items = contributors(week)
+    if items is None:
+        check(week, f"{path} valid JSON", False, "missing or does not parse", slot)
+        return
+    ids = [str(i.get("student_id", "")).strip() for i in items if isinstance(i, dict)]
+    good_ids = [i for i in ids if re.fullmatch(r"\d{9}(-\d+)?", i)]
+    check(week, f"{path} names two students", len(good_ids) == 2 and len(set(good_ids)) == 2,
+          f"{len(good_ids)} valid 9-digit numbers — need exactly two, different", slot)
+    me = ""
+    try:
+        me = str(json.loads(read("student.json") or "{}").get("student_id", "")).strip()
+    except json.JSONDecodeError:
+        pass
+    check(week, f"{path} does not list yourself", me == "" or me.split("-")[0] not in [g.split("-")[0] for g in good_ids],
+          "your own number is in it", slot)
+    roles_ok = all(str(i.get("role", "")).strip() == role for i in items if isinstance(i, dict))
+    check(week, f"{path} role is '{role}'", bool(items) and roles_ok, "wrong or empty role", slot)
+    thin = [i for i in items if isinstance(i, dict) and len(str(i.get("what", "")).strip()) < 20]
+    check(week, f"{path} says what each one did", bool(items) and not thin,
+          f"{len(thin)} entries with no real sentence in 'what'", slot)
+
+
+def week2() -> None:
+    # In the lab: Part A of the proposal, two stakeholders, the first requirement list.
+    check_proposal(2, range(1, 5), SESSION)
+    check_contributors(2, "stakeholder", SESSION)
 
     raw = read("week02/requirements.json")
+    ids: list[str] = []
     if raw is None:
-        check(2, "requirements.json present", False, "file missing")
+        check(2, "week02/requirements.json present", False, "file missing")
     else:
         try:
             data = json.loads(raw)
         except json.JSONDecodeError as exc:
             check(2, "requirements.json is valid JSON", False, str(exc))
         else:
-            items = data.get("functional_requirements", data) if isinstance(data, dict) else data
-            if isinstance(data, dict):
-                items = (data.get("functional_requirements") or []) + (
-                    data.get("non_functional_requirements") or []
-                )
-            check(
-                2,
-                "requirements.json has ≥5 entries",
-                len(items) >= 5,
-                f"{len(items)} found",
-            )
-            ids = [i.get("id", "") for i in items if isinstance(i, dict)]
+            items = data.get("requirements", data) if isinstance(data, dict) else data
+            if not isinstance(items, list):
+                items = []
+            items = [i for i in items if isinstance(i, dict)]
+            real = [i for i in items if str(i.get("description", "")).strip() not in ("", "…")]
+            check(2, "requirements.json has ≥5 entries", len(real) >= 5, f"{len(real)} filled in")
+            ids = [str(i.get("id", "")) for i in real]
             bad = [i for i in ids if not re.fullmatch(r"REQ-\d{3}", i)]
             check(2, "IDs follow REQ-NNN", not bad and bool(ids), f"bad IDs: {bad[:3]}")
-            missing = [i for i in items if isinstance(i, dict) and "description" not in i]
-            check(
-                2,
-                "every entry has a description",
-                not missing,
-                f"{len(missing)} without one",
-            )
+            f = sum(1 for i in real if i.get("functional") is True)
+            nf = sum(1 for i in real if i.get("functional") is False)
+            check(2, "≥3 functional and ≥2 non-functional", f >= 3 and nf >= 2, f"{f} functional, {nf} non-functional")
+            phone = any(re.search(r"phone|mobile|390", str(i.get("description", "")), re.I)
+                        for i in real if i.get("functional") is False)
+            check(2, "the phone-screen requirement is kept", phone, "no non-functional requirement mentions the phone screen")
 
-    uc = read("week02/use_cases/use_case_diagram.mmd") or ""
-    check(
-        2,
-        "use case diagram is Mermaid",
-        any(k in uc for k in ("graph", "flowchart")),
-        "no graph/flowchart",
-    )
+    # By Saturday: the rest of Part A, the SRS, the log.
+    check_proposal(2, range(5, 8), DEADLINE)
+    secs = proposal_sections()
+    s5 = secs.get(5, {})
+    if s5:
+        t = s5["text"].lower()
+        check(2, "PROPOSAL.md §5 names mobile, web and server",
+              all(k in t for k in ("mobile", "web", "server")), "one of the three tiers is not mentioned", DEADLINE)
+        check(2, "PROPOSAL.md §5 has its system context diagram", s5["mermaid"], "no ```mermaid block under §5", DEADLINE)
+
+    srs = read("week02/SRS.md") or ""
+    prose = re.sub(r"<!--.*?-->", "", srs, flags=re.DOTALL)
+    check(2, "week02/SRS.md filled in", len(re.sub(r"```.*?```", "", prose, flags=re.DOTALL).strip()) > 600,
+          "missing or still the scaffold", DEADLINE)
+    blocks = [b for b in re.findall(r"```mermaid\n(.*?)```", prose, re.DOTALL) if "%% EXAMPLE" not in b]
+    usecases = sum(len(re.findall(r"\(\[", b)) for b in blocks)
+    check(2, "SRS.md use case diagram with ≥3 use cases", usecases >= 3,
+          f"{usecases} use-case nodes ([…]) found in mermaid blocks", DEADLINE)
+    in_srs = set(re.findall(r"REQ-\d{3}", prose))
+    check(2, "SRS.md lists every REQ id from requirements.json", bool(ids) and set(ids) <= in_srs,
+          f"missing in SRS: {sorted(set(ids) - in_srs)[:4]}", DEADLINE)
     check_ai_log(2)
 
 

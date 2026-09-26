@@ -47,3 +47,12 @@ Thumbs.db
 *.sqlite
 chroma_db/
 faiss_index/
+
+# never student data (this repository is pushed)
+*-students*.xlsx
+class-list*.xlsx
+roster*.csv
+grades/
+private/
+~$*
+*.pptx
