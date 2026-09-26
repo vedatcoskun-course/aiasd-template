@@ -14,12 +14,13 @@ end of this file, the way you log changes to your own proposal.
 - You build **one project, alone, for the whole term**: a mobile client, a web client and a
   server, with login by e-mail code and/or OTP, **published on a public app store** by the
   end — which store, and native or hybrid, is your choice (`docs/Week02_Doc5`). The defence
-  in Week 12 is run from the store-installed app.
+  in Weeks 13–14 is run from the store-installed app.
 - **Your project includes a chatbot about itself**, built in Weeks 6–7 with open-weight
   models you run yourself — BGE-M3 for embeddings, Qwen via Ollama for answers — over your
   own documents and data, reachable from both clients. No cloud model APIs for this feature.
 - **10 points a week**: 5 read from your repository at the end of the lecture, 5 at Saturday
-  23:59. Week 1 is worth 5, all read on Saturday. Final project: 30.
+  23:59. Week 1 is worth 5, all read on Saturday. Term grade: weekly projects 60 · store
+  bonus 15 · presentation (the defence, Weeks 13–14) 15 · final exam 40.
 - **Two people help you every week** from Week 2, in the role that week names, and you record
   them in `weekNN/contributors_NN.json`. They earn a bonus from your mark; you earn one from
   theirs. Rotate: at least one new name each week.
@@ -51,7 +52,7 @@ in `AI_WEEKLY_WORKFLOW_STUDENT_EN.md` / `_TR.md`.
 | 9 | Beta test | • Enrol testers on the track<br>• open the bug list | • Fix bugs<br>• write the test report | • Beta testers must match the store's testers<br>• Role: beta-tester |
 | 10 | UAT + submission | Run the UAT session with participants | • UAT report<br>• deployment diagram<br>• submit for review | • S5 leaves a week for rejection and resubmit<br>• Role: uat-participant |
 | 11 | Release + hardening | • Apply review fixes<br>• release-tester installs from the store | • Go live<br>• final README | • S6: live<br>• Role: release-tester |
-| 12 | Closure | • Poster draft reviewed<br>• defence rehearsal | Final poster | • Defence (final 30) run from the store install<br>• Role: poster-reviewer |
+| 12 | Closure | • Poster draft reviewed<br>• defence rehearsal | Final poster | • The defence itself is in Weeks 13–14, run from the store install<br>• Role: poster-reviewer |
 
 ### File flow — what the student receives and what she pushes
 
@@ -75,4 +76,5 @@ Assignments come as `_EN` and `_TR`; the suffix is omitted below. Readings in `d
 ## Change log
 
 - 21 Sep 2026 — v2, first version shown.
+- 26 Sep 2026 — term grade per the syllabus (60 · 15 · 15 · 40, final exam); defence moved to Weeks 13–14.
 - 26 Sep 2026 — store choice is the student's (any of four stores; native or hybrid), Doc 5 added to Week 2; Week 1 readings are in `docs/`; `GRADING.md` reference replaced by the student workflow.

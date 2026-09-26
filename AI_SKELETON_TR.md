@@ -14,13 +14,14 @@ dosyanın sonunda kaydedilir.
 - **Tek bir projeyi, yalnız, dönem boyunca** yaparsınız: bir mobil istemci, bir web istemcisi
   ve bir sunucu; e-posta kodu ve/veya OTP ile giriş; dönem sonunda **bir public mağazada
   yayınlanmış** — hangi mağaza, native mi hybrid mi, sizin seçiminiz (`docs/Week02_Doc5`).
-  12. Hafta'daki savunma mağazadan yüklenmiş uygulamadan yapılır.
+  13–14. Haftalardaki savunma mağazadan yüklenmiş uygulamadan yapılır.
 - **Projeniz kendisi hakkında bir sohbet botu içerir**; 6–7. Haftalarda, kendi çalıştırdığınız
   açık ağırlıklı modellerle — gömme için BGE-M3, yanıt için Ollama üzerinden Qwen — kendi
   belgeleriniz ve verileriniz üzerinde, iki istemciden de erişilebilir. Bu özellik için bulut
   model API'si yok.
 - **Haftada 10 puan**: 5'i dersin sonunda, 5'i Cumartesi 23:59'da deponuzdan okunur. 1. Hafta
-  5 puan, tamamı Cumartesi. Final projesi: 30.
+  5 puan, tamamı Cumartesi. Dönem notu: haftalık projeler 60 · mağaza bonusu 15 · sunum
+  (savunma, 13–14. Hafta) 15 · final sınavı 40.
 - **Her hafta iki kişi size yardım eder**, 2. Hafta'dan itibaren, o haftanın adlandırdığı rolde;
   onları `weekNN/contributors_NN.json` içine kaydedersiniz. Sizin notunuzdan bonus kazanırlar;
   siz onlarınkinden. Dönüşümlü: her hafta en az bir yeni isim.
@@ -52,7 +53,7 @@ Puanların nasıl hesaplandığı, denetleyicinin neye baktığı ve bonusun ayr
 | 9 | Beta testi | • Kanala testçi kaydet<br>• hata listesini aç | • Hataları düzelt<br>• test raporunu yaz | • Beta testçileri mağazanın testçileriyle eşleşmeli<br>• Rol: beta-tester |
 | 10 | UAT + gönderim | Katılımcılarla UAT oturumunu yürüt | • UAT raporu<br>• dağıtım diyagramı<br>• incelemeye gönder | • S5, ret ve yeniden gönderim için bir hafta bırakır<br>• Rol: uat-participant |
 | 11 | Yayın + sağlamlaştırma | • İnceleme düzeltmelerini uygula<br>• release-tester mağazadan yükler | • Canlıya çık<br>• son README | • S6: canlı<br>• Rol: release-tester |
-| 12 | Kapanış | • Poster taslağı gözden geçirilir<br>• savunma provası | Son poster | • Savunma (final 30) mağaza kurulumundan yapılır<br>• Rol: poster-reviewer |
+| 12 | Kapanış | • Poster taslağı gözden geçirilir<br>• savunma provası | Son poster | • Savunmanın kendisi 13–14. Hafta'da, mağaza kurulumundan<br>• Rol: poster-reviewer |
 
 ### Dosya akışı — öğrencinin aldığı ve push ettiği
 
@@ -76,4 +77,5 @@ Puanların nasıl hesaplandığı, denetleyicinin neye baktığı ve bonusun ayr
 ## Değişiklik günlüğü
 
 - 21 Eyl 2026 — v2, gösterilen ilk sürüm.
+- 26 Eyl 2026 — dönem notu syllabus'a göre (60 · 15 · 15 · 40, final sınavı); savunma 13–14. Hafta'ya taşındı.
 - 26 Eyl 2026 — mağaza seçimi öğrencinin (dört mağazadan biri; native ya da hybrid), 2. Hafta'ya Doc 5 eklendi; 1. Hafta okumaları `docs/` altında; `GRADING.md` atfı yerine öğrenci iş akışı.
