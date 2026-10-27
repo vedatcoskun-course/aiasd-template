@@ -2,7 +2,7 @@
   "_how_to_fill_this_in": [
     "Write, by hand, your three login endpoints exactly as they are in week05/api.md: the method, one space, the path. server/course_login.py, the course's login, answers on these paths.",
     "email_field, code_field and token_field are the names of the fields in the requests and in the login answer (the token is a top-level key of the login answer).",
-    "Optional: email_must_end_with (such as \".edu\") if your REQ-001 accepts only some addresses; app_name is the name the e-mail with the code shows.",
+    "Optional: email_must_end_with (such as \".edu.tr\") if your REQ-001 accepts only some addresses; app_name is the name the e-mail with the code shows.",
     "test_email_domain is the domain of the addresses the course tests use: it must pass email_must_end_with.",
     "Replace every value in [square brackets]. The course tests in course_tests/ read this file."
   ],

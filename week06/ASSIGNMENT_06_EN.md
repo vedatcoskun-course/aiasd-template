@@ -243,9 +243,9 @@ method, one space, and the path. Then write the names of your fields:
 - The login answers `{"token": "..."}` under your `token_field`, and "me" answers `{"email": "..."}`
   under your `email_field`. If your `api.md` says something else, change the row and write its Change log line.
 - If your `api.md` has no "me" endpoint (the one that answers with the logged-in user), add its row now.
-- `email_must_end_with`: fill it in only if your REQ-001 accepts only some addresses, such as `".edu"`,
-  or a list `[".edu", ".edu.tr"]`. Then `test_email_domain` must be a domain that it accepts, such as
-  `"student.example.edu"`.
+- `email_must_end_with`: fill it in only if your REQ-001 accepts only some addresses, such as `".edu.tr"`,
+  or a list of endings. Then `test_email_domain` must be a domain that it accepts, such as
+  `"student.example.edu.tr"`.
 - `app_name` is the name that the e-mail with the code shows.
 
 **Step 2 — `server/main.py`.** Two lines:

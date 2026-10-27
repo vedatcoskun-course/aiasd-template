@@ -248,8 +248,8 @@ bir boşluk ve yol (path). Sonra alanlarınızın (fields) adlarını yazın:
   yazın.
 - `api.md` dosyanızda "me" endpoint'i (giriş yapmış kullanıcıyla cevap veren) yoksa satırını şimdi ekleyin.
 - `email_must_end_with`: bunu yalnızca REQ-001'iniz bazı adresleri kabul ediyorsa doldurun. Örneğin
-  `".edu"` ya da bir liste: `[".edu", ".edu.tr"]`. O zaman `test_email_domain` de kabul edilen bir alan adı (domain)
-  olmalı, örneğin `"student.example.edu"`.
+  `".edu.tr"` ya da birkaç sonu olan bir liste. O zaman `test_email_domain` de kabul edilen bir alan adı (domain)
+  olmalı, örneğin `"student.example.edu.tr"`.
 - `app_name`, kodu getiren e-postada görünen addır.
 
 **Adım 2 — `server/main.py`.** İki satır:
