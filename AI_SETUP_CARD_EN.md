@@ -69,9 +69,9 @@ running it costs nothing.
 **Before you push, from Week 1:** GitHub runs ruff on every push. Run the same checks:
 
 ```bash
-pip install -r requirements.txt           # once, in .venv: ruff 0.15.11, as on GitHub
-ruff check .                              # list problems
-ruff format --check .                     # check the format
+python -m pip install -r requirements.txt  # once, in .venv: ruff 0.15.11, as on GitHub
+ruff check .                               # list problems
+ruff format --check .                      # check the format
 ```
 
 If a ruff line reports a problem, run `ruff check . --fix` and `ruff format .`, then
@@ -91,11 +91,11 @@ check again.
 ## From Week 5: the server and the tests
 
 ```bash
-python -m venv .venv                      # once
-source .venv/bin/activate                 # Windows: .venv\Scripts\activate
-pip install -r week06/requirements.txt    # the newest week that has one
-uvicorn server.main:app --reload          # start the server
-python -m pytest                          # run the tests
+python -m venv .venv                              # once
+source .venv/bin/activate                         # Windows: .venv\Scripts\activate
+python -m pip install -r week06/requirements.txt  # the newest week that has one
+uvicorn server.main:app --reload                  # start the server
+python -m pytest                                  # run the tests
 ```
 
 Activate the virtual environment (`.venv`, the folder that holds the course's Python

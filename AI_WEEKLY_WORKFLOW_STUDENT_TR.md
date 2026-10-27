@@ -381,7 +381,7 @@ kodun hiç kullanmadığı bir modülü yükleyen satırdır); `ruff` bunları a
 
 GitHub'daki "Lint and format" işi, 1. haftadan itibaren her push'ta `ruff check .` ve
 `ruff format --check .` çalıştırır. GitHub'la aynı sürümü kullanın: kökteki
-`requirements.txt` içindeki `ruff==0.15.11` (`pip install -r requirements.txt`).
+`requirements.txt` içindeki `ruff==0.15.11` (`python -m pip install -r requirements.txt`).
 
 **Uygulamanız telefonda çalışmalı.** Tarayıcı pencerenizi ara sıra yaklaşık 390 piksele
 (aşağı yukarı bir telefon ekranının genişliği) daraltın. Bir şey kesiliyor ya da yana
@@ -421,7 +421,7 @@ kullanır. Bu dosyaları değiştirmeyin.
 **`ruff` yerelde temiz, CI'da değil.** Bu bir sürüm uyuşmazlığıdır: bilgisayarınız ve CI
 farklı `ruff` sürümleri çalıştırıyordur. Elinizde hangisi varsa onu değil, kökteki
 `requirements.txt` dosyasında (dersin ihtiyaç duyduğu paketlerin, tam sürümleriyle
-birlikte listesi) sabitlenmiş sürümü kurun: `pip install -r requirements.txt`,
+birlikte listesi) sabitlenmiş sürümü kurun: `python -m pip install -r requirements.txt`,
 `ruff==0.15.11` kurar. `ruff format .` da çalıştırın, çünkü GitHub biçimi de kontrol eder.
 
 **Bir şeyi bozdum ve geri alamıyorum.** Panik yapmayın, çünkü git her şeyi hatırlar:

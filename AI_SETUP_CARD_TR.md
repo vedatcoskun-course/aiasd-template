@@ -71,9 +71,9 @@ ve çalıştırmanın bir maliyeti yoktur.
 kontrolleri siz de çalıştırın:
 
 ```bash
-pip install -r requirements.txt           # bir kez, .venv içinde: ruff 0.15.11, GitHub'daki gibi
-ruff check .                              # sorunları listele
-ruff format --check .                     # biçimi kontrol et
+python -m pip install -r requirements.txt  # bir kez, .venv içinde: ruff 0.15.11, GitHub'daki gibi
+ruff check .                               # sorunları listele
+ruff format --check .                      # biçimi kontrol et
 ```
 
 Bir ruff satırı sorun bildirirse `ruff check . --fix` ve `ruff format .` çalıştırın,
@@ -93,11 +93,11 @@ sonra yeniden kontrol edin.
 ## 5. haftadan itibaren: sunucu ve testler
 
 ```bash
-python -m venv .venv                      # yalnızca bir kez
-source .venv/bin/activate                 # Windows: .venv\Scripts\activate
-pip install -r week06/requirements.txt    # bir tane olan en yeni hafta
-uvicorn server.main:app --reload          # sunucuyu başlat
-python -m pytest                          # testleri çalıştır
+python -m venv .venv                              # yalnızca bir kez
+source .venv/bin/activate                         # Windows: .venv\Scripts\activate
+python -m pip install -r week06/requirements.txt  # bir tane olan en yeni hafta
+uvicorn server.main:app --reload                  # sunucuyu başlat
+python -m pytest                                  # testleri çalıştır
 ```
 
 Her yeni terminal açtığınızda sanal ortamı (`.venv`, dersin Python paketlerini tutan

@@ -112,9 +112,9 @@ Denetleyicinin aradığı klasör ve dosya adları
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-pip install -r weekNN/requirements.txt   # bir tane olan en yeni hafta
+source .venv/bin/activate                         # Windows: .venv\Scripts\activate
+python -m pip install -r requirements.txt
+python -m pip install -r weekNN/requirements.txt  # bir tane olan en yeni hafta
 uvicorn server.main:app --reload
 ```
 
@@ -126,7 +126,7 @@ Kökteki `requirements.txt` asgaridir. Ağır bir haftanın kendi `weekNN/requir
 dosyası olur ve o haftanın ödevi ne zaman kurulacağını söyler:
 
 ```bash
-pip install -r weekNN/requirements.txt
+python -m pip install -r weekNN/requirements.txt
 ```
 
 ---

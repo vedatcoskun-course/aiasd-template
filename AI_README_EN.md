@@ -108,9 +108,9 @@ checker looks for (`week01/`, `hello.py`, `student.json`) are the same for every
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-pip install -r weekNN/requirements.txt   # the newest week that has one
+source .venv/bin/activate                         # Windows: .venv\Scripts\activate
+python -m pip install -r requirements.txt
+python -m pip install -r weekNN/requirements.txt  # the newest week that has one
 uvicorn server.main:app --reload
 ```
 
@@ -122,7 +122,7 @@ Week 1. The root `requirements.txt` is the minimum. A heavier week has its own
 `weekNN/requirements.txt`, and that week's assignment tells you when to install it:
 
 ```bash
-pip install -r weekNN/requirements.txt
+python -m pip install -r weekNN/requirements.txt
 ```
 
 ---

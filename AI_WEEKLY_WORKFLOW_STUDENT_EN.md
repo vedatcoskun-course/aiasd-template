@@ -377,7 +377,7 @@ module which the code never uses); `ruff` catches them instantly.
 
 GitHub's "Lint and format" job runs `ruff check .` and `ruff format --check .` on every
 push, from Week 1. Use the same version as GitHub: `ruff==0.15.11`, which is in the root
-`requirements.txt` (`pip install -r requirements.txt`).
+`requirements.txt` (`python -m pip install -r requirements.txt`).
 
 **Your app must work on a phone.** Narrow your browser window to about 390 pixels
 (roughly the width of a phone screen) now and then. If something is cut off or scrolls
@@ -417,7 +417,7 @@ edit these files.
 **`ruff` is clean locally but not in CI.** This is a version mismatch: your computer and
 CI are running different versions of `ruff`. Install the version pinned in the root
 `requirements.txt` (the list of the packages, with their exact versions, that the course
-needs), not whichever one you happen to have: `pip install -r requirements.txt` installs
+needs), not whichever one you happen to have: `python -m pip install -r requirements.txt` installs
 `ruff==0.15.11`. Run `ruff format .` too, because GitHub also checks the format.
 
 **I broke something and cannot undo it.** Do not panic, because git remembers

@@ -113,11 +113,11 @@ Once the environment is active, your prompt changes:
 (.venv) $
 ```
 
-> **📌 Note:** *If "(.venv)" appears at the start of your prompt, the environment is active, and pip install will now put packages only into it.*
+> **📌 Note:** *If "(.venv)" appears at the start of your prompt, the environment is active, and python -m pip install will now put packages only into it.*
 
 ## 4.3 The "externally-managed-environment" error
 
-On macOS and Linux, pip install may refuse to run and show this message:
+On macOS and Linux, python -m pip install may refuse to run and show this message:
 
 ```
 error: externally-managed-environment
@@ -130,7 +130,7 @@ The fix is simple: install into your virtual environment rather than into the sy
 
 ```bash
 source .venv/bin/activate # activate first
-pip install package_name # then install
+python -m pip install package_name # then install
 ```
 
 How do you check? Look at whether your prompt starts with (.venv). If it does not, the environment is not active. Each new terminal window needs to be activated again: you create the environment once, but you activate it every time.
@@ -142,7 +142,7 @@ How do you check? Look at whether your prompt starts with (.venv). If it does no
 With the environment active, install a package:
 
 ```bash
-pip install requests
+python -m pip install requests
 ```
 
 To see what is installed in the active environment, run `pip freeze`. It prints one line for each package, with its exact version. (The test in §8 shows it.)
@@ -150,7 +150,7 @@ To see what is installed in the active environment, run `pip freeze`. It prints 
 In this course the requirements files come from the course: `requirements.txt` at the root of your repository, and `weekNN/requirements.txt` in a week that needs new packages. To install from one of them, run:
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 Do not run `pip freeze > requirements.txt`: it overwrites the course's file. Add your own packages to the week's requirements file only when the assignment says so.
@@ -247,7 +247,7 @@ FastAPI is a Python library for writing web servers. You write one Python functi
 ### Installation
 
 ```bash
-pip install -r week05/requirements.txt
+python -m pip install -r week05/requirements.txt
 ```
 
 Week 5's requirements file brings FastAPI, uvicorn and pytest. Later weeks have their own file with more packages.
@@ -289,7 +289,7 @@ It is used from Week 6, when the server needs the password of the e-mail account
 ### Installation
 
 ```bash
-pip install -r week06/requirements.txt
+python -m pip install -r week06/requirements.txt
 ```
 
 ### Smallest working example
@@ -324,7 +324,7 @@ pytest is the most widely used Python testing library. You write small functions
 ### Installation
 
 ```bash
-pip install -r week05/requirements.txt
+python -m pip install -r week05/requirements.txt
 ```
 
 ### Smallest working example
@@ -409,7 +409,7 @@ It runs on GitHub on every push, in the "Lint and format" job (§6.5). Both `ruf
 ### Installation
 
 ```bash
-pip install ruff==0.15.11
+python -m pip install ruff==0.15.11
 ```
 
 You need it from Week 1, because it runs on every push. Install this exact version: it is the one that GitHub uses.
@@ -513,7 +513,7 @@ mkdir test_env
 cd test_env
 python -m venv .venv
 source .venv/bin/activate # Windows PowerShell: .venv\Scripts\Activate.ps1
-pip install requests
+python -m pip install requests
 python -c "import requests; print('OK')"
 pip freeze # lists requests and the packages it needs, with their versions
 deactivate
