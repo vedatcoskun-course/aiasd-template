@@ -1484,6 +1484,40 @@ def _official_course_tests() -> list[str]:
     return done
 
 
+def _ci_course_requirements(week: int) -> None:
+    """GitHub Actions only: when the repository's requirements file did not install pytest, fastapi and freezegun,
+    install the course's own requirements file for the week, so that the tests can run (VC, 1 Nov 2026: some
+    repositories still hold the old week06/requirements.txt of the template of 24-26 Sep, and their tests never
+    ran). The student's own packages stay installed; this only adds what the tests need."""
+    try:
+        missing = subprocess.run([sys.executable, "-c", "import pytest, fastapi, freezegun"], cwd=ROOT,
+                                 capture_output=True, timeout=60).returncode != 0
+    except (subprocess.TimeoutExpired, OSError):
+        missing = True
+    if not missing:
+        return
+    for w in dict.fromkeys((week, 6)):
+        try:
+            with urllib.request.urlopen(RAW_BASE + f"week{w:02d}/requirements.txt", timeout=10) as response:
+                text = response.read().decode("utf-8")
+        except (urllib.error.URLError, OSError, TimeoutError, UnicodeDecodeError):
+            continue
+        if "pytest" not in text or "fastapi" not in text:
+            continue
+        req = Path(tempfile.gettempdir()) / f"aiasd_course_requirements_{w:02d}.txt"
+        try:
+            req.write_text(text, encoding="utf-8")
+            subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-r", str(req)], cwd=ROOT,
+                           capture_output=True, timeout=600)
+        except (subprocess.TimeoutExpired, OSError):
+            return
+        print("  " + say("Your week{w}/requirements.txt did not install pytest, fastapi and freezegun, so the course's "
+                         "own file was installed for the tests. Replace your file with the course's "
+                         "week{w}/requirements.txt.", w=f"{w:02d}"))
+        print()
+        return
+
+
 def _run_pytest(args: list[str], isolated: bool) -> tuple[dict, str]:
     """One pytest run; ({test id: (outcome, message)}, why it could not run). The course's tests run isolated:
     `python -I`, no conftest.py, no pytest settings of the repository and no installed pytest plugins, so
@@ -1523,6 +1557,7 @@ def _run_tests() -> dict:
             except (subprocess.TimeoutExpired, OSError):
                 pass
         official = _official_course_tests()
+        _ci_course_requirements(week)
     result: dict = {"ran": False, "why": "", "outcomes": {}}
     try:
         probe = subprocess.run([sys.executable, "-c", "import pytest, fastapi, freezegun"], cwd=ROOT,
@@ -2681,6 +2716,8 @@ TR_RULES: list[tuple[str, str]] = [
 TR_UI = {
     "pytest, fastapi or freezegun is not installed: run pip install -r week06/requirements.txt in your virtual environment, then run the checker again":
         "pytest, fastapi ya da freezegun kurulu değil: sanal ortamında pip install -r week06/requirements.txt çalıştır, sonra checker'ı yeniden çalıştır",
+    "Your week{w}/requirements.txt did not install pytest, fastapi and freezegun, so the course's own file was installed for the tests. Replace your file with the course's week{w}/requirements.txt.":
+        "week{w}/requirements.txt dosyan pytest, fastapi ve freezegun'u kurmadı; bu yüzden testler için dersin kendi dosyası kuruldu. Dosyanı dersin week{w}/requirements.txt dosyasıyla değiştir.",
     "it did not run (see the tests' own output: python -m pytest course_tests -q)":
         "çalışmadı (testlerin kendi çıktısına bak: python -m pytest course_tests -q)",
     "Secret scan": "Gizli anahtar taraması",
