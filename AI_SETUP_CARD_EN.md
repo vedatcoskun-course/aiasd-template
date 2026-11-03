@@ -81,6 +81,11 @@ check again.
 
 - **In the lecture:** commit each piece of work in the middle, commit it again when it works,
   and push every commit right away.
+- **First push before 09:30** (from Week 7): run the checker at the start of the lecture,
+  then commit and push. If your first push arrives after 09:30 (coming late included), I check
+  by hand which computer your lecture work was made on.
+- **Commit and push when I call it** (from Week 7): at any moment in the lecture I may ask
+  everyone to commit and push at once; your push should reach GitHub within 5 minutes.
 - **Outside the lecture:** at least two commits with new work, pushed at least one hour
   apart.
 - GitHub's push time counts, not the date on a commit. A commit made by a coding agent

@@ -118,7 +118,7 @@ def _field(name: str, default: str) -> str:
 
 
 def _endings() -> list[str]:
-    """Optional "email_must_end_with" in the contract: such as ".edu", or a list of endings."""
+    """Optional "email_must_end_with" in the contract: such as ".edu.tr", or a list of endings."""
     value = CONTRACT.get("email_must_end_with") or []
     return [
         str(v).strip().lower()
@@ -255,7 +255,7 @@ def reset_for_tests() -> None:
 def auth_header_for_tests(client: Any, email: str) -> dict[str, str]:
     """For your own tests: logs `email` in through a TestClient and returns the header that carries its token:
 
-        headers = auth_header_for_tests(client, "mia@example.edu")
+        headers = auth_header_for_tests(client, "mia@example.edu.tr")
         response = client.post("/courses", json={"name": "Databases 201"}, headers=headers)
 
     Use a different address in each test (an address may ask for a new code only once a minute)."""

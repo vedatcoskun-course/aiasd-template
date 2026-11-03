@@ -18,6 +18,8 @@ as you do with every file that arrives.
 > - From the Sunday after Week 5, a change to `requirements.json` or `test_cases.json` is a
 >   `CR-` line in the Change log of `PROPOSAL.md` (§3).
 > - From Week 6, the lecture mark reads the GitHub Actions run (§2).
+> - From Week 7, your first push of the lecture reaches GitHub before 09:30, and when I call it, everyone commits and
+>   pushes within 5 minutes (§2; added 28 Oct).
 > - The roles in `group_NN.json`, week by week (§3).
 > - In the AI log, the assistant's words appear only in **bold**, copied from the Evidence
 >   block. The Evidence block has `ME:`, `AI:` and `TERMINAL:` parts (§3).
@@ -45,7 +47,8 @@ Come back here when you are stuck.
 | When | What you do | Points |
 |------|-------------|--------|
 | Before the lecture | Read `weekNN/ASSIGNMENT_NN_EN.md` | — |
-| During the lecture (3 h) | Work, and push often (a push sends your saved work from your computer to GitHub) | — |
+| Start of the lecture, before 09:30 | Run the checker (it brings the week's files), then commit and push: your first push reaches GitHub before 09:30 (from Week 7) | — |
+| During the lecture (3 h) | Work, and push often (a push sends your saved work from your computer to GitHub). When I call it, commit and push within 5 minutes (from Week 7) | — |
 | End of the lecture | Push by 11:45. The lecture mark reads your last commit pushed by the end of the lecture (I take a snapshot: a copy of your repository exactly as it is at that moment) | 5 |
 | After the lecture | Finish the rest and write `ai_log_NN.md` | — |
 | By Saturday 23:59 | **Push again.** I take a second snapshot of your repository | 5 |
@@ -151,6 +154,14 @@ messages like these cost you the commit-discipline point (§3 describes it).
 - **In the lecture:** commit each piece of work in the middle, whatever state it is in, commit it
   again when it works, and push every commit right away. A piece that arrives finished in one
   commit does not count.
+- **First push before 09:30** (from Week 7). Start the lecture by running the checker (it
+  brings the week's files), then commit and push. If your first push of the lecture reaches
+  GitHub after 09:30, for any reason (coming late included), I check by hand which computer
+  your lecture work was made on.
+- **Commit and push when I call it** (from Week 7). At any moment in the lecture I may ask
+  everyone to commit and push at once. Your push should reach GitHub within 5 minutes. A commit
+  alone is not enough: it stays on your laptop until you push it. If your push does not arrive,
+  I check your lecture work by hand.
 - **Outside the lecture:** at least two commits with new work, pushed at least one hour
   apart.
 - GitHub's push time counts, not the date on a commit.
@@ -385,7 +396,7 @@ sideways, fix it while the window is small, not in Week 10.
 
 **Never force push.** A force push (`git push --force`, or "Force Push" in VS Code)
 deletes commits from your repository's history, and that history is part of the record of
-your work that I read. Do not let an assistant do it for you either. If git refuses your
+your work that I read. Do not let an assistant do it for you either. A force push costs you the commit point of that week, whatever it changed. This includes `git push -f`, `git push --force-with-lease`, "Force Push" in VS Code and the "Force push origin" button of GitHub Desktop. If git refuses your
 push, run `git pull` and then `git push` again (in VS Code: **Sync Changes**).
 If `git pull` stops with "Need to specify how to reconcile divergent branches", run
 `git config pull.rebase false` once, then `git pull` again. If git reports

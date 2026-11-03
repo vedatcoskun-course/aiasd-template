@@ -66,13 +66,52 @@ Aşağıdaki dosya ve klasörler dönem boyunca reponuzda kalır:
 | `.github/` | Bu klasör her push'ta çalışan kontrolleri tutar |
 | `CURRENT_WEEK.txt` | Bu dosyayı ders yazar; düzenlemeyin. Denetleyiciyi ilk çalıştırdığınızda yanında `CURRENT_WEEK_CACHE.txt` adlı bir dosya belirir. O dosya denetleyicinin çevrimdışı önbelleğidir (hafta numarasının kaydedilmiş bir kopyası). Şablonun `.gitignore` dosyası onu zaten git'in dışında tutar |
 
+### Reponuz, klasör klasör
+
+```
+aiasd-project/                  kök (root): VS Code'da BU klasörü açın
+├── .github/                    ders · denetleyici (checker) ve GitHub Actions iş akışı
+├── .venv/                      commit edilmez · sanal ortamınız (virtual environment)
+├── .env                        commit edilmez · e-posta ayarlarınız ve parolanız (6. hafta)
+├── .env.example                sizin · aynı adlar, parola olmadan
+├── AI_*.md                     ders · README, OVERVIEW, SKELETON …: denetleyici günceller
+├── README.md · ruff.toml       ders · ayrıca CURRENT_WEEK.txt, requirements.txt, .gitignore
+├── student.json                sizin · kim olduğunuz (1. hafta)
+├── PROPOSAL.md                 sizin · teklif (proposal) ve Change log'u (2. hafta)
+├── week01/ … week07/           ders + sizin · dersin metinleri ve doldurduğunuz dosyalar
+│   ├── week02/                 sizin · SRS.md · requirements.json
+│   ├── week04/                 sizin · test_cases.json · prototype/ · store.json
+│   └── week05/                 sizin · DESIGN.md · api.md
+├── course_tests/               ders · giriş (login) testleri (6. hafta)
+├── server/                     sizin · sunucunuz (5. haftadan itibaren)
+│   ├── main.py                 sizin
+│   ├── course_login.py         ders · giriş (login) (6. hafta)
+│   ├── login_contract.json     sizin · elle yazılır (6. hafta)
+│   └── tests/                  sizin · test case numarasıyla adlandırılmış testler
+├── web/                        siz oluşturun · web istemcisi (web client) (6. hafta), server/ yanında
+│   └── login.html · style.css  sizin · ve her özellik için bir sayfa
+└── mobile/                     siz oluşturun · mobil istemci (mobile client) (7. hafta), web/ yanında
+    └── lib/ · src/ · app/ …    sizin · framework'ünüzün aracı yapar; build klasörleri commit edilmez
+```
+
+- **ders** dosyaları: asla düzenlemeyin; denetleyici dersin kopyasını geri koyar.
+- **Belgeleriniz geldikleri yerde kalır:** `PROPOSAL.md` kökte, diğerleri kendi haftasının klasöründe
+  (`week02/SRS.md`, `week05/api.md` …). Onları orada düzenleyin, her değişikliği bir Change log
+  satırıyla. Asla taşımayın, adını değiştirmeyin: denetleyici her dosyayı tam yolunda arar.
+- **Yalnızca `web/` ve `mobile/` klasörlerini siz oluşturursunuz**, kökte, `server/` yanında. Hafta
+  klasörleri denetleyiciyle gelir. `mobile/` klasörünü framework'ünüzün aracı oluşturur (7. hafta,
+  `ASSIGNMENT_07` §2).
+- **VS Code'da kökü açın:** File → Open Folder → `aiasd-project`. Explorer'da hemen altında `.github/`,
+  `server/` ve `week01/` görünür. Üstündeki klasörü de, içindeki bir klasörü de açmayın.
+- **commit edilmez:** `.venv/` ve `.env` bilgisayarınızda kalır; `.gitignore` onları listeler.
+
 **İnternet yok mu?** Denetleyici GitHub'a ulaşamazsa bir haftanın dosyalarını elle
 getirebilirsiniz. Bunu o dosyalara bir şey yazmadan önce yapın:
 
 ```bash
 git remote add template https://github.com/vedatcoskun-course/aiasd-template.git
 git fetch template
-git checkout template/main -- week06 course_tests server/course_login.py
+git checkout template/main -- week07 course_tests server/course_login.py
 ```
 
 İlk satır bütün dönemde yalnızca bir kez gerekir. Son satır adını verdiği dosya ve
@@ -230,6 +269,8 @@ oluşturun) ve commit edilmiş bir anahtarın otomatik 10 puan kesinti olduğunu
 
 - **Commit ve push:**
   - **Derste:** her işi ortasında commit edin, çalıştığında yeniden commit edin ve her commit'i hemen push edin. Tek commit'te bitmiş olarak gelen bir iş sayılmaz.
+  - **İlk push 09:30'dan önce** (7. haftadan itibaren): derse checker'ı çalıştırarak başlayın, sonra commit ve push edin. İlk push'unuz 09:30'dan sonra gelirse (geç gelmek dahil), ders işinizin hangi bilgisayarda yapıldığını elle incelerim.
+  - **Çağırdığımda commit ve push** (7. haftadan itibaren): ders sırasında herkesten aynı anda commit ve push isteyebilirim; push'unuz 5 dakika içinde GitHub'a ulaşmalıdır.
   - **Ders dışında:** yeni iş içeren en az iki commit, aralarında en az bir saat olacak şekilde push edilmiş olsun.
   - Commit'in üzerindeki tarih değil, GitHub'ın push saati sayılır. Bir kodlama ajanının yaptığı commit hiçbir zaman sayılmaz.
   - **Asla force push yapmayın** ve bir asistanın yapmasına da izin vermeyin. Git push'unuzu reddederse önce `git pull`, sonra `git push` yapın.

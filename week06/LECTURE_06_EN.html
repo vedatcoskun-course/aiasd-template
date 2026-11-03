@@ -397,7 +397,7 @@ bookings: <span class="hljs-built_in">list</span>[<span class="hljs-built_in">di
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" lang="POSIX">
 <h2 id="its-page--the-prototypes-screen-made-real">Its page — the prototype's screen, made real</h2>
-<p>Copy its screen from <code>week04/prototype/</code> into <code>web/</code>. Keep its look and its <code>&lt;!-- serves: REQ-… --&gt;</code> line.</p>
+<p>Copy its screen from <code>week04/prototype/</code> into <code>web/</code>: you create it at the root, next to <code>server/</code>. Keep its look and its <code>&lt;!-- serves: REQ-… --&gt;</code> line.</p>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-javascript"><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">api</span>(<span class="hljs-params">method, path, body</span>) {
   <span class="hljs-keyword">const</span> options = { method, <span class="hljs-attr">headers</span>: { <span class="hljs-title class_">Authorization</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${<span class="hljs-variable language_">sessionStorage</span>.getItem(<span class="hljs-string">&quot;token&quot;</span>)}</span>`</span> } };
   <span class="hljs-keyword">if</span> (body !== <span class="hljs-literal">undefined</span>) {

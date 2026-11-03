@@ -285,6 +285,11 @@ yalnızca import değişikliklerini içeriyor."*
 
 - **Derste:** her işi ortasında commit edin, çalıştığında yeniden commit edin ve her commit'i
   hemen push edin.
+- **İlk push 09:30'dan önce** (7. haftadan itibaren): derse checker'ı çalıştırarak başlayın,
+  sonra commit ve push edin. İlk push'unuz 09:30'dan sonra gelirse (geç gelmek dahil), ders
+  işinizin hangi bilgisayarda yapıldığını elle incelerim.
+- **Çağırdığımda commit ve push** (7. haftadan itibaren): ders sırasında herkesten aynı anda
+  commit ve push isteyebilirim; push'unuz 5 dakika içinde GitHub'a ulaşmalıdır.
 - **Ders dışında:** yeni iş içeren en az iki commit, aralarında en az bir saat olacak
   şekilde push edilmiş olsun.
 - Commit'in üzerindeki tarih değil, GitHub'ın push saati sayılır. Bir kodlama ajanının

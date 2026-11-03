@@ -63,13 +63,51 @@ The following files and folders stay in your repository all term:
 | `.github/` | This folder holds the checks that run on every push |
 | `CURRENT_WEEK.txt` | The course writes this file; do not edit it. The first time you run the checker, a file called `CURRENT_WEEK_CACHE.txt` appears next to it. That file is the checker's offline cache (a saved copy of the week number). The template's `.gitignore` already keeps it out of git |
 
+### Your repository, folder by folder
+
+```
+aiasd-project/                  the root: open THIS folder in VS Code
+├── .github/                    course · the checker and the GitHub Actions workflow
+├── .venv/                      not committed · your virtual environment
+├── .env                        not committed · your e-mail settings and password (Week 6)
+├── .env.example                yours · the same names, without the password
+├── AI_*.md                     course · README, OVERVIEW, SKELETON …: the checker updates them
+├── README.md · ruff.toml       course · also CURRENT_WEEK.txt, requirements.txt, .gitignore
+├── student.json                yours · who you are (Week 1)
+├── PROPOSAL.md                 yours · the proposal and its Change log (Week 2)
+├── week01/ … week07/           course + yours · the course's texts and the files you fill in
+│   ├── week02/                 yours · SRS.md · requirements.json
+│   ├── week04/                 yours · test_cases.json · prototype/ · store.json
+│   └── week05/                 yours · DESIGN.md · api.md
+├── course_tests/               course · the login tests (Week 6)
+├── server/                     yours · your server (from Week 5)
+│   ├── main.py                 yours
+│   ├── course_login.py         course · the login (Week 6)
+│   ├── login_contract.json     yours · written by hand (Week 6)
+│   └── tests/                  yours · tests named by test case id
+├── web/                        you create · the web client (Week 6), next to server/
+│   └── login.html · style.css  yours · and one page for each feature
+└── mobile/                     you create · the mobile client (Week 7), next to web/
+    └── lib/ · src/ · app/ …    yours · made by your framework's tool; its build folders not committed
+```
+
+- **course** files: never edit them; the checker puts the course's copy back.
+- **Your documents stay where they arrived:** `PROPOSAL.md` at the root, the others in their week's
+  folder (`week02/SRS.md`, `week05/api.md` …). Edit them there, each change with a Change log line.
+  Never move or rename them: the checker looks for each file at its exact path.
+- **You create only `web/` and `mobile/`**, at the root, next to `server/`. The week folders arrive with
+  the checker. Your framework's tool creates `mobile/` for you (Week 7, `ASSIGNMENT_07` §2).
+- **Open the root in VS Code:** File → Open Folder → `aiasd-project`. The Explorer shows `.github/`,
+  `server/` and `week01/` directly under it. Not the folder above it, not a folder inside it.
+- **not committed:** `.venv/` and `.env` stay on your computer; `.gitignore` lists them.
+
 **Offline?** If the checker cannot reach GitHub, you can bring a week's files by hand.
 Do it before you write anything in them:
 
 ```bash
 git remote add template https://github.com/vedatcoskun-course/aiasd-template.git
 git fetch template
-git checkout template/main -- week06 course_tests server/course_login.py
+git checkout template/main -- week07 course_tests server/course_login.py
 ```
 
 You need the first line only once in the whole term. The last line overwrites the files
@@ -221,6 +259,8 @@ that a committed key is an automatic 10-point deduction.
 
 - **Commits and pushes:**
   - **In the lecture:** commit each piece of work in the middle, commit it again when it works, and push every commit right away. A piece that arrives finished in one commit does not count.
+  - **First push before 09:30** (from Week 7): run the checker at the start of the lecture, then commit and push. If your first push arrives after 09:30 (coming late included), I check by hand which computer your lecture work was made on.
+  - **Commit and push when I call it** (from Week 7): at any moment in the lecture I may ask everyone to commit and push at once; your push should reach GitHub within 5 minutes.
   - **Outside the lecture:** at least two commits with new work, pushed at least one hour apart.
   - GitHub's push time counts, not the date on a commit. A commit made by a coding agent never counts.
   - **Never force push**, and never let an assistant do it. If git refuses your push, run `git pull`, then `git push`.

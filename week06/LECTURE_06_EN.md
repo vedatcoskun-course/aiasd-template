@@ -276,7 +276,7 @@ One test per test case with `"run": "server"` · a **new address** in every test
 
 ## Its page — the prototype's screen, made real
 
-Copy its screen from `week04/prototype/` into `web/`. Keep its look and its `<!-- serves: REQ-… -->` line.
+Copy its screen from `week04/prototype/` into `web/`: you create it at the root, next to `server/`. Keep its look and its `<!-- serves: REQ-… -->` line.
 
 ```javascript
 async function api(method, path, body) {

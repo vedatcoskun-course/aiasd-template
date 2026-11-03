@@ -761,11 +761,13 @@ def round_of(run: dict) -> int:
     return int(m.group()) if m else 1
 
 
-def check_collaborator(week: int, role: str, slot: str = SESSION) -> list[str]:
+def check_collaborator(week: int, role: str, slot: str = SESSION, who: str = "collaborator") -> list[str]:
     """Your collaborator in weekNN/group_NN.json: one classmate of your choice, from any group, who runs
     your test cases on your prototype (VC, 11 Oct 2026; before that the file held the other members of the
-    group, 6 Oct). The file keeps its name and its "members" list, with exactly one entry; returns their number."""
+    group, 6 Oct). The file keeps its name and its "members" list, with exactly one entry; returns their number.
+    who: how the messages call them ("tester" in Week 7)."""
     path = f"week{week:02d}/group_{week:02d}.json"
+    your = "your tester" if who == "tester" else "your collaborator"
     items = contributors(week)
     if items is None:
         check(week, f"{path} is valid JSON", False,
@@ -774,8 +776,8 @@ def check_collaborator(week: int, role: str, slot: str = SESSION) -> list[str]:
     items = [i for i in items if isinstance(i, dict)]
     ids = [str(i.get("student_id", "")).strip() for i in items]
     good = [i for i in ids if re.fullmatch(r"\d{9}(-\d+)?", i)]
-    check(week, f"{path} names your collaborator", len(items) == 1 and len(good) == 1,
-          f"{path} must name your collaborator: exactly one entry, with a valid 9-digit student number. "
+    check(week, f"{path} names {your}", len(items) == 1 and len(good) == 1,
+          f"{path} must name {your}: exactly one entry, with a valid 9-digit student number. "
           f"Found: {pl(len(items), 'entry', 'entries')}, {len(good)} with a valid number.", slot)
     me = my_number()
     # VC, 13 Oct 2026: these two are checked only once a collaborator is named. On the untouched file (role
@@ -786,15 +788,15 @@ def check_collaborator(week: int, role: str, slot: str = SESSION) -> list[str]:
         check(week, f"{path} gives everyone the role '{role}'", bool(items) and all(str(i.get("role", "")).strip() == role for i in items),
               f"{path} must give everyone the role '{role}'. Found: a wrong or empty role.", slot)
     else:
-        why = "It is checked once the file names your collaborator's student number."
+        why = f"It is checked once the file names {your}'s student number."
         later(week, f"{path} does not list you", why)
         later(week, f"{path} gives everyone the role '{role}'", why)
     thin = [i for i in items if len(str(i.get("what", "")).strip()) < 25]
-    check(week, f"{path} quotes what your collaborator found or said", bool(items) and not thin,
-          f"{path} must quote a real sentence that your collaborator found or said. Found: {pl(len(thin), 'entry', 'entries')} without one.", slot)
+    check(week, f"{path} quotes what {your} found or said", bool(items) and not thin,
+          f"{path} must quote a real sentence that {your} found or said. Found: {pl(len(thin), 'entry', 'entries')} without one.", slot)
     undecided = [i for i in items if i.get("accepted") not in (True, False) or len(str(i.get("why", "")).strip()) < 15]
     check(week, f"{path} gives a decision and a reason", bool(items) and not undecided,
-          f"{path} must say whether you accepted what your collaborator found (accepted: true or false) and why. "
+          f"{path} must say whether you accepted what {your} found (accepted: true or false) and why. "
           f"Found: {pl(len(undecided), 'entry', 'entries')} without a decision and a reason.", DEADLINE)
     return [g.split("-")[0] for g in good]
 
@@ -1869,7 +1871,522 @@ def week6() -> None:
     check_ai_log(6)
 
 
-CHECKS = {1: week1, 2: week2, 3: week3, 4: week4, 5: week5, 6: week6}
+# ── Week 7: the mobile client ─────────────────────────────────────────
+
+MOBILE_BUILD = ("node_modules", "build", ".dart_tool", ".gradle", "Pods", ".expo")  # folders a framework builds again
+MOBILE_SOURCE = {".dart", ".js", ".jsx", ".ts", ".tsx", ".kt", ".java", ".swift"}
+MOBILE_NAMES = {"flutter": "Flutter", "expo": "React Native–Expo", "gradle": "Kotlin", "xcode": "Swift"}
+_MOBILE: dict | None = None
+
+
+def mobile_project() -> dict:
+    """mobile/, read once: {"framework": "Flutter", ... or "", "sources": {path: text}, "ids": [app ids]}.
+
+    The framework is told by the files its own tool writes, at most one folder down (Xcode puts the project in a
+    folder of its own): pubspec.yaml (Flutter, first: it has android/ and ios/ too), package.json with expo or
+    react-native, a Gradle build (Kotlin), an .xcodeproj (Swift). The app ids are every applicationId of a Gradle
+    build, android.package and ios.bundleIdentifier of app.json or app.config, and PRODUCT_BUNDLE_IDENTIFIER of an
+    Xcode project (its test targets left out). Build folders and hidden folders are never read."""
+    global _MOBILE
+    if _MOBILE is not None:
+        return _MOBILE
+    base = ROOT / "mobile"
+    marks: set[str] = set()
+    sources: dict[Path, str] = {}
+    ids: list[str] = []
+    if base.is_dir():
+        for dirpath, dirnames, filenames in os.walk(base):
+            dirnames[:] = sorted(d for d in dirnames if d not in MOBILE_BUILD and not d.startswith("."))
+            folder = Path(dirpath)
+            depth = len(folder.relative_to(base).parts)
+            names = set(filenames)
+            if folder.suffix == ".xcodeproj" and depth <= 2:
+                marks.add("xcode")
+            if depth <= 1:
+                if "pubspec.yaml" in names:
+                    marks.add("flutter")
+                if names & {"settings.gradle", "settings.gradle.kts", "build.gradle", "build.gradle.kts"}:
+                    marks.add("gradle")
+                if "package.json" in names:
+                    try:
+                        pkg = json.loads((folder / "package.json").read_text(encoding="utf-8", errors="replace"))
+                    except (OSError, json.JSONDecodeError):
+                        pkg = {}
+                    deps = {}
+                    for k in ("dependencies", "devDependencies"):
+                        if isinstance(pkg, dict) and isinstance(pkg.get(k), dict):
+                            deps.update(pkg[k])
+                    if "expo" in deps or "react-native" in deps:
+                        marks.add("expo")
+            for name in filenames:
+                p = folder / name
+                try:
+                    if p.stat().st_size > 1_000_000:
+                        continue
+                    text = None
+                    if p.suffix.lower() in MOBILE_SOURCE or name in (
+                            "build.gradle", "build.gradle.kts", "project.pbxproj", "app.json") or (
+                            depth <= 1 and name.startswith("app.config.")):
+                        text = p.read_text(encoding="utf-8", errors="replace")
+                except OSError:
+                    continue
+                if text is None:
+                    continue
+                if p.suffix.lower() in MOBILE_SOURCE and not name.startswith("app.config."):
+                    sources[p] = text
+                if name in ("build.gradle", "build.gradle.kts"):
+                    ids += re.findall(r"(?<![\w.])applicationId\s*=?\s*[\"']([^\"']+)[\"']", text)
+                elif name == "project.pbxproj":
+                    ids += [i for i in re.findall(r"PRODUCT_BUNDLE_IDENTIFIER\s*=\s*\"?([^\";\s]+)\"?\s*;", text)
+                            if "$(" not in i and not i.lower().endswith("tests")]
+                elif name == "app.json" and depth <= 1:
+                    try:
+                        conf = json.loads(text)
+                    except json.JSONDecodeError:
+                        conf = {}
+                    conf = conf.get("expo", conf) if isinstance(conf, dict) else {}
+                    for side, key in (("android", "package"), ("ios", "bundleIdentifier")):
+                        part = conf.get(side) if isinstance(conf, dict) else None
+                        if isinstance(part, dict) and isinstance(part.get(key), str) and part[key].strip():
+                            ids.append(part[key].strip())
+                elif name.startswith("app.config."):
+                    ids += re.findall(r"\b(?:package|bundleIdentifier)\s*:\s*[\"']([^\"']+)[\"']", text)
+    framework = next((MOBILE_NAMES[k] for k in ("flutter", "expo", "gradle", "xcode") if k in marks), "")
+    _MOBILE = {"framework": framework, "sources": sources, "ids": ids}
+    return _MOBILE
+
+
+def mobile_serves(text: str) -> list[str]:
+    """The requirements a source file of mobile/ names in a comment: // serves: REQ-002 (also /* serves: … */)."""
+    out: list[str] = []
+    for m in re.finditer(r"(?://|/\*)\s*serves:([^\n]*)", text, re.I):
+        if "[" not in m.group(1):  # the [placeholder] of an example names nothing
+            out += re.findall(r"REQ-\d{3}", m.group(1))
+    return out
+
+
+def mobile_tracked_build() -> list[str]:
+    """The build folders of mobile/ that are in git: by git ls-files; in the instructor's capture of a snapshot
+    without .git, every file there is a committed one."""
+    if (ROOT / ".git").exists():
+        try:
+            files = subprocess.run(["git", "ls-files", "-z", "mobile"], cwd=ROOT, capture_output=True, text=True,
+                                   timeout=60).stdout.split("\0")
+        except (subprocess.TimeoutExpired, OSError):
+            return []
+    elif os.environ.get("AIASD_SLOT") and (ROOT / "mobile").is_dir():
+        files = [p.relative_to(ROOT).as_posix() for p in (ROOT / "mobile").rglob("*") if p.is_file()]
+    else:
+        return []
+    return sorted({part for f in files if f for part in f.split("/")[1:-1] if part in MOBILE_BUILD})
+
+
+# ── live feedback on the commits of the week (VC, 1 Nov 2026) ─────────────────────────────────────────────
+# Only in the student's own run on their computer, from Week 7: no mark is read from it (the marks read GitHub).
+LIVE_FROM = 7
+LIVE_AGENT = re.compile(r"claude|anthropic|copilot|cursor|codex|openai|devin|\[bot\]|gemini|windsurf|aider", re.I)
+LIVE_TRAILER = re.compile(r"^\s*(co-authored-by|generated-by):.*(claude|anthropic|copilot|codex|cursor|openai|gemini|devin|"
+                          r"aider|\[bot\])|generated (with|by) \[?(claude|copilot|codex|cursor|gemini)", re.I | re.M)
+
+
+def _git_out(*args: str) -> str | None:
+    try:
+        p = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, errors="replace", timeout=30)
+    except (subprocess.TimeoutExpired, OSError):
+        return None
+    return p.stdout if p.returncode == 0 else None
+
+
+def live_pieces(week: int) -> tuple[list, set]:
+    """The pieces of the week's lecture work as (name, test on a repository path), and the screen files."""
+    if week != 7:
+        return [], set()
+    screens: dict[str, list[str]] = {}
+    for path, text in mobile_project()["sources"].items():
+        reqs = mobile_serves(text)
+        if reqs:
+            screens[Path(path).relative_to(ROOT).as_posix()] = reqs
+    login = {p for p, r in screens.items() if "REQ-001" in r}
+    own = {p for p, r in screens.items() if "REQ-001" not in r}
+
+    def app(p: str) -> bool:
+        return p.startswith("mobile/") and p not in screens and not set(p.split("/")) & set(MOBILE_BUILD)
+
+    def tester(p: str) -> bool:
+        return p in ("week07/mobile_runs.json", "week07/group_07.json")
+
+    return [("the app in mobile/", app), ("the login screen", lambda p: p in login),
+            ("the screen of your requirement", lambda p: p in own), ("the tester round", tester)], set(screens)
+
+
+def _filled_at(sha: str, path: str) -> bool:
+    """A course JSON file at a commit holds something the student wrote (the course's copy has only empty values)."""
+    if not path.endswith(".json"):
+        return True
+    text = _git_out("show", f"{sha}:{path}") or ""
+    return bool(re.search(r'"(?:tc|tester|student_id|device|result|note|what|why)"\s*:\s*"[^"\s]', text))
+
+
+def _routes_at(rev: str) -> set[str] | None:
+    """The routes of server/ at a revision ('METHOD /path'), read as route_defs reads them, the login's own endpoints
+    left out. The files are only parsed (ast), never run. None when git cannot be read; an empty set when the
+    revision has no server/."""
+    global ROOT
+    import io
+    import tarfile
+    try:
+        p = subprocess.run(["git", "archive", "--format=tar", rev, "server"], cwd=ROOT, capture_output=True, timeout=60)
+    except (subprocess.TimeoutExpired, OSError):
+        return None
+    if p.returncode != 0:
+        return set()
+    with tempfile.TemporaryDirectory() as tmp:
+        try:
+            with tarfile.open(fileobj=io.BytesIO(p.stdout)) as tf:
+                for m in tf.getmembers():
+                    parts = m.name.split("/")
+                    if m.isfile() and m.name.endswith(".py") and not m.name.startswith("/") and ".." not in parts:
+                        dest = Path(tmp).joinpath(*parts)
+                        dest.parent.mkdir(parents=True, exist_ok=True)
+                        dest.write_bytes(tf.extractfile(m).read())
+        except (tarfile.TarError, OSError):
+            return None
+        old, kept = ROOT, list(NOT_INCLUDED)
+        ROOT = Path(tmp)
+        try:
+            return {k for k, (_, node) in route_defs().items() if node is not None}
+        finally:
+            ROOT = old
+            NOT_INCLUDED[:] = kept
+
+
+def _routes_now() -> set[str]:
+    """The routes of server/ as they are on disk now, the login's own endpoints left out."""
+    kept = list(NOT_INCLUDED)
+    try:
+        return {k for k, (_, node) in route_defs().items() if node is not None}
+    finally:
+        NOT_INCLUDED[:] = kept
+
+
+def live_commits(week: int) -> list[str]:
+    """The commits of this week on this computer, piece by piece: what the commit point will look for (each piece
+    in at least two commits, the first while it is unfinished; each new screen and each new route in its own commit,
+    VC 2 Nov 2026; also the changes not yet committed that would add two or more). Commits since
+    the last Saturday 23:59, by the time on this computer; a commit of a coding agent is left out."""
+    import datetime as _dt
+    if week < LIVE_FROM or os.environ.get("GITHUB_ACTIONS") or os.environ.get("AIASD_SLOT") or not (ROOT / ".git").exists():
+        return []
+    if (_git_out("rev-parse", "--is-shallow-repository") or "").strip() == "true":
+        return []
+    pieces, screens = live_pieces(week)
+    if not pieces:
+        return []
+    now = _dt.datetime.now()
+    start = (now - _dt.timedelta(days=(now.weekday() - 5) % 7 or 7)).replace(hour=23, minute=59, second=0, microsecond=0)
+    log = _git_out("log", f"--since={start:%Y-%m-%d %H:%M}", "--numstat", "--format=\x1e%h\x1f%an <%ae> %cn <%ce>\x1f%B\x1f")
+    if log is None:
+        return []
+    counts = {name: 0 for name, _ in pieces}
+    agent, multi = 0, []
+    # VC, 2 Nov 2026: one new screen and one new route per commit. A screen is new in the commit where its file
+    # first gets its '// serves:' line (the files a framework's tool creates do not count until then; a move is not
+    # new); a route is new when its 'METHOD /path' was not in server/ before the commit.
+    renamed: dict[str, dict] = {}
+    status = _git_out("log", f"--since={start:%Y-%m-%d %H:%M}", "-M", "--name-status", "--format=\x1e%h") or ""
+    for block in status.split("\x1e")[1:]:
+        lines = block.strip().splitlines()
+        if lines:
+            renamed[lines[0].strip()] = {ln.split("\t")[2]: ln.split("\t")[1] for ln in lines[1:]
+                                         if ln.startswith("R") and ln.count("\t") == 2}
+    serving_cache: dict[str, set[str]] = {}
+
+    def serving(rev: str) -> set[str]:
+        """The files of mobile/ that hold a '// serves:' line at a revision (build folders left out)."""
+        if rev not in serving_cache:
+            found = _git_out("grep", "-l", "-E", r"(//|/\*)[[:space:]]*serves:", rev, "--", "mobile") or ""
+            files = {ln.split(":", 1)[1] if ln.startswith(rev + ":") else ln for ln in found.splitlines() if ln}
+            serving_cache[rev] = {f for f in files if not set(f.split("/")) & set(MOBILE_BUILD)}
+        return serving_cache[rev]
+
+    def new_screens_in(sha: str) -> list[str]:
+        before = serving(sha + "^")
+        out = []
+        for f in sorted(serving(sha) - before):
+            if renamed.get(sha, {}).get(f) in before:
+                continue   # moved, not new
+            if mobile_serves(_git_out("show", f"{sha}:{f}") or ""):   # an example's [placeholder] names nothing
+                out.append(f)
+        return out
+    route_cache: dict[str, set[str] | None] = {}
+
+    def routes(rev: str) -> set[str] | None:
+        if rev not in route_cache:
+            route_cache[rev] = _routes_at(rev)
+        return route_cache[rev]
+    for block in log.split("\x1e")[1:]:
+        head, _, stats = block.rpartition("\x1f")
+        sha, who, msg = (head.split("\x1f", 2) + ["", "", ""])[:3]
+        if LIVE_AGENT.search(who) or LIVE_TRAILER.search(msg):
+            agent += 1
+            continue
+        changed = []
+        for ln in stats.splitlines():
+            parts = ln.split("\t")
+            if len(parts) == 3 and (parts[0] == "-" or parts[0].isdigit() and int(parts[0]) > 0):
+                changed.append(parts[2])
+        for name, test in pieces:
+            if any(test(p) and (name != "the tester round" or _filled_at(sha, p)) for p in changed):
+                counts[name] += 1
+        new_screens = new_screens_in(sha) if any(p.startswith("mobile/") for p in changed) else []
+        if len(new_screens) > 1:
+            multi.append((sha, "screens", [Path(p).name for p in new_screens]))
+        if any(p.startswith("server/") and p.endswith(".py") and "/tests/" not in p for p in changed):
+            after, before = routes(sha), routes(sha + "^")
+            if after is not None and before is not None and len(after - before) > 1:
+                multi.append((sha, "routes", sorted(after - before)))
+    out = [say("Your commits this week, piece by piece (read on this computer; your mark reads GitHub):")]
+    for name, _ in pieces:
+        n = counts[name]
+        if n >= 2:
+            out.append("  ✓ " + say("{piece}: {n} commits", piece=say(name), n=n))
+        elif n == 1:
+            out.append("  · " + say("{piece}: 1 commit. Commit it again when it works.", piece=say(name)))
+        else:
+            out.append("  · " + say("{piece}: no commit yet.", piece=say(name)))
+    for sha, kind, names in multi:
+        out.append("  ! " + (say("Commit {sha} adds {k} new screens: {names}. Each new screen must have its own commit; a commit that adds two or more costs the commit point.", sha=sha, k=len(names), names=", ".join(names))
+                             if kind == "screens" else
+                             say("Commit {sha} adds {k} new routes: {names}. Each new route must have its own commit; a commit that adds two or more costs the commit point.", sha=sha, k=len(names), names=", ".join(names))))
+    # Before the commit, while splitting is still easy: what the changes not yet committed would add.
+    st = _git_out("status", "--porcelain", "-uall", "--", "mobile") or ""
+    moved_from = {ln[3:].split(" -> ", 1)[1].strip('"'): ln[3:].split(" -> ", 1)[0].strip('"')
+                  for ln in st.splitlines() if ln[:1] == "R" and " -> " in ln[3:]}
+    head_serving = serving("HEAD")
+    pending_screens = sorted(Path(f).name for f in screens if f not in head_serving and moved_from.get(f) not in head_serving)
+    if len(pending_screens) > 1:
+        out.append("  ! " + say("Your changes not yet committed add {k} new screens: {names}. Commit them one at a time.", k=len(pending_screens), names=", ".join(pending_screens)))
+    head = routes("HEAD")
+    if head is not None:
+        pending_routes = sorted(_routes_now() - head)
+        if len(pending_routes) > 1:
+            out.append("  ! " + say("Your changes not yet committed add {k} new routes: {names}. Commit them one at a time; git add -p lets you take the lines of one route first.", k=len(pending_routes), names=", ".join(pending_routes)))
+    ahead = _git_out("rev-list", "--count", "@{upstream}..HEAD")
+    if ahead is None:
+        ahead = _git_out("rev-list", "--count", "origin/main..HEAD")
+    if ahead and ahead.strip().isdigit() and int(ahead) > 0:
+        n = int(ahead)
+        out.append("  ! " + (say("1 commit is not pushed yet. Push it now: git push") if n == 1 else
+                             say("{n} commits are not pushed yet. Push them now: git push", n=n)))
+    if agent:
+        out.append("  · " + (say("1 commit by a coding agent is not counted.") if agent == 1 else
+                             say("{n} commits by a coding agent are not counted.", n=agent)))
+    return out
+
+
+def is_commit(sha: str) -> bool | None:
+    """Whether sha is a commit of this repository; None when there is no history to look in (no .git, or a shallow
+    clone, as in GitHub Actions)."""
+    if not (ROOT / ".git").exists():
+        return None
+    try:
+        shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"], cwd=ROOT, capture_output=True,
+                                 text=True, timeout=30).stdout.strip() == "true"
+        if shallow:
+            return None
+        return subprocess.run(["git", "cat-file", "-e", sha + "^{commit}"], cwd=ROOT, capture_output=True,
+                              timeout=30).returncode == 0
+    except (subprocess.TimeoutExpired, OSError):
+        return None
+
+
+def week7() -> None:
+    """The mobile client: an app in mobile/ (Flutter, React Native–Expo, Kotlin or Swift) that calls the same server,
+    with the same token. In the lecture: the app, the login screen on the phone (phone_login.png), a screen of your own
+    feature, and the tester round (mobile_runs.json and group_07.json, typed by you). By Saturday: every functional must
+    requirement on the phone and tested there, the app id = the package of S2, no build files in git, the tests still
+    green, and the AI log (small diffs, AI_Doc5 §6)."""
+    musts, fmust = must_requirements()
+    own = fmust - {"REQ-001"}
+    eps = api_endpoints()
+    mob = mobile_project()
+    src = mob["sources"]
+    code = "\n".join(src.values())
+    there = (ROOT / "mobile").is_dir()
+
+    # --- in the lecture: the app, the login on the phone, a screen of your own feature ------------------------
+    check(7, "mobile/ holds your app, made with Flutter, React Native–Expo, Kotlin or Swift", bool(mob["framework"]),
+          "mobile/, at the root of your repository, must hold your app, created with the tool of your framework: "
+          "Flutter (pubspec.yaml), React Native–Expo (package.json with expo or react-native), Kotlin (a Gradle build) "
+          "or Swift (an Xcode project). Found: " + ("no mobile/ folder." if not there else "none of these."))
+
+    data, bad = login_contract()
+    login_keys = []
+    if data is not None and not bad:
+        for k in ("request_code", "login", "me"):
+            method, route = data[k].strip().split(None, 1)
+            login_keys.append(f"{method.upper()} {norm_path(route.strip())}")
+    login_files = [p for p, text in src.items() if "REQ-001" in mobile_serves(text)]
+    not_called = [k for k in login_keys if not calls_path(code, k)]
+    check(7, "mobile/ has a login screen with serves: REQ-001 that sends requests to your three login endpoints",
+          bool(login_files) and bool(login_keys) and not not_called,
+          "mobile/ must have a login screen whose source file names REQ-001 in a comment like // serves: REQ-001, and "
+          "your app must send requests to the three endpoints of server/login_contract.json (request_code, login and "
+          "me). Write the path of each endpoint with its /, as in week05/api.md. Found: "
+          + ("no mobile/ folder." if not there
+             else "no source file in mobile/ (.dart, .js, .ts, .kt, .java or .swift)." if not src
+             else "no source file in mobile/ names REQ-001 in a serves: comment." if not login_files
+             else "server/login_contract.json is not filled in." if not login_keys
+             else f"no request to: {not_called}."))
+    shots = [p for p in (ROOT / "week07").glob("phone_login.*") if p.suffix.lower() in (".png", ".jpg", ".jpeg")] \
+        if (ROOT / "week07").is_dir() else []
+    check(7, "week07/phone_login.png shows the login on the phone", bool(shots),
+          "week07/ must hold phone_login.png (or .jpg): a screenshot of the phone, or of the emulator, that shows the "
+          "logged-in user's address after the login. Found: no such file.")
+
+    own_rows = [e for e in eps if set(e["reqs"]) & own]
+    screens = {r for text in src.values() for r in mobile_serves(text)} & own
+    calling = [r for r in screens if any(calls_path(code, e["key"]) for e in own_rows if r in e["reqs"])]
+    check(7, "mobile/ has a screen of one of your own must requirements that sends requests to its endpoints",
+          bool(calling),
+          "mobile/ must have a screen of one of your own functional must requirements (not the login, REQ-001): its "
+          "source file names the requirement in a comment like // serves: REQ-002, and your app sends requests to an "
+          "endpoint of week05/api.md that serves it. Found: "
+          + ("no mobile/ folder." if not there
+             else "no source file in mobile/ (.dart, .js, .ts, .kt, .java or .swift)." if not src
+             else "no functional must requirement besides REQ-001 in week02/requirements.json." if not own
+             else "no source file in mobile/ names one of them in a serves: comment." if not screens
+             else "the app sends no request to their endpoints in week05/api.md."))
+
+    # --- in the lecture: the tester round --------------------------------------------------------------------
+    testers = check_collaborator(7, "tester", who="tester")
+    tester = testers[0] if testers else ""
+    cases = test_cases() or []
+    known = {str(c.get("id", "")).strip() for c in cases}
+    live = {str(c.get("id", "")).strip(): str(c.get("req", "")).strip() for c in cases if not c.get("dropped")}
+    dropped = known - set(live)
+
+    def req_of(tc: str) -> str:
+        return live.get(tc) or (f"REQ-{tc[3:6]}" if re.fullmatch(r"TC-\d{3}-\d{2}", tc) else "")
+
+    raw = load_json("week07/mobile_runs.json")
+    runs = raw.get("runs", raw) if isinstance(raw, dict) else raw
+    if not isinstance(runs, list):
+        check(7, "week07/mobile_runs.json is valid JSON", False,
+              "week07/mobile_runs.json is missing or is not valid JSON. Run the checker online to fetch it, and check the commas and quotation marks.")
+        runs = []
+    runs = [r for r in runs if isinstance(r, dict) and (filled(r.get("tc")) or filled(r.get("tester")))]
+    tc_of = {id(r): str(r.get("tc", "")).strip() for r in runs}
+    result = {id(r): str(r.get("result", "")).strip().lower() for r in runs}
+    round1 = [r for r in runs if round_of(r) == 1]
+    by_tester = [r for r in round1 if tester and str(r.get("tester", "")).strip().split("-")[0] == tester]
+    no_runs7 = "Found: no runs recorded in week07/mobile_runs.json yet."
+    check(7, "mobile_runs.json: your tester ran at least three test cases on your phone", len(by_tester) >= 3,
+          "Your tester, the student named in week07/group_07.json, must run at least three of your test cases on your "
+          "phone in round 1, each run recorded under their student number. "
+          + (no_runs7 if not runs else "Found: no tester in week07/group_07.json." if not tester
+             else f"Found: {pl(len(by_tester), 'run')} by your tester in round 1."))
+    outside = [r for r in by_tester if req_of(tc_of[id(r)]) not in ("", "REQ-001")]
+    check(7, "mobile_runs.json: at least one of your tester's runs is outside the login", bool(outside),
+          "At least one of your tester's runs in round 1 must be a test case outside the login (REQ-001): a test case "
+          "of your own feature. " + (no_runs7 if not runs else "Found: none."))
+    unknown = sorted({tc_of[id(r)] for r in runs} - known)
+    check(7, "mobile_runs.json: every run names a test case from test_cases.json", bool(runs) and not unknown,
+          "Every run in week07/mobile_runs.json must name a test case that exists in week04/test_cases.json. "
+          + (no_runs7 if not runs else f"Found: not in test_cases.json: {unknown[:3]}."))
+    odd = [r for r in runs if result[id(r)] not in ("pass", "fail", "blocked") or not filled(r.get("device"))
+           or (result[id(r)] in ("fail", "blocked") and len(str(r.get("note", "")).strip()) < 15)]
+    check(7, "mobile_runs.json: every run names the device and has a result, with a note for fail and blocked",
+          bool(runs) and not odd,
+          "Every run in week07/mobile_runs.json must name the phone or the emulator (device) and have a result (pass, fail or "
+          "blocked), with a note of at least 15 characters for fail and blocked. "
+          + (no_runs7 if not runs else f"Found: {pl(len(odd), 'run')} without a device or a valid result, or a fail or "
+             "blocked without a note."))
+
+    # --- by Saturday: every functional must requirement on the phone, and tested there -------------------------
+    served = {r for text in src.values() for r in mobile_serves(text)}
+    no_screen = sorted(fmust - served)
+    check(7, "every functional must requirement has a screen in mobile/", bool(fmust) and not no_screen,
+          "Every functional must requirement needs a screen in mobile/ whose source file names it in a comment like "
+          "// serves: REQ-002. Found: "
+          + ("no functional must requirement in week02/requirements.json." if not fmust
+             else f"no such screen for {no_screen[:4]}."), DEADLINE)
+    fm_rows = [e for e in eps if set(e["reqs"]) & fmust]
+    uncalled = [e["key"] for e in fm_rows if not calls_path(code, e["key"])]
+    check(7, "your app sends requests to every endpoint of week05/api.md that serves a functional must requirement",
+          bool(fm_rows) and not uncalled,
+          "Your app in mobile/ must send requests to every endpoint of week05/api.md that serves a functional must "
+          "requirement. Write the path of each endpoint with its /, as in api.md. Found: "
+          + ("no row of week05/api.md serves a functional must requirement." if not fm_rows
+             else f"no request to: {uncalled[:4]}."), DEADLINE)
+    passed = {req_of(tc_of[id(r)]) for r in runs if result[id(r)] == "pass" and tc_of[id(r)] in live}
+    untested = sorted(fmust - passed)
+    check(7, "every functional must requirement has a test case that passed on the phone", bool(fmust) and not untested,
+          "Every functional must requirement needs at least one of its test cases with a pass in week07/mobile_runs.json. Found: "
+          + ("no functional must requirement in week02/requirements.json." if not fmust
+             else f"no pass for {untested[:4]}."), DEADLINE)
+    failed = {tc_of[id(r)] for r in round1 if result[id(r)] == "fail"}
+    rerun = {tc_of[id(r)] for r in runs if round_of(r) == 2}
+    open_fails = sorted(failed - rerun - dropped)
+    check(7, "mobile_runs.json: every failed test case was run again in round 2", bool(runs) and not open_fails,
+          "Every test case that failed on the phone in round 1 must be run again in round 2 after the fix, or dropped "
+          "with a change request. " + (no_runs7 if not runs else f"Found: no round 2 for {open_fails[:3]}."), DEADLINE)
+
+    st = load_json("week04/store.json")
+    s2 = st.get("S2") if isinstance(st, dict) and isinstance(st.get("S2"), dict) else {}
+    package = str(s2.get("package", "")).strip()
+    wrong = sorted({i for i in mob["ids"] if i != package})
+    check(7, "the app id in mobile/ is the package of S2 in week04/store.json",
+          bool(package) and bool(mob["ids"]) and not wrong,
+          "The id of your app (applicationId in build.gradle, android.package and ios.bundleIdentifier in app.json, or "
+          "PRODUCT_BUNDLE_IDENTIFIER in Xcode) must be the package name of S2 in week04/store.json. Found: "
+          + ("no package in S2 of week04/store.json." if not package else "no app id in mobile/." if not mob["ids"]
+             else f"{wrong[:3]}, not {package}."), DEADLINE)
+    tracked = mobile_tracked_build()
+    check(7, "no build files of mobile/ are in git", there and not tracked,
+          "mobile/ must not have in git the folders your framework builds again (node_modules, build, .dart_tool, "
+          ".gradle, Pods, .expo): add them to mobile/.gitignore, then git rm -r --cached mobile/<the folder>. Found: "
+          + ("no mobile/ folder." if not there else f"in git: {tracked}."), DEADLINE)
+
+    # --- by Saturday: the server and the web stay green -------------------------------------------------------
+    res = test_results()
+    if not res["ran"]:
+        ok, found = False, res["why"]
+    else:
+        red = [f"LOGIN_{n}" for n in LOGIN_TESTS if res["outcomes"].get(f"LOGIN_{n}", ("", ""))[0] != "passed"]
+        ok, found = not red, f"not passing: {red[:4]}"
+    check(7, "all ten course tests still pass", ok,
+          f"All ten course tests (course_tests/) must still pass. Found: {found}.", DEADLINE)
+    server_tc = sorted({str(c.get("id", "")).strip() for c in cases if not c.get("dropped")
+                        and str(c.get("req", "")).strip() in musts and str(c.get("run", "")).strip().lower() == "server"})
+    if not res["ran"]:
+        ok, found = False, res["why"]
+    elif not server_tc:
+        ok, found = False, 'no test case of a must requirement with "run": "server"'
+    else:
+        failing = [i for i in server_tc if res["outcomes"].get(i, ("", ""))[0] != "passed"]
+        ok, found = not failing, f"no passing test for {failing[:4]}"
+    check(7, 'every test case of a must requirement with run "server" still has a test that passes', ok,
+          'Every test case of a must requirement with "run": "server" in week04/test_cases.json must still have a test '
+          f"in server/tests/ named by its id that passes. Found: {found}.", DEADLINE)
+
+    # --- by Saturday: the AI log, small diffs ------------------------------------------------------------------
+    log = ai_log_section(7)
+    shas = re.findall(r"(?<![0-9A-Za-z])[0-9a-f]{7,40}(?![0-9A-Za-z])", log)
+    # without the history, a commit id must have a letter: a student number or a date is not one
+    named = [s for s in shas if is_commit(s) or (is_commit(s) is None and re.search(r"[a-f]", s))]
+    check(7, "week07/ai_log_07.md names the commit of the change you accepted", bool(named),
+          "week07/ai_log_07.md must name the commit of the change you accepted: the first 7 characters of its commit "
+          "id, outside the comments and the Evidence block. Found: "
+          + ("no commit id." if not shas else f"{shas[:2]}, not a commit of this repository."), DEADLINE)
+    check(7, "week07/ai_log_07.md holds the git diff of the change", bool(re.search(
+          r"^\s*(diff --git |@@ -\d)", ai_log_evidence(7), re.M)),
+          "week07/ai_log_07.md must hold, in the Evidence block, the git diff of the change as your terminal showed it "
+          "(the lines that start with diff --git and @@). Found: none.", DEADLINE)
+    check_ai_log(7)
+
+
+CHECKS = {1: week1, 2: week2, 3: week3, 4: week4, 5: week5, 6: week6, 7: week7}
 
 
 # ── secrets: this one runs for every week ────────────────────────────
@@ -1882,25 +2399,29 @@ SECRET_PATTERNS = [
 ]
 
 
+SECRET_SKIP = {".git", ".venv", "venv", *MOBILE_BUILD}  # never walked into: git's own files, packages, build output
+SECRET_SUFFIXES_BEFORE_7 = {".py", ".md", ".txt", ".json", ".toml", ".yml", ".yaml", ".mmd", ""}
+# From Week 7 (VC, 31 Oct 2026) the app's own code too: a key in an app is a key in every copy of the app.
+# Weeks 1-6 keep the old list, so a capture of an earlier week reads what the students were told then.
+SECRET_SUFFIXES = SECRET_SUFFIXES_BEFORE_7 | {*MOBILE_SOURCE, ".kts", ".gradle", ".xml", ".plist", ".properties"}
+
+
+def _secret_files():
+    for dirpath, dirnames, filenames in os.walk(ROOT):
+        dirnames[:] = [d for d in dirnames if d not in SECRET_SKIP]
+        for name in filenames:
+            yield Path(dirpath) / name
+
+
 def check_secrets() -> bool:
-    """Scan tracked text files for anything that looks like a live key."""
+    """Scan the text files of the repository for anything that looks like a live key."""
     clean = True
-    for path in ROOT.rglob("*"):
-        if not path.is_file() or ".git" in path.parts or "/.venv" in str(path):
+    suffixes = SECRET_SUFFIXES if RUN_WEEK >= 7 else SECRET_SUFFIXES_BEFORE_7
+    for path in _secret_files():
+        if not path.is_file() or path.suffix.lower() not in suffixes:
             continue
-        if path.suffix.lower() not in {
-            ".py",
-            ".md",
-            ".txt",
-            ".json",
-            ".toml",
-            ".yml",
-            ".yaml",
-            ".mmd",
-            "",
-        }:
-            continue
-        if path.name in {"check_deliverables.py", ".env.example"}:
+        # Firebase's files for the app (Android, iOS): their API key only names the Firebase project
+        if path.name in {"check_deliverables.py", ".env.example", "google-services.json", "GoogleService-Info.plist"}:
             continue
         if path.name == ".env" or path.name.startswith(".env."):
             continue  # keys belong in .env (git ignores it); only files that can be committed are scanned
@@ -1927,10 +2448,10 @@ def check_secrets() -> bool:
 #   the same name ({n} is a number); {{ and }} are literal braces. First match wins, so a
 #   more specific sentence goes before a general one. A sentence without an entry is shown in
 #   English and counted at the end of the run. When you change a sentence in a check above,
-#   change its entry here; `claude-private/scripts/check_tr_coverage.py` lists the ones that
+#   change its entry here; `aiasd-claude/scripts/check_tr_coverage.py` lists the ones that
 #   no longer match. Weeks in TR_WEEKS are fully covered; a later week is shown in English.
 
-TR_WEEKS = frozenset({1, 2, 3, 4, 5, 6})
+TR_WEEKS = frozenset({1, 2, 3, 4, 5, 6, 7})
 
 TR_RULES: list[tuple[str, str]] = [
     # --- every week: the AI log ---------------------------------------------------------------
@@ -2707,6 +3228,141 @@ TR_RULES: list[tuple[str, str]] = [
      '{p} her bulgu için düzeltip düzeltmeyeceğini ve nedenini söylüyor'),
     ("{p} must say for each attacker's finding whether you fix it (accepted: true or false) and why. Found: {n} {u} without a decision and a reason.",
      '{p} her saldırganın bulgusu için düzeltip düzeltmeyeceğini (accepted: true ya da false) ve nedenini söylemeli. Bulunan: {n} giriş karar ve neden içermiyor.'),
+    # --- Week 7: the mobile client ----------------------------------------------------------------
+    ('{p} must name your tester: exactly one entry, with a valid 9-digit student number. Found: {n} {u}, {m} with a valid number.',
+     '{p} içinde testçin yazılmalı: tam olarak tek bir giriş ve geçerli 9 haneli öğrenci numarası. Bulunan: {n} giriş, geçerli numarası olan {m}.'),
+    ('{p} names your tester',
+     '{p} testçini adlandırıyor'),
+    ("It is checked once the file names your tester's student number.",
+     'Dosya testçinin öğrenci numarasını verince kontrol edilir.'),
+    ('{p} must quote a real sentence that your tester found or said. Found: {n} {u} without one.',
+     '{p} içinde testçinin bulduğu ya da söylediği gerçek bir cümle alıntılanmalı. Bulunan: {n} giriş bunu içermiyor.'),
+    ('{p} quotes what your tester found or said',
+     '{p} testçinin bulduğunu ya da söylediğini alıntılıyor'),
+    ('{p} must say whether you accepted what your tester found (accepted: true or false) and why. Found: {n} {u} without a decision and a reason.',
+     '{p} içinde testçinin bulduğunu kabul edip etmediğin (accepted: true ya da false) ve nedeni yazılmalı. Bulunan: {n} girişte karar ve neden yok.'),
+    ('mobile/ holds your app, made with Flutter, React Native–Expo, Kotlin or Swift',
+     'mobile/ içinde Flutter, React Native–Expo, Kotlin ya da Swift ile yapılmış uygulaman var'),
+    ('mobile/, at the root of your repository, must hold your app, created with the tool of your framework: Flutter (pubspec.yaml), React Native–Expo (package.json with expo or react-native), Kotlin (a Gradle build) or Swift (an Xcode project). Found: no mobile/ folder.',
+     "Reponun kökündeki mobile/ klasöründe uygulaman olmalı, framework'ünün kendi aracıyla oluşturulmuş: Flutter (pubspec.yaml), React Native–Expo (expo ya da react-native içeren package.json), Kotlin (bir Gradle build'i) ya da Swift (bir Xcode projesi). Bulunan: mobile/ klasörü yok."),
+    ('mobile/, at the root of your repository, must hold your app, created with the tool of your framework: Flutter (pubspec.yaml), React Native–Expo (package.json with expo or react-native), Kotlin (a Gradle build) or Swift (an Xcode project). Found: none of these.',
+     "Reponun kökündeki mobile/ klasöründe uygulaman olmalı, framework'ünün kendi aracıyla oluşturulmuş: Flutter (pubspec.yaml), React Native–Expo (expo ya da react-native içeren package.json), Kotlin (bir Gradle build'i) ya da Swift (bir Xcode projesi). Bulunan: bunların hiçbiri yok."),
+    ('mobile/ has a login screen with serves: REQ-001 that sends requests to your three login endpoints',
+     "mobile/ içinde serves: REQ-001 içeren ve üç giriş endpoint'ine istek gönderen bir giriş ekranı var"),
+    ('mobile/ must have a login screen whose source file names REQ-001 in a comment like // serves: REQ-001, and your app must send requests to the three endpoints of server/login_contract.json (request_code, login and me). Write the path of each endpoint with its /, as in week05/api.md. Found: no mobile/ folder.',
+     "mobile/ içinde, kaynak dosyası REQ-001'i // serves: REQ-001 gibi bir yorumda adlandıran bir giriş ekranı olmalı; uygulaman da server/login_contract.json içindeki üç endpoint'e (request_code, login ve me) istek göndermeli. Her endpoint'in yolunu week05/api.md içindeki gibi / ile yaz. Bulunan: mobile/ klasörü yok."),
+    ('mobile/ must have a login screen whose source file names REQ-001 in a comment like // serves: REQ-001, and your app must send requests to the three endpoints of server/login_contract.json (request_code, login and me). Write the path of each endpoint with its /, as in week05/api.md. Found: no source file in mobile/ (.dart, .js, .ts, .kt, .java or .swift).',
+     "mobile/ içinde, kaynak dosyası REQ-001'i // serves: REQ-001 gibi bir yorumda adlandıran bir giriş ekranı olmalı; uygulaman da server/login_contract.json içindeki üç endpoint'e (request_code, login ve me) istek göndermeli. Her endpoint'in yolunu week05/api.md içindeki gibi / ile yaz. Bulunan: mobile/ içinde kaynak dosyası yok (.dart, .js, .ts, .kt, .java ya da .swift)."),
+    ('mobile/ must have a login screen whose source file names REQ-001 in a comment like // serves: REQ-001, and your app must send requests to the three endpoints of server/login_contract.json (request_code, login and me). Write the path of each endpoint with its /, as in week05/api.md. Found: no source file in mobile/ names REQ-001 in a serves: comment.',
+     "mobile/ içinde, kaynak dosyası REQ-001'i // serves: REQ-001 gibi bir yorumda adlandıran bir giriş ekranı olmalı; uygulaman da server/login_contract.json içindeki üç endpoint'e (request_code, login ve me) istek göndermeli. Her endpoint'in yolunu week05/api.md içindeki gibi / ile yaz. Bulunan: mobile/ içinde REQ-001'i bir serves: yorumunda adlandıran kaynak dosyası yok."),
+    ('mobile/ must have a login screen whose source file names REQ-001 in a comment like // serves: REQ-001, and your app must send requests to the three endpoints of server/login_contract.json (request_code, login and me). Write the path of each endpoint with its /, as in week05/api.md. Found: server/login_contract.json is not filled in.',
+     "mobile/ içinde, kaynak dosyası REQ-001'i // serves: REQ-001 gibi bir yorumda adlandıran bir giriş ekranı olmalı; uygulaman da server/login_contract.json içindeki üç endpoint'e (request_code, login ve me) istek göndermeli. Her endpoint'in yolunu week05/api.md içindeki gibi / ile yaz. Bulunan: server/login_contract.json doldurulmamış."),
+    ('mobile/ must have a login screen whose source file names REQ-001 in a comment like // serves: REQ-001, and your app must send requests to the three endpoints of server/login_contract.json (request_code, login and me). Write the path of each endpoint with its /, as in week05/api.md. Found: no request to: {x}.',
+     "mobile/ içinde, kaynak dosyası REQ-001'i // serves: REQ-001 gibi bir yorumda adlandıran bir giriş ekranı olmalı; uygulaman da server/login_contract.json içindeki üç endpoint'e (request_code, login ve me) istek göndermeli. Her endpoint'in yolunu week05/api.md içindeki gibi / ile yaz. Bulunan: istek gönderilmeyenler: {x}."),
+    ('week07/phone_login.png shows the login on the phone',
+     'week07/phone_login.png telefondaki girişi gösteriyor'),
+    ("week07/ must hold phone_login.png (or .jpg): a screenshot of the phone, or of the emulator, that shows the logged-in user's address after the login. Found: no such file.",
+     'week07/ içinde phone_login.png (ya da .jpg) olmalı: girişten sonra giriş yapan kullanıcının adresini gösteren, telefonun ya da emülatörün ekran görüntüsü. Bulunan: böyle bir dosya yok.'),
+    ('mobile/ has a screen of one of your own must requirements that sends requests to its endpoints',
+     "mobile/ içinde kendi must gereksinimlerinden birinin, endpoint'lerine istek gönderen bir ekranı var"),
+    ('mobile/ must have a screen of one of your own functional must requirements (not the login, REQ-001): its source file names the requirement in a comment like // serves: REQ-002, and your app sends requests to an endpoint of week05/api.md that serves it. Found: no mobile/ folder.',
+     "mobile/ içinde kendi işlevsel must gereksinimlerinden birinin (giriş, yani REQ-001 dışında) bir ekranı olmalı: kaynak dosyası gereksinimi // serves: REQ-002 gibi bir yorumda adlandırır ve uygulaman week05/api.md içinde ona hizmet eden bir endpoint'e istek gönderir. Bulunan: mobile/ klasörü yok."),
+    ('mobile/ must have a screen of one of your own functional must requirements (not the login, REQ-001): its source file names the requirement in a comment like // serves: REQ-002, and your app sends requests to an endpoint of week05/api.md that serves it. Found: no source file in mobile/ (.dart, .js, .ts, .kt, .java or .swift).',
+     "mobile/ içinde kendi işlevsel must gereksinimlerinden birinin (giriş, yani REQ-001 dışında) bir ekranı olmalı: kaynak dosyası gereksinimi // serves: REQ-002 gibi bir yorumda adlandırır ve uygulaman week05/api.md içinde ona hizmet eden bir endpoint'e istek gönderir. Bulunan: mobile/ içinde kaynak dosyası yok (.dart, .js, .ts, .kt, .java ya da .swift)."),
+    ('mobile/ must have a screen of one of your own functional must requirements (not the login, REQ-001): its source file names the requirement in a comment like // serves: REQ-002, and your app sends requests to an endpoint of week05/api.md that serves it. Found: no functional must requirement besides REQ-001 in week02/requirements.json.',
+     "mobile/ içinde kendi işlevsel must gereksinimlerinden birinin (giriş, yani REQ-001 dışında) bir ekranı olmalı: kaynak dosyası gereksinimi // serves: REQ-002 gibi bir yorumda adlandırır ve uygulaman week05/api.md içinde ona hizmet eden bir endpoint'e istek gönderir. Bulunan: week02/requirements.json içinde REQ-001 dışında işlevsel must gereksinim yok."),
+    ('mobile/ must have a screen of one of your own functional must requirements (not the login, REQ-001): its source file names the requirement in a comment like // serves: REQ-002, and your app sends requests to an endpoint of week05/api.md that serves it. Found: no source file in mobile/ names one of them in a serves: comment.',
+     "mobile/ içinde kendi işlevsel must gereksinimlerinden birinin (giriş, yani REQ-001 dışında) bir ekranı olmalı: kaynak dosyası gereksinimi // serves: REQ-002 gibi bir yorumda adlandırır ve uygulaman week05/api.md içinde ona hizmet eden bir endpoint'e istek gönderir. Bulunan: mobile/ içinde bunlardan birini bir serves: yorumunda adlandıran kaynak dosyası yok."),
+    ('mobile/ must have a screen of one of your own functional must requirements (not the login, REQ-001): its source file names the requirement in a comment like // serves: REQ-002, and your app sends requests to an endpoint of week05/api.md that serves it. Found: the app sends no request to their endpoints in week05/api.md.',
+     "mobile/ içinde kendi işlevsel must gereksinimlerinden birinin (giriş, yani REQ-001 dışında) bir ekranı olmalı: kaynak dosyası gereksinimi // serves: REQ-002 gibi bir yorumda adlandırır ve uygulaman week05/api.md içinde ona hizmet eden bir endpoint'e istek gönderir. Bulunan: uygulama, week05/api.md içindeki endpoint'lerinin hiçbirine istek göndermiyor."),
+    ('mobile_runs.json: your tester ran at least three test cases on your phone',
+     'mobile_runs.json: testçin telefonunda en az üç test case çalıştırmış'),
+    ('Your tester, the student named in week07/group_07.json, must run at least three of your test cases on your phone in round 1, each run recorded under their student number. Found: no runs recorded in week07/mobile_runs.json yet.',
+     "Testçin, yani week07/group_07.json içinde adı geçen öğrenci, 1. turda telefonunda test case'lerinden en az üçünü çalıştırmalı; her çalıştırma onun öğrenci numarasıyla kaydedilmeli. Bulunan: week07/mobile_runs.json içinde henüz kayıtlı çalıştırma yok."),
+    ('Your tester, the student named in week07/group_07.json, must run at least three of your test cases on your phone in round 1, each run recorded under their student number. Found: no tester in week07/group_07.json.',
+     "Testçin, yani week07/group_07.json içinde adı geçen öğrenci, 1. turda telefonunda test case'lerinden en az üçünü çalıştırmalı; her çalıştırma onun öğrenci numarasıyla kaydedilmeli. Bulunan: week07/group_07.json içinde testçi yok."),
+    ('Your tester, the student named in week07/group_07.json, must run at least three of your test cases on your phone in round 1, each run recorded under their student number. Found: {n} {u} by your tester in round 1.',
+     "Testçin, yani week07/group_07.json içinde adı geçen öğrenci, 1. turda telefonunda test case'lerinden en az üçünü çalıştırmalı; her çalıştırma onun öğrenci numarasıyla kaydedilmeli. Bulunan: 1. turda testçinin {n} çalıştırması."),
+    ("mobile_runs.json: at least one of your tester's runs is outside the login",
+     'mobile_runs.json: testçinin çalıştırmalarından en az biri girişin dışında'),
+    ("At least one of your tester's runs in round 1 must be a test case outside the login (REQ-001): a test case of your own feature. Found: no runs recorded in week07/mobile_runs.json yet.",
+     "Testçinin 1. turdaki çalıştırmalarından en az biri girişin (REQ-001) dışında bir test case olmalı: kendi özelliğinin bir test case'i. Bulunan: week07/mobile_runs.json içinde henüz kayıtlı çalıştırma yok."),
+    ("At least one of your tester's runs in round 1 must be a test case outside the login (REQ-001): a test case of your own feature. Found: none.",
+     "Testçinin 1. turdaki çalıştırmalarından en az biri girişin (REQ-001) dışında bir test case olmalı: kendi özelliğinin bir test case'i. Bulunan: yok."),
+    ('mobile_runs.json: every run names a test case from test_cases.json',
+     "mobile_runs.json: her çalıştırma test_cases.json içinden bir test case'i anıyor"),
+    ('Every run in week07/mobile_runs.json must name a test case that exists in week04/test_cases.json. Found: no runs recorded in week07/mobile_runs.json yet.',
+     "week07/mobile_runs.json içindeki her çalıştırma, week04/test_cases.json içinde var olan bir test case'i anmalı. Bulunan: week07/mobile_runs.json içinde henüz kayıtlı çalıştırma yok."),
+    ('Every run in week07/mobile_runs.json must name a test case that exists in week04/test_cases.json. Found: not in test_cases.json: {x}.',
+     "week07/mobile_runs.json içindeki her çalıştırma, week04/test_cases.json içinde var olan bir test case'i anmalı. Bulunan: test_cases.json içinde olmayanlar: {x}."),
+    ('mobile_runs.json: every run names the device and has a result, with a note for fail and blocked',
+     'mobile_runs.json: her çalıştırma cihazı anıyor ve bir sonucu var; fail ve blocked için not var'),
+    ('Every run in week07/mobile_runs.json must name the phone or the emulator (device) and have a result (pass, fail or blocked), with a note of at least 15 characters for fail and blocked. Found: no runs recorded in week07/mobile_runs.json yet.',
+     'week07/mobile_runs.json içindeki her çalıştırma telefonu ya da emülatörü (device) anmalı ve bir sonucu (pass, fail ya da blocked) olmalı; fail ve blocked için en az 15 karakterlik bir not gerekir. Bulunan: week07/mobile_runs.json içinde henüz kayıtlı çalıştırma yok.'),
+    ('Every run in week07/mobile_runs.json must name the phone or the emulator (device) and have a result (pass, fail or blocked), with a note of at least 15 characters for fail and blocked. Found: {n} {u} without a device or a valid result, or a fail or blocked without a note.',
+     'week07/mobile_runs.json içindeki her çalıştırma telefonu ya da emülatörü (device) anmalı ve bir sonucu (pass, fail ya da blocked) olmalı; fail ve blocked için en az 15 karakterlik bir not gerekir. Bulunan: cihazı ya da geçerli sonucu olmayan veya notsuz fail ya da blocked olan {n} çalıştırma.'),
+    ('every functional must requirement has a screen in mobile/',
+     'her işlevsel must gereksinimin mobile/ içinde bir ekranı var'),
+    ('Every functional must requirement needs a screen in mobile/ whose source file names it in a comment like // serves: REQ-002. Found: no functional must requirement in week02/requirements.json.',
+     'Her işlevsel must gereksinimin mobile/ içinde, kaynak dosyası onu // serves: REQ-002 gibi bir yorumda adlandıran bir ekranı olmalı. Bulunan: week02/requirements.json içinde işlevsel must gereksinim yok.'),
+    ('Every functional must requirement needs a screen in mobile/ whose source file names it in a comment like // serves: REQ-002. Found: no such screen for {x}.',
+     'Her işlevsel must gereksinimin mobile/ içinde, kaynak dosyası onu // serves: REQ-002 gibi bir yorumda adlandıran bir ekranı olmalı. Bulunan: şunlar için böyle bir ekran yok: {x}.'),
+    ('your app sends requests to every endpoint of week05/api.md that serves a functional must requirement',
+     "uygulaman, week05/api.md içinde işlevsel bir must gereksinime hizmet eden her endpoint'e istek gönderiyor"),
+    ('Your app in mobile/ must send requests to every endpoint of week05/api.md that serves a functional must requirement. Write the path of each endpoint with its /, as in api.md. Found: no row of week05/api.md serves a functional must requirement.',
+     "mobile/ içindeki uygulaman, week05/api.md içinde işlevsel bir must gereksinime hizmet eden her endpoint'e istek göndermeli. Her endpoint'in yolunu api.md içindeki gibi / ile yaz. Bulunan: week05/api.md içinde işlevsel bir must gereksinime hizmet eden satır yok."),
+    ('Your app in mobile/ must send requests to every endpoint of week05/api.md that serves a functional must requirement. Write the path of each endpoint with its /, as in api.md. Found: no request to: {x}.',
+     "mobile/ içindeki uygulaman, week05/api.md içinde işlevsel bir must gereksinime hizmet eden her endpoint'e istek göndermeli. Her endpoint'in yolunu api.md içindeki gibi / ile yaz. Bulunan: istek gönderilmeyenler: {x}."),
+    ('every functional must requirement has a test case that passed on the phone',
+     "her işlevsel must gereksinimin telefonda geçmiş bir test case'i var"),
+    ('Every functional must requirement needs at least one of its test cases with a pass in week07/mobile_runs.json. Found: no functional must requirement in week02/requirements.json.',
+     "Her işlevsel must gereksinimin week07/mobile_runs.json içinde pass almış en az bir test case'i olmalı. Bulunan: week02/requirements.json içinde işlevsel must gereksinim yok."),
+    ('Every functional must requirement needs at least one of its test cases with a pass in week07/mobile_runs.json. Found: no pass for {x}.',
+     "Her işlevsel must gereksinimin week07/mobile_runs.json içinde pass almış en az bir test case'i olmalı. Bulunan: şunlar için pass yok: {x}."),
+    ('mobile_runs.json: every failed test case was run again in round 2',
+     'mobile_runs.json: kalan her test case 2. turda yeniden çalıştırılmış'),
+    ('Every test case that failed on the phone in round 1 must be run again in round 2 after the fix, or dropped with a change request. Found: no runs recorded in week07/mobile_runs.json yet.',
+     '1. turda telefonda kalan her test case, düzeltmeden sonra 2. turda yeniden çalıştırılmalı ya da bir change request ile bırakılmalı. Bulunan: week07/mobile_runs.json içinde henüz kayıtlı çalıştırma yok.'),
+    ('Every test case that failed on the phone in round 1 must be run again in round 2 after the fix, or dropped with a change request. Found: no round 2 for {x}.',
+     '1. turda telefonda kalan her test case, düzeltmeden sonra 2. turda yeniden çalıştırılmalı ya da bir change request ile bırakılmalı. Bulunan: şunlar için 2. tur yok: {x}.'),
+    ('the app id in mobile/ is the package of S2 in week04/store.json',
+     "mobile/ içindeki uygulama kimliği, week04/store.json içindeki S2'nin paketi"),
+    ('The id of your app (applicationId in build.gradle, android.package and ios.bundleIdentifier in app.json, or PRODUCT_BUNDLE_IDENTIFIER in Xcode) must be the package name of S2 in week04/store.json. Found: no package in S2 of week04/store.json.',
+     "Uygulamanın kimliği (build.gradle içinde applicationId, app.json içinde android.package ve ios.bundleIdentifier ya da Xcode'da PRODUCT_BUNDLE_IDENTIFIER), week04/store.json içindeki S2'nin paket adı olmalı. Bulunan: week04/store.json içindeki S2'de paket yok."),
+    ('The id of your app (applicationId in build.gradle, android.package and ios.bundleIdentifier in app.json, or PRODUCT_BUNDLE_IDENTIFIER in Xcode) must be the package name of S2 in week04/store.json. Found: no app id in mobile/.',
+     "Uygulamanın kimliği (build.gradle içinde applicationId, app.json içinde android.package ve ios.bundleIdentifier ya da Xcode'da PRODUCT_BUNDLE_IDENTIFIER), week04/store.json içindeki S2'nin paket adı olmalı. Bulunan: mobile/ içinde uygulama kimliği yok."),
+    ('The id of your app (applicationId in build.gradle, android.package and ios.bundleIdentifier in app.json, or PRODUCT_BUNDLE_IDENTIFIER in Xcode) must be the package name of S2 in week04/store.json. Found: {x}, not {y}.',
+     "Uygulamanın kimliği (build.gradle içinde applicationId, app.json içinde android.package ve ios.bundleIdentifier ya da Xcode'da PRODUCT_BUNDLE_IDENTIFIER), week04/store.json içindeki S2'nin paket adı olmalı. Bulunan: {x}; {y} değil."),
+    ('no build files of mobile/ are in git',
+     "mobile/ build dosyalarının hiçbiri git'te değil"),
+    ('mobile/ must not have in git the folders your framework builds again (node_modules, build, .dart_tool, .gradle, Pods, .expo): add them to mobile/.gitignore, then git rm -r --cached mobile/<the folder>. Found: no mobile/ folder.',
+     "mobile/, framework'ünün yeniden üretebildiği klasörleri (node_modules, build, .dart_tool, .gradle, Pods, .expo) git'te tutmamalı: onları mobile/.gitignore dosyasına ekle, sonra git rm -r --cached mobile/<klasör>. Bulunan: mobile/ klasörü yok."),
+    ('mobile/ must not have in git the folders your framework builds again (node_modules, build, .dart_tool, .gradle, Pods, .expo): add them to mobile/.gitignore, then git rm -r --cached mobile/<the folder>. Found: in git: {x}.',
+     "mobile/, framework'ünün yeniden üretebildiği klasörleri (node_modules, build, .dart_tool, .gradle, Pods, .expo) git'te tutmamalı: onları mobile/.gitignore dosyasına ekle, sonra git rm -r --cached mobile/<klasör>. Bulunan: git'te olanlar: {x}."),
+    ('all ten course tests still pass',
+     'on ders testinin hepsi hala geçiyor'),
+    ('All ten course tests (course_tests/) must still pass. Found: not passing: {x}.',
+     'On ders testinin (course_tests/) hepsi hala geçmeli. Bulunan: geçmeyenler: {x}.'),
+    ('All ten course tests (course_tests/) must still pass. Found: {f}.',
+     'On ders testinin (course_tests/) hepsi hala geçmeli. Bulunan: {f}.'),
+    ('every test case of a must requirement with run "server" still has a test that passes',
+     'run değeri "server" olan, must bir gereksinimin her test case\'inin hala geçen bir testi var'),
+    ('Every test case of a must requirement with "run": "server" in week04/test_cases.json must still have a test in server/tests/ named by its id that passes. Found: no test case of a must requirement with "run": "server".',
+     'week04/test_cases.json içinde "run": "server" olan, must bir gereksinimin her test case\'inin server/tests/ içinde kendi id\'siyle adlandırılmış ve hala geçen bir testi olmalı. Bulunan: "run": "server" olan, must bir gereksinimin test case\'i yok.'),
+    ('Every test case of a must requirement with "run": "server" in week04/test_cases.json must still have a test in server/tests/ named by its id that passes. Found: no passing test for {x}.',
+     'week04/test_cases.json içinde "run": "server" olan, must bir gereksinimin her test case\'inin server/tests/ içinde kendi id\'siyle adlandırılmış ve hala geçen bir testi olmalı. Bulunan: şunların geçen testi yok: {x}.'),
+    ('Every test case of a must requirement with "run": "server" in week04/test_cases.json must still have a test in server/tests/ named by its id that passes. Found: {f}.',
+     'week04/test_cases.json içinde "run": "server" olan, must bir gereksinimin her test case\'inin server/tests/ içinde kendi id\'siyle adlandırılmış ve hala geçen bir testi olmalı. Bulunan: {f}.'),
+    ('week07/ai_log_07.md names the commit of the change you accepted',
+     "week07/ai_log_07.md kabul ettiğin değişikliğin commit'ini anıyor"),
+    ('week07/ai_log_07.md must name the commit of the change you accepted: the first 7 characters of its commit id, outside the comments and the Evidence block. Found: no commit id.',
+     "week07/ai_log_07.md kabul ettiğin değişikliğin commit'ini anmalı: commit kimliğinin ilk 7 karakteri, yorumların ve Evidence bloğunun dışında. Bulunan: commit kimliği yok."),
+    ('week07/ai_log_07.md must name the commit of the change you accepted: the first 7 characters of its commit id, outside the comments and the Evidence block. Found: {x}, not a commit of this repository.',
+     "week07/ai_log_07.md kabul ettiğin değişikliğin commit'ini anmalı: commit kimliğinin ilk 7 karakteri, yorumların ve Evidence bloğunun dışında. Bulunan: {x}; bu reponun bir commit'i değil."),
+    ('week07/ai_log_07.md holds the git diff of the change',
+     "week07/ai_log_07.md değişikliğin git diff'ini içeriyor"),
+    ('week07/ai_log_07.md must hold, in the Evidence block, the git diff of the change as your terminal showed it (the lines that start with diff --git and @@). Found: none.',
+     "week07/ai_log_07.md, Evidence bloğunda değişikliğin git diff'ini terminalinin gösterdiği gibi içermeli (diff --git ve @@ ile başlayan satırlar). Bulunan: yok."),
     # a course test the entries above do not name (they come first, so every LOGIN_NN of the table has its own Turkish)
     ('course test {k}: {w}', 'ders testi {k}: {w}'),
     ('Course test {k} ({w}) must pass. Found: {f}.', '{k} ders testi ({w}) geçmeli. Bulunan: {f}.'),
@@ -2749,6 +3405,40 @@ TR_UI = {
     "Was due Saturday 23:59": "Cumartesi 23:59'a kadar teslim edilmesi gerekiyordu",
     "Due by Saturday 23:59": "Cumartesi 23:59'a kadar teslim",
     "In the lab:     {a} of {b} done": "Derste:           {a} / {b} tamam",
+    'Your commits this week, piece by piece (read on this computer; your mark reads GitHub):':
+        "Bu haftaki commit'lerin, iş iş (bu bilgisayardan okundu; notun GitHub'dan okunur):",
+    "the app in mobile/":
+        "mobile/ içindeki uygulama",
+    "the login screen":
+        "giriş ekranı",
+    "the screen of your requirement":
+        "gereksiniminin ekranı",
+    "the tester round":
+        "testçi turu",
+    "{piece}: {n} commits":
+        "{piece}: {n} commit",
+    "{piece}: 1 commit. Commit it again when it works.":
+        "{piece}: 1 commit. Çalışınca yeniden commit et.",
+    "{piece}: no commit yet.":
+        "{piece}: henüz commit yok.",
+    "Commit {sha} adds {k} new screens: {names}. Each new screen must have its own commit; a commit that adds two or more costs the commit point.":
+        "{sha} commit'i {k} yeni ekran ekliyor: {names}. Her yeni ekranın kendi commit'i olmalı; iki ya da daha fazlasını ekleyen bir commit, commit puanına mal olur.",
+    "Commit {sha} adds {k} new routes: {names}. Each new route must have its own commit; a commit that adds two or more costs the commit point.":
+        "{sha} commit'i {k} yeni route ekliyor: {names}. Her yeni route'un kendi commit'i olmalı; iki ya da daha fazlasını ekleyen bir commit, commit puanına mal olur.",
+    "Your changes not yet committed add {k} new screens: {names}. Commit them one at a time.":
+        "Henüz commit etmediğin değişiklikler {k} yeni ekran ekliyor: {names}. Bunları tek tek commit et.",
+    "Your changes not yet committed add {k} new routes: {names}. Commit them one at a time; git add -p lets you take the lines of one route first.":
+        "Henüz commit etmediğin değişiklikler {k} yeni route ekliyor: {names}. Bunları tek tek commit et; git add -p ile önce tek bir route'un satırlarını alabilirsin.",
+    "1 commit is not pushed yet. Push it now: git push":
+        "1 commit henüz push edilmedi. Şimdi push et: git push",
+    "{n} commits are not pushed yet. Push them now: git push":
+        "{n} commit henüz push edilmedi. Şimdi push et: git push",
+    '1 commit by a coding agent is not counted.':
+        "Bir kodlama ajanının 1 commit'i sayılmaz.",
+    '{n} commits by a coding agent are not counted.':
+        "Bir kodlama ajanının {n} commit'i sayılmaz.",
+    "\n  A red result while a piece is still unfinished is normal and costs you nothing.\n  Commit and push it anyway. The lecture mark reads only your last push at the end\n  of the lecture, and the Saturday mark reads your final state.":
+        "\n  Bir parça henüz bitmemişken kırmızı görmen normaldir ve sana puan kaybettirmez.\n  Yine de commit ve push et. Ders puanı yalnızca dersin sonundaki son push'unu,\n  Cumartesi puanı ise son durumunu okur.",
     "By Saturday:    {a} of {b} done": "Cumartesiye dek:  {a} / {b} tamam",
     "Earlier weeks, checks still failing: {listing} — see one with: python .github/check_deliverables.py {n}":
         "Önceki haftalarda hala eksik olan kontroller: {listing} — birine bakmak için: python .github/check_deliverables.py {n} tr",
@@ -2805,6 +3495,39 @@ def _compile_tr() -> list:
     return _TR_COMPILED
 
 
+# The reasons the instructor's capture gives for a GitHub Actions run (AIASD_CI_WHY / AIASD_CI_UNTRUSTED), in Turkish,
+# so that a "Found:" in a Turkish sentence is Turkish too (VC, 1 Nov 2026). Matched from the start of the text.
+CI_FOUND_TR = [
+    ("the GitHub Actions run of the commit read had not finished when it was read",
+     "okunan commit'in GitHub Actions çalıştırması okunduğunda henüz bitmemişti"),
+    ("no GitHub Actions run for the commit read", "okunan commit için bir GitHub Actions çalıştırması yok"),
+    ("the GitHub Actions run of the commit read did not start", "okunan commit'in GitHub Actions çalıştırması başlamadı"),
+    ("the GitHub Actions run of the commit read holds no test results",
+     "okunan commit'in GitHub Actions çalıştırmasında test sonucu yok"),
+    ("the GitHub Actions run of the commit read has no 'Weekly deliverables' job",
+     "okunan commit'in GitHub Actions çalıştırmasında 'Weekly deliverables' işi yok"),
+    ("the log of the GitHub Actions run of the commit read could not be read",
+     "okunan commit'in GitHub Actions çalıştırmasının kaydı okunamadı"),
+    ("the GitHub Actions run of the commit read cannot be used: .github/workflows/check.yml is not a version the course published",
+     "okunan commit'in GitHub Actions çalıştırması kullanılamıyor: .github/workflows/check.yml dersin yayımladığı bir sürüm değil"),
+    ("the GitHub Actions run of the commit read cannot be used", "okunan commit'in GitHub Actions çalıştırması kullanılamıyor"),
+    ("in GitHub Actions, pytest, fastapi or freezegun is not installed: run pip install -r week06/requirements.txt in your "
+     "virtual environment, then run the checker again",
+     "GitHub Actions'ta pytest, fastapi ya da freezegun kurulu değil: sanal ortamında pip install -r week06/requirements.txt "
+     "çalıştır, sonra checker'ı yeniden çalıştır"),
+    ("in GitHub Actions, pytest, fastapi or freezegun is not installed",
+     "GitHub Actions'ta pytest, fastapi ya da freezegun kurulu değil"),
+]
+
+
+def _tr_field(value: str) -> str:
+    for en, tr in CI_FOUND_TR:
+        if value.startswith(en):
+            rest = value[len(en):]
+            return tr + (rest if not rest.strip() or rest.lstrip().startswith((":", "(")) else "")
+    return value
+
+
 def translate_sentence(sentence: str) -> str | None:
     """The Turkish text for one sentence the checker printed (PASS or FAIL), or None if the
     table has no entry for it."""
@@ -2812,7 +3535,7 @@ def translate_sentence(sentence: str) -> str | None:
     for rx, tr in _compile_tr():
         m = rx.fullmatch(s)
         if m:
-            fields = m.groupdict()
+            fields = {k: _tr_field(v) if isinstance(v, str) else v for k, v in m.groupdict().items()}
             return re.sub(r"\{\{|\}\}|\{(\w+)\}",
                           lambda t: "{" if t.group(0) == "{{" else "}" if t.group(0) == "}}" else fields.get(t.group(1), t.group(0)), tr)
     return None
@@ -3246,6 +3969,12 @@ def main() -> int:
             "Earlier weeks, checks still failing: {listing} — see one with: python .github/check_deliverables.py {n}",
             listing=listing, n=max(older)))
     print("-" * 64)
+    if not past:
+        live = live_commits(shown)
+        if live:
+            print("\n  " + "\n  ".join(live))
+    if s_bad and not past:   # VC, 1 Nov 2026: a red run on unfinished work must not stop anyone from committing
+        print(say("\n  A red result while a piece is still unfinished is normal and costs you nothing.\n  Commit and push it anyway. The lecture mark reads only your last push at the end\n  of the lecture, and the Saturday mark reads your final state."))
     if d_bad and not s_bad and not past:
         print(say(
             "\n  {n} still to do before Saturday 23:59. Those do not fail this run —\n"

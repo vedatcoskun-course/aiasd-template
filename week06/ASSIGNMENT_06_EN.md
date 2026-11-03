@@ -414,7 +414,9 @@ each of them with `"run": "server"`. Name the test by the test case id:
 
 **When:** in the lecture, until 11:45.
 
-Copy the requirement's screen from `week04/prototype/` into `web/`. Keep its look: it is your design.
+Copy the requirement's screen from `week04/prototype/` into `web/`: a folder that you create yourself, at
+the root of your repository, next to `server/` (AI_README_EN.md, "Your repository, folder by folder").
+Keep its look: it is your design.
 Keep its `<!-- serves: REQ-… -->` line too. Then make it real:
 
 - replace the fixed data of the prototype with the server's answers;

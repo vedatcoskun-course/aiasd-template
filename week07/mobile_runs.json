@@ -1,0 +1,20 @@
+{
+  "_how_to_fill_this_in": [
+    "This file records your test cases that ran on the phone (ASSIGNMENT_07 §5 and §9). Write one object for each run, as in the walk-through of Week 4.",
+    "tc is the id of a test case from week04/test_cases.json.",
+    "tester is the 9-digit student number of the person who ran the test case. In the lecture, this person is your tester, the same person as in week07/group_07.json. You must watch and must not help. After the lecture, the person is your tester or you.",
+    "device names the phone or the emulator, for example 'Samsung A52, Android 14' or 'Pixel 7 emulator'.",
+    "round is 1 for a run in the lecture and 2 for every run after the lecture. Every test case that fails in round 1 must run again in round 2 after the fix, unless you drop it with a change request.",
+    "result is 'pass' if the tester saw what 'expected' says, and 'fail' if the tester did not see it. The result is 'blocked' if the test case could not run. For a 'blocked' run, the note says why.",
+    "note must say what the tester saw, in one full sentence. A 'fail' run or a 'blocked' run must have a note. For a 'pass' run, a few words are enough.",
+    "In the lecture, your tester must make at least three runs, and at least one of them must be outside the login. By Saturday, every functional 'must' requirement must have at least one of its test cases with a 'pass' here.",
+    "Type this file yourself, by hand, right after the turn. No assistant writes, translates or corrects it, not even for the grammar. Your English or Turkish is not graded. A person reads it.",
+    "Add as many objects as you need, with a comma between them. You may delete this block after you read it. The checker ignores it."
+  ],
+  "week": 7,
+  "runs": [
+    { "tc": "", "tester": "", "device": "", "round": 1, "result": "", "note": "" },
+    { "tc": "", "tester": "", "device": "", "round": 1, "result": "", "note": "" },
+    { "tc": "", "tester": "", "device": "", "round": 1, "result": "", "note": "" }
+  ]
+}

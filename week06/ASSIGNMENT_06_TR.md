@@ -419,7 +419,9 @@ geçirerek giriş yaptırır (aşağıda "Kendi testleriniz"e bakın). `python -
 
 **Ne zaman:** derste, 11:45'e kadar.
 
-Gereksinimin ekranını `week04/prototype/` içinden `web/` klasörüne kopyalayın. Görünüşünü koruyun: o
+Gereksinimin ekranını `week04/prototype/` içinden `web/` klasörüne kopyalayın: bu klasörü kendiniz,
+reponuzun kökünde, `server/` yanında oluşturursunuz (AI_README_TR.md, "Reponuz, klasör klasör").
+Görünüşünü koruyun: o
 sizin tasarımınız. `<!-- serves: REQ-… -->` satırını da koruyun. Sonra onu gerçek yapın:
 
 - prototipin sabit verilerini sunucunun cevaplarıyla değiştirin;

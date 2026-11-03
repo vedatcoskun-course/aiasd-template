@@ -276,7 +276,7 @@ def test_TC_002_02_a_busy_slot_is_refused():
 
 ## Sayfası — prototipin ekranı, artık gerçek
 
-Ekranını `week04/prototype/` içinden `web/` klasörüne kopyalayın. Görünüşünü ve `<!-- serves: REQ-… -->` satırını koruyun.
+Ekranını `week04/prototype/` içinden `web/` klasörüne kopyalayın: onu kökte, `server/` yanında siz oluşturursunuz. Görünüşünü ve `<!-- serves: REQ-… -->` satırını koruyun.
 
 ```javascript
 async function api(method, path, body) {

@@ -18,6 +18,8 @@ gibi onu da `git add .` ile ekleyin.
 > - 5. haftadan sonraki Pazar gününden itibaren `requirements.json` ya da `test_cases.json`
 >   değişikliği, `PROPOSAL.md` Change log'unda bir `CR-` satırıdır (§3).
 > - 6. haftadan itibaren ders notu GitHub Actions çalıştırmasını okur (§2).
+> - 7. haftadan itibaren dersteki ilk push'unuz GitHub'a 09:30'dan önce ulaşır; çağırdığımda herkes 5 dakika
+>   içinde commit ve push yapar (§2; 28 Ekim'de eklendi).
 > - `group_NN.json` içindeki roller, hafta hafta (§3).
 > - Yapay zeka günlüğünde asistanın sözleri yalnızca **kalın** olarak, Evidence bloğundan
 >   kopyalanarak yer alır. Evidence bloğunda `ME:`, `AI:` ve `TERMINAL:` parçaları vardır (§3).
@@ -45,7 +47,8 @@ Takıldığınızda buraya dönün.
 | Ne zaman | Ne yaparsınız | Puan |
 |------|-------------|--------|
 | Dersten önce | `weekNN/ASSIGNMENT_NN_TR.md` dosyasını okuyun | — |
-| Ders sırasında (3 saat) | Çalışın ve sık push edin (push, bilgisayarınızda kaydettiğiniz işi GitHub'a gönderir) | — |
+| Dersin başında, 09:30'dan önce | Checker'ı çalıştırın (haftanın dosyalarını getirir), sonra commit ve push edin: ilk push'unuz GitHub'a 09:30'dan önce ulaşır (7. haftadan itibaren) | — |
+| Ders sırasında (3 saat) | Çalışın ve sık push edin (push, bilgisayarınızda kaydettiğiniz işi GitHub'a gönderir). Çağırdığımda 5 dakika içinde commit ve push edin (7. haftadan itibaren) | — |
 | Ders sonunda | 11:45'e dek push edin. Ders notu, dersin sonuna dek push ettiğiniz son commit'i okur (anlık görüntü alırım: reponuzun o andaki halinin birebir kopyası) | 5 |
 | Dersten sonra | Kalanı bitirin ve `ai_log_NN.md` dosyasını yazın | — |
 | Cumartesi 23:59'a kadar | **Yeniden push edin.** Reponuzun ikinci bir anlık görüntüsünü alırım | 5 |
@@ -153,6 +156,14 @@ böyle mesajlar size commit disiplini puanına (§3'te anlatılır) mal olur.
 
 - **Derste:** her işi, hangi durumda olursa olsun, ortasında commit edin; çalıştığında yeniden
   commit edin ve her commit'i hemen push edin. Tek commit'te bitmiş olarak gelen bir iş sayılmaz.
+- **İlk push 09:30'dan önce** (7. haftadan itibaren). Derse checker'ı çalıştırarak başlayın
+  (haftanın dosyalarını getirir), sonra commit ve push edin. Dersteki ilk push'unuz GitHub'a
+  09:30'dan sonra ulaşırsa, nedeni ne olursa olsun (geç gelmek dahil), ders işinizin hangi
+  bilgisayarda yapıldığını elle incelerim.
+- **Çağırdığımda commit ve push** (7. haftadan itibaren). Ders sırasında herhangi bir anda
+  herkesten aynı anda commit ve push yapmasını isteyebilirim. Push'unuz 5 dakika içinde GitHub'a
+  ulaşmalıdır. Yalnızca commit yetmez: push edene dek bilgisayarınızda kalır. Push'unuz gelmezse
+  ders işinizi elle incelerim.
 - **Ders dışında:** yeni iş içeren en az iki commit, aralarında en az bir saat olacak
   şekilde push edilmiş olsun.
 - Commit'in üzerindeki tarih değil, GitHub'ın push saati sayılır.
@@ -389,7 +400,7 @@ kayıyorsa pencere küçükken düzeltin, 10. haftada değil.
 
 **Asla force push yapmayın.** Force push (`git push --force` ya da VS Code'daki "Force Push")
 reponuzun geçmişinden commit siler; bu geçmiş de çalışmanızın benim okuduğum kaydının bir
-parçasıdır. Bir asistanın sizin yerinize yapmasına da izin vermeyin. Git push'unuzu reddederse
+parçasıdır. Bir asistanın sizin yerinize yapmasına da izin vermeyin. Force push, neyi değiştirmiş olursa olsun, size o haftanın commit puanına mal olur. Buna `git push -f`, `git push --force-with-lease`, VS Code'daki "Force Push" ve GitHub Desktop'taki "Force push origin" düğmesi de dahildir. Git push'unuzu reddederse
 önce `git pull`, sonra yeniden `git push` yapın (VS Code'da: **Sync Changes**).
 `git pull` "Need to specify how to reconcile divergent branches" diyerek durursa bir kez
 `git config pull.rebase false` çalıştırın, sonra yeniden `git pull` yapın. Git bir çakışma

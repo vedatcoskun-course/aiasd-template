@@ -1,0 +1,15 @@
+{
+  "_how_to_fill_this_in": [
+    "This file has one entry for your tester (ASSIGNMENT_07 §5 and §6). Your tester is the classmate from your Week 3 group who ran your test cases on your phone in the lecture. If nobody from your group was in the lecture, your tester is any classmate. The list is called 'members' only because the checker and the course tools read it with that name.",
+    "student_id is the 9-digit student number of your tester. It is the same number as in the 'tester' field of the runs of your tester in week07/mobile_runs.json. Do not write your own number.",
+    "role is 'tester'.",
+    "what must quote the most useful thing that your tester found or said, in one full sentence.",
+    "accepted and why wait until Saturday (ASSIGNMENT_07 §11). Set accepted to true if you changed something because of the finding, and to false if you changed nothing. In why, write one full sentence. The sentence says what you changed, or why the finding was not a real problem.",
+    "Write all of this yourself, by hand, in your own words. No assistant writes, translates or corrects it, not even for the grammar. Your English or Turkish is not graded. A person reads it.",
+    "You may delete this block after you read it. The checker ignores it."
+  ],
+  "week": 7,
+  "members": [
+    { "student_id": "", "role": "tester", "what": "", "accepted": null, "why": "" }
+  ]
+}
