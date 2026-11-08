@@ -25,7 +25,8 @@ hemen değiştirin ve bana söyleyin.
 
 **Include all branches:** kapalı bırakın.
 
-Sonra repoyu bilgisayarınıza klonlayın.
+Sonra repoyu bilgisayarınıza klonlayın: `AI_SETUP_CARD_TR.md` içindeki 2. ve 3. adımları
+izleyin (bilgisayarınızı bir kez GitHub'a bağlayın, sonra reponuzu `git clone` ile kopyalayın).
 
 Şimdi beni Collaborator olarak ekleyin: **Settings → Collaborators → Add people**, ardından
 **`VedatCOSKUN`** araması yapın — tam bu yazım, tiresiz; notunuzu veren hesap budur. Bu

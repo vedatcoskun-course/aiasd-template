@@ -25,7 +25,8 @@ change it in Settings at once and tell me.
 
 **Include all branches:** leave it off.
 
-Then clone it to your laptop.
+Then clone it to your laptop: follow steps 2 and 3 of `AI_SETUP_CARD_EN.md` (connect your
+computer to GitHub once, then `git clone` your repository).
 
 Now add me as a Collaborator: **Settings → Collaborators → Add people**, then search
 for **`VedatCOSKUN`** — that exact spelling, no hyphen, it is the account that grades
