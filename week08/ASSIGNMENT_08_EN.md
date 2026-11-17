@@ -5,7 +5,7 @@
 ### 1.1 Rules
 
 - **Use one unshared computer and one unshared GitHub account.** You must work in the lecture on your
-  own computer, and you must work after the lecture on the same computer. Only the computers that you listed
+  own computer, and you must work after the lecture on the same computer. If you really need a second computer, you must list it too, with its reason (§4.1). Only the computers that you listed
   in `student.json` count. Lecture work that you do on a computer that is not listed in `student.json`, or
   under another person's Git identity, earns nothing for the lecture.
 

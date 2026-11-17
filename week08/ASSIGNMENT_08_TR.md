@@ -5,7 +5,7 @@
 ### 1.1 Kurallar
 
 - **Paylaşılmayan tek bir bilgisayar ve paylaşılmayan tek bir GitHub hesabı kullan.** Derste kendi
-  bilgisayarında çalışmalısın, dersten sonra da aynı bilgisayarda çalışmalısın. Yalnız `student.json` içinde
+  bilgisayarında çalışmalısın, dersten sonra da aynı bilgisayarda çalışmalısın. Gerçekten ikinci bir bilgisayara ihtiyacın varsa onu da gerekçesiyle listelemelisin (§4.1). Yalnız `student.json` içinde
   listelediğin bilgisayarlar sayılacak. `student.json` içinde listelenmemiş bir bilgisayarda ya da başka bir
   kişinin Git kimliğiyle yaptığın ders çalışması ders için puan getirmeyecek.
 
