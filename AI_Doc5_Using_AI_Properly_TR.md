@@ -87,7 +87,7 @@ gösterir.
 | Üç katman ve sohbet botu (8) | Her katmanı (sunucu, web, mobil) kendi başına doğru yazar; sohbet botunun LLM API'sini çağıran sunucu kodunu da. | Üç katmanı birbiriyle uyuşturmaz: aynı alan sunucuda `room_id`, uygulamada `roomId` adını taşır; sunucu hiçbir istemcinin ele almadığı bir durum kodu döndürür. API anahtarını sunucunun `.env` dosyası yerine uygulamaya koyabilir. | §7, §9 |
 | İnsanlarla test (9–10) | Test planları, hata raporu şablonları ve olası arızaların bir listesini yazar. | Testçilerinizin gerçekte ne yapacağını bilemez, çünkü onlarla hiç tanışmamıştır. | §8 |
 | Mağaza ve yayın (11) | Kontrol listelerini ve mağaza ilanının metnini yazar. | Mağaza kurallarını bir yıl önceki halleriyle aktarır ve inceleme süresini yeni bir hesap için değil yerleşik bir hesap için verir. | §3, §5 |
-| Kapanış ve savunma (12–14) | Özetleri ve posterin ilk taslağını yazar. | Neyi neden kararlaştırdığınızı söyleyemez; bunu yalnızca siz bilirsiniz ve size sorulacaktır. | §9 |
+| Kapanış ve savunma (12–13; EN şubesinde 12–14) | Özetleri ve posterin ilk taslağını yazar. | Neyi neden kararlaştırdığınızı söyleyemez; bunu yalnızca siz bilirsiniz ve size sorulacaktır. | §9 |
 
 Tabloyu yukarıdan aşağı okuyun. Asistan, işin genel olduğu yerde en yararlıdır. İşin
 *sizin* ürününüz ve *sizin* insanlarınızla ilgili olduğu yerde en az yararlıdır. Bu ders
@@ -535,7 +535,7 @@ dört kişiden birinin diğerlerinden ayrıldığı bir noktayı işaretler.
     ve nerede kontrol ettiğinizi söyleyebilirsiniz (§9).
 12. Uygulama mağazadan kurulmuş halde bir sınav görevlisinin karşısına çıkıp uygulamanın
     herhangi bir satırı için "Bu neden burada?" sorusunu yanıtlayabilirsiniz. Bunu
-    yapabilirsiniz, çünkü push sizindi ve kayıt vardır (§9, 13–14. hafta).
+    yapabilirsiniz, çünkü push sizindi ve kayıt vardır (§9, 13. hafta; EN şubesinde 13–14. hafta).
 
 Asistanı olan eğitimsiz kullanıcı bunların hiçbirini yapamaz ve bunu bilmez. Disiplini
 olmayan mühendis çoğunu yapabilir ve yapmaz. On iki haftanın amacı, §0'daki sağ sütunun

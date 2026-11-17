@@ -31,7 +31,7 @@ Dersi tamamlayan öğrenci:
 8. **Formal test süreçleri yürütür.** Öğrenci birim ve entegrasyon testleri yazar, kayıtlı testçilerle beta test yapar, hata listesi tutar, test raporu yazar ve gerçek kullanıcılarla Kullanıcı Kabul Testi (gerçek kullanıcıların ürünü deneyip ihtiyaçlarını karşılayıp karşılamadığını söylediği bir oturum) yürütür (5–7. ve 9–10. hafta).
 9. **Uygulamayı mağazada yayınlar.** Öğrenci S0–S6 izini izler (3–11. hafta): mağazayı seçer (S0), geliştirici hesabı açar (S1), uygulama kaydını oluşturur (S2), bir build yükler ve testçileri kaydeder (S3), beta testini test kanalında yürütür (S4), uygulamayı incelemeye gönderir (S5), inceleme düzeltmelerini uygular ve uygulamayı yayınlar (S6).
 10. **İnceler ve iş birliği yapar.** Öğrenci sabit dörtlü grupta, ödevin adını verdiği haftalarda incelemelere katılır, geri bildirimi alıntı olarak, kabul/ret kararı ve gerekçesiyle kaydeder ve sınıf arkadaşlarının işine paydaş, gözden geçiren ya da testçi olarak katkı verir (3. haftadan).
-11. **Ürünü savunur.** Öğrenci uygulamayı sınav görevlisinin önünde mağazadan kurar, koddaki ve belgelerdeki kararları gerekçelendirir ve poster ile sunum hazırlar (12–14. hafta).
+11. **Ürünü savunur.** Öğrenci uygulamayı sınav görevlisinin önünde mağazadan kurar, koddaki ve belgelerdeki kararları gerekçelendirir ve poster ile sunum hazırlar (12–13. hafta; EN şubesinde 12–14. hafta).
 
 ## Ders Materyali
 
@@ -47,7 +47,7 @@ Araçlar: Python 3.12, Git/GitHub, VS Code, sunucu için FastAPI, web istemcisi 
 |---|---|---|
 | Haftalık Projeler | 45 | 12 hafta × 10 puan, 45'e ölçeklenir (1. hafta 5 puandır ve tamamı Cumartesi okunur). Her hafta:<br>• **Ders, 5 puan:** otomatik kontroller dersin sonunda repoyu okur (6. haftadan itibaren test sonuçları GitHub Actions çalıştırmasından gelir).<br>• **Cumartesi 23:59, 5 puan:** otomatik kontroller 2 · insan katkısı 2 (çoğunlukla yapay zeka günlüğü, haftanın elle yazılmasını istediği dosyalarla birlikte; öğretim üyesi notlar) · commit disiplini 1 (öğretim üyesi notlar).<br>• **Commit disiplini:** derste her iş ortasında ve çalıştığında commit edilir, her commit hemen push edilir (6. haftadan itibaren; 5. haftaya kadar 10:00, 11:00 ve 11:45 civarında push'lar), 7. haftadan itibaren dersteki ilk push 09:30'dan önce yapılır (daha sonra gelen bir ilk push, geç gelmek dahil, elle incelenir) ve öğretim üyesi istediğinde 5 dakika içinde commit ve push yapılır; ders dışında yeni iş içeren, aralarında en az bir saat olacak şekilde push edilmiş en az iki commit. GitHub'ın push saati sayılır. Bir kodlama ajanının yaptığı commit hiçbir zaman sayılmaz. Öğrenci asla force push yapmaz. Şüpheli bir durumda önceki haftalara da bakılır.<br>• Haftanın adını verdiği her sınıf arkadaşı (katkıcı), öğrencinin o haftaki notunun %10'unu katkı bonusu olarak kazanır.<br>• Kaçırılan ders için telafi yoktur. |
 | Mağaza Bonusu | en fazla 15 | Yayın bonusu. Mağaza izi S0–S6, her adımın teslim haftasında adım adım notlandırılır: öğrenci mağazayı seçer (S0), geliştirici hesabı açar (S1), uygulama kaydını oluşturur (S2), bir build yükler ve testçileri kaydeder (S3), beta testini test kanalında yürütür (S4), uygulamayı gönderir (S5) ve uygulama canlıya çıkar (S6). |
-| Sunum | 15 | 13–14. haftalarda proje savunması. Öğrenci uygulamayı sınav görevlisinin önünde mağazadan yükler ve koddaki ve belgelerdeki kararlar hakkındaki soruları yanıtlar. Uygulama geliştirme makinesinden değil, mağaza build'inden çalıştırılır. |
+| Sunum | 15 | 13. haftada (22–23 Aralık) proje savunması. EN şubesinde savunma iki haftaya yayılır: 13. hafta (22 Aralık) ve 14. hafta (29 Aralık). Öğrenci uygulamayı sınav görevlisinin önünde mağazadan yükler ve koddaki ve belgelerdeki kararlar hakkındaki soruları yanıtlar. Uygulama geliştirme makinesinden değil, mağaza sürümünden çalıştırılır. Sunumun kendisi 12 puan üzerinden notlandırılacak. 13. haftada sunan öğrenci, uygulamasını 5 Aralık Cumartesi 23:59'a kadar mağazanın incelemesine gönderdiyse (S5) ve uygulaması o gün ders başlamadan önce mağazada yayındaysa kalan 3 puanı da alacak, yani en yüksek not 15 olacak; 14. haftada sunan öğrenci en fazla 12 alabilecek. Mağazanın inceleme süresi öğrencinin sorumluluğundadır, bu nedenle uygulamanın erken gönderilmesi gerekir. EN şubesinde uygulaması 22 Aralık'ta ders başlamadan önce mağazada yayında ve indirilebilir olan öğrenciler 22 Aralık'ta, diğer öğrenciler 29 Aralık'ta sunar. |
 | Final Sınavı | 40 | Üniversitenin sınav döneminde yazılı final sınavı. SDLC belgelerini, yapay zeka günlüğü pratiğini ve on iki haftanın teknik içeriğini kapsar. |
 
 **Dönem notu:** Haftalık Projeler (45) + Sunum (15) + Final Sınavı (40) = 100. Mağaza bonusu en fazla 15 puan ekler. Dönem notu en fazla 100'dür.
@@ -72,13 +72,14 @@ Araçlar: Python 3.12, Git/GitHub, VS Code, sunucu için FastAPI, web istemcisi 
 | 5 | 20/10 · 21/10 | Tasarım ve API sözleşmesi; geliştirme sunucu iskeleti ve ilk otomatik testlerle başlar; gereksinimler ve test case'ler taban çizgisi (baseline) olur (ondan sonra her değişiklik bir change request'tir) |
 | 6 | 27/10 · 28/10 | Projenin kendi özelliği, uçtan uca: dersin girişi (e-postayla gönderilen 4 haneli kod) bağlanır ve her işlevsel `must` gereksinim sunucuda çalışır, testlerini CI'da geçer ve web istemcisinde sayfasına kavuşur, gereksinimden web sayfasına kadar; uygulama kaydı oluşturulur (S2) |
 | 7 | 03/11 · 04/11 | Mobil istemci: giriş ekranı telefonda çalışır ve sunucuyla konuşur; testler |
-| 8 | 10/11 · 11/11 | Ürünün sohbet botu sunucu ve barındırılan bir LLM API'si üzerinden mobil istemcide çalışır ve gereksinimlere bir change request ile girer; projenin kendi çekirdek özelliği üç katmanda birden çalışır; ilk build test kanalına çıkar ve testçiler kanala kaydedilir (S3); bundan sonra sunucu verilerini yeniden başlatmadan sonra da korur (bir dosyada ya da öğrencinin seçtiği bir veritabanında) |
-| 9 | 17/11 · 18/11 | Beta testi, 8. haftada kaydedilen testçilerle: öğrenciler hata listesi tutar ve test raporu yazar (S4) |
-| 10 | 24/11 · 25/11 | UAT ve gönderim: öğrenciler UAT raporunu ve dağıtım diyagramını yazar, uygulama incelemeye gönderilir (S5) |
-| 11 | 01/12 · 02/12 | Yayın ve sağlamlaştırma: öğrenciler inceleme düzeltmelerini uygular, uygulama mağazada canlıya çıkar ve son README yazılır (S6) |
-| 12 | 08/12 · 09/12 | Kapanış: poster ve savunma provası |
-| 13 | 15/12 · 16/12 | **Proje savunması (sunumlar)** |
-| 14 | 22/12 · 23/12 | **Proje savunması (sunumlar)** |
+| – | 10/11 · 11/11 | Ders yok |
+| 8 | 17/11 · 18/11 | Ürünün sohbet botu sunucu ve barındırılan bir LLM API'si üzerinden mobil istemcide çalışır ve gereksinimlere bir change request ile girer; projenin kendi çekirdek özelliği üç katmanda birden çalışır; ilk build test kanalına çıkar ve testçiler kanala kaydedilir (S3); bundan sonra sunucu verilerini yeniden başlatmadan sonra da korur (bir dosyada ya da öğrencinin seçtiği bir veritabanında) |
+| 9 | 24/11 · 25/11 | Beta testi, 8. haftada kaydedilen testçilerle: öğrenciler hata listesi tutar ve test raporu yazar (S4) |
+| 10 | 01/12 · 02/12 | UAT ve gönderim: öğrenciler UAT raporunu ve dağıtım diyagramını yazar, uygulama incelemeye gönderilir (S5) |
+| 11 | 08/12 · 09/12 | Yayın ve sağlamlaştırma: öğrenciler inceleme düzeltmelerini uygular, uygulama mağazada canlıya çıkar ve son README yazılır (S6) |
+| 12 | 15/12 · 16/12 | Kapanış: poster ve savunma provası |
+| 13 | 22/12 · 23/12 | **Proje savunması (sunumlar).** Uygulaması mağazada yayında olan öğrenci bu hafta sunar ve bunun için 15 sunum puanının 3'ünü alır. EN şubesinde bu hafta yalnız bu öğrenciler sunar. |
+| 14 | 29/12 · – | **EN şubesinin diğer öğrencilerinin proje savunması (sunumlar)** |
 | | | **Final Sınavı** |
 
 *Not: haftalık plan sınıfın ilerlemesine göre değiştirilebilir.*

@@ -1,4 +1,4 @@
-en=7
+en=8
 tr=7
 # Published by the course. Every student's checker reads this file over the
 # network on each run, so these lines are the single source of truth for which

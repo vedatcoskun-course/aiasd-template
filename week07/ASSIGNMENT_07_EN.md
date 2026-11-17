@@ -14,7 +14,7 @@ This week, the same version will run on a phone instead of the web. The server s
 
 - Develop the mobile app with Flutter, React Native–Expo, Kotlin or Swift.
 - The mobile app will call the same endpoints as your web page.
-- Each screen must contain its requirement in a comment, for example `// serves: REQ-002`. This comment will connect the screen to its requirement. In this way, the phone screen will be added to the chain of the requirement as its ninth link.
+- Each screen must contain its requirement in a comment, for example `// serves: REQ-002`. This comment will connect the screen to its requirement. In this way, the phone screen becomes the ninth task in the requirement's task list.
 
 What you do in the lecture
 
@@ -43,11 +43,11 @@ In the coming weeks, your product will include its chatbot. Your app will be com
 
 Before Week 8, collect the e-mail addresses of your testers. A new personal Google Play account needs 12 testers for 14 days. Also open an account with the LLM API that you will use. The key of this account must go only into `.env`.
 
-## The chain gets one more link
+## One more task is completed in the task list
 
-Each of your functional requirements is a chain of links. This week, the ninth link of the chain will form.
+Each of your functional requirements has a task list. This week, its ninth task is completed.
 
-| Link | Where it lives | Since |
+| Task | Where it lives | Since |
 |---|---|---|
 | 1 and 2. Requirements and use cases | `week02/requirements.json` and `week02/SRS.md` | Week 2 |
 | 3. Screens, with `serves:` | `week04/prototype/` | Week 4 |
@@ -57,7 +57,7 @@ Each of your functional requirements is a chain of links. This week, the ninth l
 | 8. The page in the web client | `web/` | Week 6 |
 | 9. The screen in the mobile client; this screen sends requests to the same endpoints | `mobile/`, with `// serves: REQ-…` | This week |
 
-`requirements.json` is still the source. The phone screen must do what the requirement and its test cases say, as the web page does. If the phone shows that a link is wrong, change that link first. Write a line about the change in `PROPOSAL.md`. For a requirement or a test case, this line is a change request, as in Week 6 §9.
+`requirements.json` is still the source. The phone screen must do what the requirement and its test cases say, as the web page does. If the phone shows that an earlier task is wrong, correct that task first. Write a line about the change in `PROPOSAL.md`. For a requirement or a test case, this line is a change request, as in Week 6 §9.
 
 ### What you need to know this week
 

@@ -1998,8 +1998,10 @@ def _git_out(*args: str) -> str | None:
 
 
 def live_pieces(week: int) -> tuple[list, set]:
-    """The pieces of the week's lecture work as (name, test on a repository path), and the screen files."""
-    if week != 7:
+    """The pieces of the week's lecture work as (name, test on a repository path), and the screen files.
+    Week 7: the app, the login screen, the screen of the student's own requirement and the tester round. Week 8 (VC,
+    16 Nov 2026): the file of the route POST /chat in server/ and the chat screen in mobile/."""
+    if week not in (7, 8):
         return [], set()
     screens: dict[str, list[str]] = {}
     for path, text in mobile_project()["sources"].items():
@@ -2015,6 +2017,13 @@ def live_pieces(week: int) -> tuple[list, set]:
     def tester(p: str) -> bool:
         return p in ("week07/mobile_runs.json", "week07/group_07.json")
 
+    if week == 8:
+        req = chat_requirement()
+        chat = {p for p, r in screens.items() if req and req in r}
+        route_files = {Path(f).as_posix() for k, (f, _) in route_defs().items()
+                       if k.startswith("POST ") and k.rstrip("/").endswith("/chat")}
+        return [("the route POST /chat in server/", lambda p: p in route_files),
+                ("the chat screen", lambda p: p in chat)], set(screens)
     return [("the app in mobile/", app), ("the login screen", lambda p: p in login),
             ("the screen of your requirement", lambda p: p in own), ("the tester round", tester)], set(screens)
 
@@ -2386,7 +2395,325 @@ def week7() -> None:
     check_ai_log(7)
 
 
-CHECKS = {1: week1, 2: week2, 3: week3, 4: week4, 5: week5, 6: week6, 7: week7}
+# ── Week 8: the chatbot, the data kept after a restart, and the first build for testers ──────────
+
+COMPUTER_PLACEHOLDERS = {"the name of your computer", "the output of git config user.email", "your student number"}
+LLM_KEY_NAME = "LLM_API_KEY"
+
+
+def computers() -> list | None:
+    """The "computers" list of student.json (VC, 14 Nov 2026: one unshared computer and one unshared GitHub account);
+    None when student.json has no such list."""
+    data = load_json("student.json")
+    items = data.get("computers") if isinstance(data, dict) else None
+    return [i for i in items if isinstance(i, dict)] if isinstance(items, list) else None
+
+
+def _this_hostname() -> str:
+    """The name of this computer, as Step 1 of the Week 8 assignment shows it: scutil --get LocalHostName on a Mac,
+    hostname elsewhere."""
+    import platform
+    import socket
+    if platform.system() == "Darwin":
+        try:
+            out = subprocess.run(["scutil", "--get", "LocalHostName"], capture_output=True, text=True, timeout=10)
+            if out.returncode == 0 and out.stdout.strip():
+                return out.stdout.strip()
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    return socket.gethostname()
+
+
+def _host_key(name: str) -> str:
+    return re.sub(r"\.(local|lan|home)$", "", str(name).strip().lower())
+
+
+def live_computer(week: int) -> list[str]:
+    """From Week 8, on the student's own computer only (never in GitHub Actions or in the instructor's capture): a
+    warning when this computer, or its Git e-mail, is not listed in student.json. Not a check, so it counts for no
+    mark; the instructor compares the list with the commits."""
+    if week < 8 or os.environ.get("GITHUB_ACTIONS") or os.environ.get("AIASD_SLOT"):
+        return []
+    items = computers()
+    if not items:
+        return []
+    host = _this_hostname()
+    email = (_git_out("config", "user.email") or "").strip()
+    hosts = {_host_key(i.get("hostname", "")) for i in items}
+    emails = {str(i.get("git_email", "")).strip().lower() for i in items}
+    out = []
+    if host and _host_key(host) not in hosts:
+        out.append(say("WARNING: this computer ({host}) is not listed in student.json. You are not allowed to use a "
+                       "computer that is not listed there.", host=host))
+    if email and email.lower() not in emails:
+        out.append(say("WARNING: the Git e-mail on this computer ({email}) is not a git_email of student.json.",
+                       email=email))
+    return out
+
+
+def chat_rows() -> list[dict]:
+    """The rows of week05/api.md for POST /chat (a prefix such as /api/chat counts too)."""
+    return [e for e in api_endpoints() if e["key"].startswith("POST ") and e["key"].rstrip("/").endswith("/chat")]
+
+
+def chat_requirement() -> str:
+    """The requirement of the chatbot: the functional must requirement that the POST /chat row of api.md names
+    (the first one); "" when there is none."""
+    _, fmust = must_requirements()
+    for e in chat_rows():
+        for r in e["reqs"]:
+            if r in fmust:
+                return r
+    return ""
+
+
+def _md_parts(path: str) -> dict[int, str]:
+    """The numbered parts of a log ('## 1. ...'), comments removed: number -> the text under the heading."""
+    text = re.sub(r"<!--.*?-->", "", read(path) or "", flags=re.DOTALL)
+    parts: dict[int, str] = {}
+    marks = list(re.finditer(r"^##\s*(\d+)\.[^\n]*$", text, re.M))
+    for k, m in enumerate(marks):
+        end = marks[k + 1].start() if k + 1 < len(marks) else len(text)
+        parts[int(m.group(1))] = text[m.end():end].strip()
+    return parts
+
+
+def _table_rows(text: str) -> list[list[str]]:
+    """The body rows of the first Markdown table in text, as cells; rows whose cells are all empty are left out."""
+    rows = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if all(re.fullmatch(r":?-{2,}:?", c) for c in cells if c):
+            continue
+        rows.append(cells)
+    return [r for r in rows[1:] if any(r)]  # rows[0] is the header
+
+
+def _prose(text: str) -> str:
+    """The text of a part without its table lines."""
+    return "\n".join(ln for ln in text.splitlines() if not ln.strip().startswith("|")).strip()
+
+
+def week8() -> None:
+    """The chatbot as a change request: a functional must requirement, a manual test case, the api.md row of
+    POST /chat (401, 429, 503), the route on the server with the key only in server/.env, and the chat screen in
+    mobile/ (serves:, POST /chat, the label "AI answer"). student.json lists the computers of the student. By
+    Saturday: S3 (at least 12 testers, at least 6 of them classmates), PRIVACY.md, the tests still green, and the new
+    AI log (how the assistants were used in the whole week)."""
+    # --- in the lecture: the computers in student.json -----------------------------------------------------
+    items = computers()
+    me = my_number()
+    if items is None:
+        found = "no \"computers\" list in student.json."
+        ok = False
+    else:
+        empty = [n for n, i in enumerate(items, 1)
+                 if not filled(i.get("hostname")) or str(i.get("hostname", "")).strip() in COMPUTER_PLACEHOLDERS
+                 or "@" not in str(i.get("git_email", "")) or not filled(i.get("owner"))
+                 or str(i.get("owner", "")).strip() in COMPUTER_PLACEHOLDERS]
+        no_why = len([i for i in items if len(str(i.get("why", "")).strip()) < 10])
+        ok = bool(items) and not empty and (len(items) == 1 or no_why <= 1)
+        found = ("an empty list." if not items
+                 else f"entry {empty[0]} without a real hostname, git_email or owner." if empty
+                 else f"{pl(len(items), 'computer')}, but {pl(no_why, 'entry', 'entries')} without a reason in why.")
+    check(8, "student.json lists your computers", ok,
+          'student.json must list your computers in "computers": for each computer, its hostname, the git_email that '
+          'you use on it and its owner. If you list a second computer, write in "why" why you need it. Found: ' + found)
+
+    # --- in the lecture: the change request of the chatbot ---------------------------------------------------
+    rows = chat_rows()
+    check(8, "week05/api.md has the row of POST /chat", bool(rows),
+          "week05/api.md must have a row for POST /chat, the route of your chatbot. Found: no such row.")
+    errs = " ".join(e["errors"] for e in rows)
+    missing = [c for c in ("401", "429", "503") if c not in errs]
+    if rows:
+        check(8, "the POST /chat row of week05/api.md names the errors 401, 429 and 503", not missing,
+              "The POST /chat row of week05/api.md must name the errors 401 (no token), 429 (after the daily limit) "
+              f"and 503 (the LLM API does not answer). Found: no {missing}.")
+    else:
+        later(8, "the POST /chat row of week05/api.md names the errors 401, 429 and 503",
+              "It is checked once week05/api.md has the row of POST /chat.")
+    req = chat_requirement()
+    reqs = requirement_index()
+    check(8, "the POST /chat row names a functional must requirement for the chatbot", bool(req),
+          "The POST /chat row of week05/api.md must name, in its REQ column, a new functional must requirement in "
+          "week02/requirements.json: the requirement of your chatbot. Found: "
+          + ("no POST /chat row." if not rows else "no functional must requirement in that row."))
+    if req:
+        acc = str(reqs[req].get("acceptance", "") or "")
+        check(8, f"the acceptance criterion of {req} says how many messages a user can send in a day",
+              bool(re.search(r"\d", acc)) and len(acc.strip()) >= 40,
+              f"The acceptance criterion of {req} in week02/requirements.json must say what the chatbot answers, that "
+              "only a logged-in user can use it, that it uses only the data of this user, and how many messages a "
+              "user can send in a day (a number). Found: " + ("no number in it." if len(acc.strip()) >= 40
+                                                              else "it is empty or too short."))
+        manual = [c for c in (test_cases() or []) if str(c.get("req", "")).strip() == req and not c.get("dropped")
+                  and str(c.get("run", "")).strip().lower() == "manual"]
+        check(8, f'week04/test_cases.json has a test case of {req} with "run": "manual"', bool(manual),
+              f'week04/test_cases.json must have at least one test case of {req} with "run": "manual". Found: none.')
+        text = read("PROPOSAL.md") or ""
+        m = re.search(r"^## Change log.*?$", text, re.M)
+        log = re.sub(r"<!--.*?-->", "", text[m.end():], flags=re.DOTALL) if m else ""
+        cr = [ln for ln in log.splitlines() if req in ln and re.search(r"20\d\d-\d\d-\d\d", ln)]
+        check(8, f"PROPOSAL.md has a dated Change log line for {req}", bool(cr),
+              f"The Change log of PROPOSAL.md must have one dated line for the change request of the chatbot that "
+              f"names {req}, its test case and the api.md row. Found: no dated line names {req}.")
+    else:
+        why = "It is checked once the POST /chat row of week05/api.md names the requirement of the chatbot."
+        later(8, "the acceptance criterion of the chatbot's requirement says how many messages a user can send in a day", why)
+        later(8, 'week04/test_cases.json has a test case of the chatbot with "run": "manual"', why)
+        later(8, "PROPOSAL.md has a dated Change log line for the chatbot", why)
+
+    # --- in the lecture: POST /chat on the server, the key only in server/.env --------------------------------
+    routes = [k for k in route_defs() if k.startswith("POST ") and k.rstrip("/").endswith("/chat")]
+    check(8, "server/ has the route POST /chat", bool(routes),
+          "server/ must have the route POST /chat. Found: " + ("no server/ folder." if not (ROOT / "server").is_dir()
+                                                              else "no such route."))
+    server_code = "\n".join((p.read_text(encoding="utf-8", errors="replace") for p in (ROOT / "server").rglob("*.py")
+                             if "tests" not in p.parts and ".venv" not in p.parts)) if (ROOT / "server").is_dir() else ""
+    example = read("server/.env.example") or read(".env.example") or ""
+    check(8, f"the server reads {LLM_KEY_NAME} from the environment, and .env.example names it without a value",
+          LLM_KEY_NAME in server_code and bool(re.search(rf"^\s*{LLM_KEY_NAME}\s*=\s*$", example, re.M)),
+          f'Your server must read the key of the LLM API with os.getenv("{LLM_KEY_NAME}"), and server/.env.example '
+          f"must have the line {LLM_KEY_NAME}= with no value after it. Found: "
+          + (f"{LLM_KEY_NAME} is not in the code of server/." if LLM_KEY_NAME not in server_code
+             else f"no empty {LLM_KEY_NAME}= line in .env.example."))
+
+    # --- in the lecture: the chat screen in mobile/ --------------------------------------------------------
+    src = mobile_project()["sources"]
+    if req:
+        screens = {p: t for p, t in src.items() if req in mobile_serves(t)}
+        calling = [p for p, t in screens.items() if calls_path(t, "POST /chat")]
+        check(8, f"mobile/ has a screen with serves: {req} that sends the message to POST /chat", bool(calling),
+              f"mobile/ must have the chat screen: its source file names {req} in a comment like // serves: {req}, "
+              "and it sends the message to POST /chat. Found: "
+              + ("no source file in mobile/ names it." if not screens else "the screen sends nothing to /chat."))
+        check(8, 'the chat screen shows each answer with the label "AI answer"',
+              any("AI answer" in t for t in screens.values()),
+              f'The chat screen (the source file with serves: {req}) must show each answer of the chatbot with the label '
+              '"AI answer". Found: ' + ("no chat screen." if not screens else 'no "AI answer" in it.'))
+    else:
+        why = "It is checked once the POST /chat row of week05/api.md names the requirement of the chatbot."
+        later(8, "mobile/ has the chat screen that sends the message to POST /chat", why)
+        later(8, 'the chat screen shows each answer with the label "AI answer"', why)
+
+    # --- by Saturday: S3, the first build on the test track ----------------------------------------------------
+    st = load_json("week04/store.json")
+    s3 = st.get("S3") if isinstance(st, dict) and isinstance(st.get("S3"), dict) else {}
+    ok3 = (re.fullmatch(r"20\d\d-\d\d-\d\d", str(s3.get("date", "")).strip()) and filled(s3.get("track"))
+           and filled(s3.get("version")))
+    check(8, "store.json S3 is filled in", bool(ok3),
+          "week04/store.json S3 must have the date your first build went to the test track, like 2026-11-21, the name "
+          "of the track (track) and the version of the build (version). Found: one of them missing or wrong.", DEADLINE)
+    mates = s3.get("classmate_testers") if isinstance(s3.get("classmate_testers"), list) else []
+    others = s3.get("other_testers") if isinstance(s3.get("other_testers"), list) else []
+    nums = {str(x).strip().split("-")[0] for x in mates if re.fullmatch(r"\d{9}(-\d+)?", str(x).strip())}
+    nums.discard(me)
+    names = {" ".join(str(x).split()).lower() for x in others
+             if len(str(x).split()) >= 2 and "@" not in str(x) and filled(x)}
+    mails = [x for x in [*mates, *others] if "@" in str(x)]
+    check(8, "store.json S3 names at least 6 classmates as testers", len(nums) >= 6 and not mails,
+          'week04/store.json S3 must list in "classmate_testers" the student numbers of at least 6 classmates who are '
+          "your testers, not your own number and no e-mail address. Found: "
+          + (f"{pl(len(mails), 'e-mail address', 'e-mail addresses')}; e-mail addresses never go into your "
+             "repository." if mails else f"{pl(len(nums), 'valid number')}."), DEADLINE)
+    check(8, "store.json S3 lists at least 12 testers", len(nums) + len(names) >= 12,
+          'week04/store.json S3 must list at least 12 testers: the student numbers in "classmate_testers" and the '
+          'first name and the surname of each other tester in "other_testers". '
+          f"Found: {len(nums)} + {len(names)}.", DEADLINE)
+    url = str(s3.get("privacy_url", "")).strip()
+    check(8, "store.json S3 gives the public address of your privacy text",
+          bool(re.fullmatch(r"https://[^\s/]+\.[^\s/]+/\S+", url)) and "..." not in url and "your-name" not in url,
+          'week04/store.json S3 must give in "privacy_url" the public https address of your privacy text, for example '
+          "the address of a public GitHub Gist. Found: " + (repr(url) if url else "nothing."), DEADLINE)
+    ev = str(s3.get("evidence", "")).strip().replace("\\", "/")
+    ev_ok = (bool(ev) and ".." not in ev and not Path(ev).is_absolute() and ":" not in ev
+             and ((ROOT / ev).is_file() or (ROOT / "week04" / ev).is_file()))
+    check(8, "store.json S3 screenshot is saved", ev_ok,
+          "The file named in 'evidence' in week04/store.json S3 must be saved in week04/. Found: no such file.", DEADLINE)
+    privacy = re.sub(r"<!--.*?-->", "", read("PRIVACY.md") or "", flags=re.DOTALL).strip()
+    check(8, "PRIVACY.md holds the privacy text of your app", len(privacy) >= 300,
+          "PRIVACY.md, at the root of your repository, must hold the privacy text of your app. It must say that the "
+          "messages of the chatbot go to your LLM API and name the provider. Found: "
+          + ("no PRIVACY.md." if read("PRIVACY.md") is None else f"{pl(len(privacy), 'character')}."), DEADLINE)
+
+    # --- by Saturday: the tests stay green, no build folders in git ---------------------------------------------
+    musts, _ = must_requirements()
+    cases = test_cases() or []
+    res = test_results()
+    if not res["ran"]:
+        ok, found = False, res["why"]
+    else:
+        red = [f"LOGIN_{n}" for n in LOGIN_TESTS if res["outcomes"].get(f"LOGIN_{n}", ("", ""))[0] != "passed"]
+        ok, found = not red, f"not passing: {red[:4]}"
+    check(8, "all ten course tests still pass", ok,
+          f"All ten course tests (course_tests/) must still pass. Found: {found}.", DEADLINE)
+    server_tc = sorted({str(c.get("id", "")).strip() for c in cases if not c.get("dropped")
+                        and str(c.get("req", "")).strip() in musts and str(c.get("run", "")).strip().lower() == "server"})
+    if not res["ran"]:
+        ok, found = False, res["why"]
+    elif not server_tc:
+        ok, found = False, 'no test case of a must requirement with "run": "server"'
+    else:
+        failing = [i for i in server_tc if res["outcomes"].get(i, ("", ""))[0] != "passed"]
+        ok, found = not failing, f"no passing test for {failing[:4]}"
+    check(8, 'every test case of a must requirement with run "server" still has a test that passes', ok,
+          'Every test case of a must requirement with "run": "server" in week04/test_cases.json must still have a test '
+          f"in server/tests/ named by its id that passes. Found: {found}.", DEADLINE)
+    there = (ROOT / "mobile").is_dir()
+    tracked = mobile_tracked_build()
+    check(8, "no build files of mobile/ are in git", there and not tracked,
+          "mobile/ must not have in git the folders your framework builds again (node_modules, build, .dart_tool, "
+          ".gradle, Pods, .expo): add them to mobile/.gitignore, then git rm -r --cached mobile/<the folder>. Found: "
+          + ("no mobile/ folder." if not there else f"in git: {tracked}."), DEADLINE)
+
+    # --- by Saturday: the AI log of the whole week (no Evidence block from Week 8) --------------------------
+    path = ai_log_path(8)
+    parts = _md_parts(path)
+    short = [n for n in (3, 4, 5) if len(_prose(parts.get(n, ""))) < 20]
+    check(8, f"{path} is filled in", read(path) is not None and not short,
+          f"{path} must be filled in, in your own words: parts 3, 4 and 5 each need at least one real sentence. "
+          "Found: " + ("no such file." if read(path) is None else f"part {short[0]} is empty." if short else "every part is filled in."),
+          DEADLINE)
+    assistants = _table_rows(parts.get(1, ""))
+    uses = _table_rows(parts.get(2, ""))
+    if not assistants and not uses and short:
+        # VC, 13 Oct 2026: an untouched file earns no free ticks; a week without an assistant is allowed once the
+        # log is written (parts 3 to 5)
+        why = "It is checked once the log is filled in."
+        later(8, f"{path} lists each assistant with its model, and whether it is free or paid", why, DEADLINE)
+        later(8, f"every use of an assistant in {path} is a full row with its commit", why, DEADLINE)
+        return
+    half = [n for n, r in enumerate(assistants, 1) if len(r) < 3 or not all(r[:3])
+            or not re.search(r"\b(free|paid|ücretsiz|ücretli)\b", r[2], re.I)]
+    check(8, f"{path} lists each assistant with its model, and whether it is free or paid", not half,
+          f"Every row of part 1 of {path} must name the assistant, its model, and free or paid, with the plan of a "
+          f"paid one. Found: row {half[0] if half else 0} is not complete.", DEADLINE)
+    bad_use = [n for n, r in enumerate(uses, 1) if len(r) < 6 or not all(r[:6])]
+    no_commit = []
+    for n, r in enumerate(uses, 1):
+        cell = r[5] if len(r) >= 6 else ""
+        shas = re.findall(r"(?<![0-9A-Za-z])[0-9a-f]{7,40}(?![0-9A-Za-z])", cell)
+        if re.search(r"not kept|tutulmadı|kullanılmadı", cell, re.I):
+            continue
+        if not any(is_commit(s) or (is_commit(s) is None and re.search(r"[a-f]", s)) for s in shas):
+            no_commit.append(n)
+    if assistants and not uses:
+        check(8, f"every use of an assistant in {path} is a full row with its commit", False,
+              f"Part 2 of {path} must have one row for each real use of an assistant this week. Found: part 1 lists "
+              "an assistant, but part 2 has no row.", DEADLINE)
+    else:
+        check(8, f"every use of an assistant in {path} is a full row with its commit", not bad_use and not no_commit,
+              f"Every row of part 2 of {path} must fill in all six columns, and its last column must name the commit "
+              'where the result went (the first 7 characters of its id) or say "not kept". Found: '
+              + (f"row {bad_use[0]} is not complete." if bad_use else f"row {no_commit[0] if no_commit else 0} names "
+                 "no commit of this repository."), DEADLINE)
+
+
+CHECKS = {1: week1, 2: week2, 3: week3, 4: week4, 5: week5, 6: week6, 7: week7, 8: week8}
 
 
 # ── secrets: this one runs for every week ────────────────────────────
@@ -2396,6 +2723,10 @@ SECRET_PATTERNS = [
     (r"AIza[0-9A-Za-z\-_]{30,}", "Google API key"),
     (r"sk-[A-Za-z0-9]{32,}", "OpenAI-style API key"),
     (r"ghp_[A-Za-z0-9]{20,}", "GitHub token"),
+    (r"github_pat_[A-Za-z0-9_]{40,}", "GitHub token"),  # VC, 16 Nov 2026: the free LLM APIs of Week 8
+    (r"gsk_[A-Za-z0-9]{40,}", "Groq API key"),
+    (r"sk-or-v1-[0-9a-f]{40,}", "OpenRouter API key"),
+    (r"hf_[A-Za-z0-9]{30,}", "Hugging Face token"),
 ]
 
 
@@ -2451,7 +2782,7 @@ def check_secrets() -> bool:
 #   change its entry here; `aiasd-claude/scripts/check_tr_coverage.py` lists the ones that
 #   no longer match. Weeks in TR_WEEKS are fully covered; a later week is shown in English.
 
-TR_WEEKS = frozenset({1, 2, 3, 4, 5, 6, 7})
+TR_WEEKS = frozenset({1, 2, 3, 4, 5, 6, 7, 8})
 
 TR_RULES: list[tuple[str, str]] = [
     # --- every week: the AI log ---------------------------------------------------------------
@@ -3363,6 +3694,122 @@ TR_RULES: list[tuple[str, str]] = [
      "week07/ai_log_07.md değişikliğin git diff'ini içeriyor"),
     ('week07/ai_log_07.md must hold, in the Evidence block, the git diff of the change as your terminal showed it (the lines that start with diff --git and @@). Found: none.',
      "week07/ai_log_07.md, Evidence bloğunda değişikliğin git diff'ini terminalinin gösterdiği gibi içermeli (diff --git ve @@ ile başlayan satırlar). Bulunan: yok."),
+    # --- Week 8: the chatbot, S3 and the AI log of the whole week (VC, 16 Nov 2026) ---------------------------
+    # the NOT YET names come first: their "the chatbot" would otherwise match the {r} of the entries below
+    ("the acceptance criterion of the chatbot's requirement says how many messages a user can send in a day",
+     "sohbet botu gereksiniminin kabul kriteri bir kullanıcının bir günde kaç mesaj gönderebileceğini söylüyor"),
+    ('week04/test_cases.json has a test case of the chatbot with "run": "manual"',
+     'week04/test_cases.json içinde sohbet botu için "run": "manual" olan bir test case var'),
+    ("PROPOSAL.md has a dated Change log line for the chatbot",
+     "PROPOSAL.md Change log'unda sohbet botu için tarihli bir satır var"),
+    ("mobile/ has the chat screen that sends the message to POST /chat",
+     "mobile/ içinde mesajı POST /chat'e gönderen sohbet ekranı var"),
+    ("It is checked once week05/api.md has the row of POST /chat.",
+     "week05/api.md içinde POST /chat satırı olduğunda kontrol edilecek."),
+    ("It is checked once the POST /chat row of week05/api.md names the requirement of the chatbot.",
+     "week05/api.md içindeki POST /chat satırı sohbet botunun gereksinimini andığında kontrol edilecek."),
+    ("It is checked once the log is filled in.", "Log doldurulduğunda kontrol edilecek."),
+    ("student.json lists your computers", "student.json bilgisayarlarını listeliyor"),
+    ('student.json must list your computers in "computers": for each computer, its hostname, the git_email that you use on it and its owner. If you list a second computer, write in "why" why you need it. Found: no "computers" list in student.json.',
+     'student.json, "computers" içinde bilgisayarlarını listelemeli: her bilgisayar için hostname, onda kullandığın git_email ve sahibi (owner). İkinci bir bilgisayar listelersen "why" alanına ona neden ihtiyacın olduğunu yaz. Bulunan: student.json içinde "computers" listesi yok.'),
+    ('student.json must list your computers in "computers": for each computer, its hostname, the git_email that you use on it and its owner. If you list a second computer, write in "why" why you need it. Found: an empty list.',
+     'student.json, "computers" içinde bilgisayarlarını listelemeli: her bilgisayar için hostname, onda kullandığın git_email ve sahibi (owner). İkinci bir bilgisayar listelersen "why" alanına ona neden ihtiyacın olduğunu yaz. Bulunan: boş bir liste.'),
+    ('student.json must list your computers in "computers": for each computer, its hostname, the git_email that you use on it and its owner. If you list a second computer, write in "why" why you need it. Found: entry {n} without a real hostname, git_email or owner.',
+     'student.json, "computers" içinde bilgisayarlarını listelemeli: her bilgisayar için hostname, onda kullandığın git_email ve sahibi (owner). İkinci bir bilgisayar listelersen "why" alanına ona neden ihtiyacın olduğunu yaz. Bulunan: {n}. kayıtta gerçek bir hostname, git_email ya da owner yok.'),
+    ('student.json must list your computers in "computers": for each computer, its hostname, the git_email that you use on it and its owner. If you list a second computer, write in "why" why you need it. Found: {n} {u}, but {m} {v} without a reason in why.',
+     'student.json, "computers" içinde bilgisayarlarını listelemeli: her bilgisayar için hostname, onda kullandığın git_email ve sahibi (owner). İkinci bir bilgisayar listelersen "why" alanına ona neden ihtiyacın olduğunu yaz. Bulunan: {n} bilgisayar var, ama {m} kaydın why alanında gerekçe yok.'),
+    ("week05/api.md has the row of POST /chat", "week05/api.md içinde POST /chat satırı var"),
+    ("week05/api.md must have a row for POST /chat, the route of your chatbot. Found: no such row.",
+     "week05/api.md içinde sohbet botunun route'u olan POST /chat için bir satır olmalı. Bulunan: böyle bir satır yok."),
+    ("the POST /chat row of week05/api.md names the errors 401, 429 and 503",
+     "week05/api.md içindeki POST /chat satırı 401, 429 ve 503 hatalarını anıyor"),
+    ("The POST /chat row of week05/api.md must name the errors 401 (no token), 429 (after the daily limit) and 503 (the LLM API does not answer). Found: no {x}.",
+     "week05/api.md içindeki POST /chat satırı 401 (token yok), 429 (günlük sınırdan sonra) ve 503 (LLM API'si cevap vermiyor) hatalarını anmalı. Bulunan: eksik olanlar: {x}."),
+    ("the POST /chat row names a functional must requirement for the chatbot",
+     "POST /chat satırı sohbet botu için işlevsel bir must gereksinimi anıyor"),
+    ("The POST /chat row of week05/api.md must name, in its REQ column, a new functional must requirement in week02/requirements.json: the requirement of your chatbot. Found: no POST /chat row.",
+     "week05/api.md içindeki POST /chat satırı, REQ sütununda week02/requirements.json içindeki yeni bir işlevsel must gereksinimi anmalı: sohbet botunun gereksinimi. Bulunan: POST /chat satırı yok."),
+    ("The POST /chat row of week05/api.md must name, in its REQ column, a new functional must requirement in week02/requirements.json: the requirement of your chatbot. Found: no functional must requirement in that row.",
+     "week05/api.md içindeki POST /chat satırı, REQ sütununda week02/requirements.json içindeki yeni bir işlevsel must gereksinimi anmalı: sohbet botunun gereksinimi. Bulunan: o satırda işlevsel bir must gereksinim yok."),
+    ("the acceptance criterion of {r} says how many messages a user can send in a day",
+     "{r} gereksiniminin kabul kriteri bir kullanıcının bir günde kaç mesaj gönderebileceğini söylüyor"),
+    ("The acceptance criterion of {r} in week02/requirements.json must say what the chatbot answers, that only a logged-in user can use it, that it uses only the data of this user, and how many messages a user can send in a day (a number). Found: no number in it.",
+     "week02/requirements.json içinde {r} gereksiniminin kabul kriteri sohbet botunun neye cevap verdiğini, onu yalnız giriş yapmış bir kullanıcının kullanabileceğini, yalnız bu kullanıcının verisini kullandığını ve bir kullanıcının bir günde kaç mesaj gönderebileceğini (bir sayı) söylemeli. Bulunan: içinde bir sayı yok."),
+    ("The acceptance criterion of {r} in week02/requirements.json must say what the chatbot answers, that only a logged-in user can use it, that it uses only the data of this user, and how many messages a user can send in a day (a number). Found: it is empty or too short.",
+     "week02/requirements.json içinde {r} gereksiniminin kabul kriteri sohbet botunun neye cevap verdiğini, onu yalnız giriş yapmış bir kullanıcının kullanabileceğini, yalnız bu kullanıcının verisini kullandığını ve bir kullanıcının bir günde kaç mesaj gönderebileceğini (bir sayı) söylemeli. Bulunan: boş ya da çok kısa."),
+    ('week04/test_cases.json has a test case of {r} with "run": "manual"',
+     'week04/test_cases.json içinde {r} için "run": "manual" olan bir test case var'),
+    ('week04/test_cases.json must have at least one test case of {r} with "run": "manual". Found: none.',
+     'week04/test_cases.json içinde {r} için "run": "manual" olan en az bir test case olmalı. Bulunan: yok.'),
+    ("PROPOSAL.md has a dated Change log line for {r}", "PROPOSAL.md Change log'unda {r} için tarihli bir satır var"),
+    ("The Change log of PROPOSAL.md must have one dated line for the change request of the chatbot that names {r}, its test case and the api.md row. Found: no dated line names {s}.",
+     "PROPOSAL.md'nin Change log'unda sohbet botunun değişiklik isteği için {r} gereksinimini, onun test case'ini ve api.md satırını anan tarihli bir satır olmalı. Bulunan: {s} gereksinimini anan tarihli bir satır yok."),
+    ("server/ has the route POST /chat", "server/ içinde POST /chat route'u var"),
+    ("server/ must have the route POST /chat. Found: no server/ folder.",
+     "server/ içinde POST /chat route'u olmalı. Bulunan: server/ klasörü yok."),
+    ("server/ must have the route POST /chat. Found: no such route.",
+     "server/ içinde POST /chat route'u olmalı. Bulunan: böyle bir route yok."),
+    ("the server reads LLM_API_KEY from the environment, and .env.example names it without a value",
+     "sunucu LLM_API_KEY'i ortamdan okuyor ve .env.example onu değeri olmadan anıyor"),
+    ('Your server must read the key of the LLM API with os.getenv("LLM_API_KEY"), and server/.env.example must have the line LLM_API_KEY= with no value after it. Found: LLM_API_KEY is not in the code of server/.',
+     'Sunucun LLM API anahtarını os.getenv("LLM_API_KEY") ile okumalı ve server/.env.example içinde, arkasında değer olmayan LLM_API_KEY= satırı olmalı. Bulunan: server/ kodunda LLM_API_KEY yok.'),
+    ('Your server must read the key of the LLM API with os.getenv("LLM_API_KEY"), and server/.env.example must have the line LLM_API_KEY= with no value after it. Found: no empty LLM_API_KEY= line in .env.example.',
+     'Sunucun LLM API anahtarını os.getenv("LLM_API_KEY") ile okumalı ve server/.env.example içinde, arkasında değer olmayan LLM_API_KEY= satırı olmalı. Bulunan: .env.example içinde boş bir LLM_API_KEY= satırı yok.'),
+    ("mobile/ has a screen with serves: {r} that sends the message to POST /chat",
+     "mobile/ içinde serves: {r} olan ve mesajı POST /chat'e gönderen bir ekran var"),
+    ("mobile/ must have the chat screen: its source file names {r} in a comment like // serves: {s}, and it sends the message to POST /chat. Found: no source file in mobile/ names it.",
+     "mobile/ içinde sohbet ekranı olmalı: kaynak dosyası {r} gereksinimini // serves: {s} gibi bir yorumda anmalı ve mesajı POST /chat'e göndermeli. Bulunan: mobile/ içinde onu anan bir kaynak dosyası yok."),
+    ("mobile/ must have the chat screen: its source file names {r} in a comment like // serves: {s}, and it sends the message to POST /chat. Found: the screen sends nothing to /chat.",
+     "mobile/ içinde sohbet ekranı olmalı: kaynak dosyası {r} gereksinimini // serves: {s} gibi bir yorumda anmalı ve mesajı POST /chat'e göndermeli. Bulunan: ekran /chat'e hiçbir şey göndermiyor."),
+    ('the chat screen shows each answer with the label "AI answer"',
+     'sohbet ekranı her cevabı "AI answer" etiketiyle gösteriyor'),
+    ('The chat screen (the source file with serves: {r}) must show each answer of the chatbot with the label "AI answer". Found: no chat screen.',
+     'Sohbet ekranı (serves: {r} olan kaynak dosyası) sohbet botunun her cevabını "AI answer" etiketiyle göstermeli. Bulunan: sohbet ekranı yok.'),
+    ('The chat screen (the source file with serves: {r}) must show each answer of the chatbot with the label "AI answer". Found: no "AI answer" in it.',
+     'Sohbet ekranı (serves: {r} olan kaynak dosyası) sohbet botunun her cevabını "AI answer" etiketiyle göstermeli. Bulunan: içinde "AI answer" yok.'),
+    ("store.json S3 is filled in", "store.json S3 dolduruldu"),
+    ("week04/store.json S3 must have the date your first build went to the test track, like 2026-11-21, the name of the track (track) and the version of the build (version). Found: one of them missing or wrong.",
+     "week04/store.json içindeki S3'te ilk build'inin test kanalına çıktığı tarih (2026-11-21 gibi), kanalın adı (track) ve build'in sürümü (version) olmalı. Bulunan: biri eksik ya da yanlış."),
+    ("store.json S3 names at least 6 classmates as testers", "store.json S3 en az 6 sınıf arkadaşını testçi olarak anıyor"),
+    ('week04/store.json S3 must list in "classmate_testers" the student numbers of at least 6 classmates who are your testers, not your own number and no e-mail address. Found: {n} {u}; e-mail addresses never go into your repository.',
+     'week04/store.json içindeki S3, "classmate_testers" alanında testçin olan en az 6 sınıf arkadaşının öğrenci numarasını listelemeli; kendi numaranı ve e-posta adreslerini değil. Bulunan: {n} e-posta adresi; e-posta adresleri asla repona girmez.'),
+    ('week04/store.json S3 must list in "classmate_testers" the student numbers of at least 6 classmates who are your testers, not your own number and no e-mail address. Found: {n} {u}.',
+     'week04/store.json içindeki S3, "classmate_testers" alanında testçin olan en az 6 sınıf arkadaşının öğrenci numarasını listelemeli; kendi numaranı ve e-posta adreslerini değil. Bulunan: {n} geçerli numara.'),
+    ("store.json S3 lists at least 12 testers", "store.json S3 en az 12 testçi listeliyor"),
+    ('week04/store.json S3 must list at least 12 testers: the student numbers in "classmate_testers" and the first name and the surname of each other tester in "other_testers". Found: {n} + {m}.',
+     'week04/store.json içindeki S3 en az 12 testçi listelemeli: "classmate_testers" içinde öğrenci numaraları, "other_testers" içinde diğer her testçinin adı ve soyadı. Bulunan: {n} + {m}.'),
+    ("store.json S3 gives the public address of your privacy text",
+     "store.json S3 gizlilik metninin herkese açık adresini veriyor"),
+    ('week04/store.json S3 must give in "privacy_url" the public https address of your privacy text, for example the address of a public GitHub Gist. Found: nothing.',
+     'week04/store.json içindeki S3, "privacy_url" alanında gizlilik metninin herkese açık https adresini vermeli, örneğin herkese açık bir GitHub Gist\'in adresini. Bulunan: hiçbir şey.'),
+    ('week04/store.json S3 must give in "privacy_url" the public https address of your privacy text, for example the address of a public GitHub Gist. Found: {x}',
+     'week04/store.json içindeki S3, "privacy_url" alanında gizlilik metninin herkese açık https adresini vermeli, örneğin herkese açık bir GitHub Gist\'in adresini. Bulunan: {x}'),
+    ("store.json S3 screenshot is saved", "store.json S3 ekran görüntüsü kaydedildi"),
+    ("The file named in 'evidence' in week04/store.json S3 must be saved in week04/. Found: no such file.",
+     "week04/store.json S3 içindeki 'evidence' alanında adı geçen dosya week04/ içine kaydedilmeli. Bulunan: böyle bir dosya yok."),
+    ("PRIVACY.md holds the privacy text of your app", "PRIVACY.md uygulamanın gizlilik metnini içeriyor"),
+    ("PRIVACY.md, at the root of your repository, must hold the privacy text of your app. It must say that the messages of the chatbot go to your LLM API and name the provider. Found: no PRIVACY.md.",
+     "Reponun kök klasöründeki PRIVACY.md uygulamanın gizlilik metnini içermeli. Metin sohbet botunun mesajlarının LLM API'ne gittiğini söylemeli ve sağlayıcının adını vermeli. Bulunan: PRIVACY.md yok."),
+    ("PRIVACY.md, at the root of your repository, must hold the privacy text of your app. It must say that the messages of the chatbot go to your LLM API and name the provider. Found: {n} {u}.",
+     "Reponun kök klasöründeki PRIVACY.md uygulamanın gizlilik metnini içermeli. Metin sohbet botunun mesajlarının LLM API'ne gittiğini söylemeli ve sağlayıcının adını vermeli. Bulunan: {n} karakter."),
+    ("{p} must be filled in, in your own words: parts 3, 4 and 5 each need at least one real sentence. Found: no such file.",
+     "{p} kendi sözlerinle doldurulmalı: 3., 4. ve 5. kısımların her birinde en az bir gerçek cümle olmalı. Bulunan: böyle bir dosya yok."),
+    ("{p} must be filled in, in your own words: parts 3, 4 and 5 each need at least one real sentence. Found: part {n} is empty.",
+     "{p} kendi sözlerinle doldurulmalı: 3., 4. ve 5. kısımların her birinde en az bir gerçek cümle olmalı. Bulunan: {n}. kısım boş."),
+    ("{p} must be filled in, in your own words: parts 3, 4 and 5 each need at least one real sentence. Found: every part is filled in.",
+     "{p} kendi sözlerinle doldurulmalı: 3., 4. ve 5. kısımların her birinde en az bir gerçek cümle olmalı. Bulunan: her kısım dolu."),
+    ("{p} lists each assistant with its model, and whether it is free or paid",
+     "{p} her asistanı modeliyle ve ücretsiz mi ücretli mi olduğuyla listeliyor"),
+    ("Every row of part 1 of {p} must name the assistant, its model, and free or paid, with the plan of a paid one. Found: row {n} is not complete.",
+     "{p} dosyasının 1. kısmındaki her satır asistanı, modelini ve ücretsiz (free) ya da ücretli (paid) olduğunu, ücretliyse paketini anmalı. Bulunan: {n}. satır eksik."),
+    ("every use of an assistant in {p} is a full row with its commit",
+     "{p} içindeki her asistan kullanımı, commit'iyle birlikte tam bir satır"),
+    ("Part 2 of {p} must have one row for each real use of an assistant this week. Found: part 1 lists an assistant, but part 2 has no row.",
+     "{p} dosyasının 2. kısmında bu haftaki her gerçek asistan kullanımı için bir satır olmalı. Bulunan: 1. kısım bir asistan listeliyor, ama 2. kısımda hiç satır yok."),
+    ('Every row of part 2 of {p} must fill in all six columns, and its last column must name the commit where the result went (the first 7 characters of its id) or say "not kept". Found: row {n} is not complete.',
+     '{p} dosyasının 2. kısmındaki her satırın altı sütunu da dolu olmalı ve son sütun sonucun girdiği commit\'i (kimliğinin ilk 7 karakteri) anmalı ya da "not kept" demeli. Bulunan: {n}. satır eksik.'),
+    ('Every row of part 2 of {p} must fill in all six columns, and its last column must name the commit where the result went (the first 7 characters of its id) or say "not kept". Found: row {n} names no commit of this repository.',
+     '{p} dosyasının 2. kısmındaki her satırın altı sütunu da dolu olmalı ve son sütun sonucun girdiği commit\'i (kimliğinin ilk 7 karakteri) anmalı ya da "not kept" demeli. Bulunan: {n}. satır bu reponun hiçbir commit\'ini anmıyor.'),
     # a course test the entries above do not name (they come first, so every LOGIN_NN of the table has its own Turkish)
     ('course test {k}: {w}', 'ders testi {k}: {w}'),
     ('Course test {k} ({w}) must pass. Found: {f}.', '{k} ders testi ({w}) geçmeli. Bulunan: {f}.'),
@@ -3415,6 +3862,10 @@ TR_UI = {
         "gereksiniminin ekranı",
     "the tester round":
         "testçi turu",
+    "the route POST /chat in server/":
+        "server/ içindeki POST /chat route'u",
+    "the chat screen":
+        "sohbet ekranı",
     "{piece}: {n} commits":
         "{piece}: {n} commit",
     "{piece}: 1 commit. Commit it again when it works.":
@@ -3447,6 +3898,10 @@ TR_UI = {
     "PASS": "TAMAM",
     "FAIL": "EKSİK",
     "NOT YET": "BEKLİYOR",
+    "WARNING: this computer ({host}) is not listed in student.json. You are not allowed to use a computer that is not listed there.":
+        "UYARI: bu bilgisayar ({host}) student.json içinde listelenmemiş. student.json içinde listelenmemiş bir bilgisayarı kullanmana izin verilmiyor.",
+    "WARNING: the Git e-mail on this computer ({email}) is not a git_email of student.json.":
+        "UYARI: bu bilgisayardaki Git e-postası ({email}) student.json içindeki git_email'lerden biri değil.",
     "({k} not yet)": "({k} bekliyor)",
     "{n} line(s) above have no Turkish yet and are shown in English.": "Yukarıdaki {n} satırın henüz Türkçesi yok, İngilizce gösterildi.",
 }
@@ -3970,7 +4425,7 @@ def main() -> int:
             listing=listing, n=max(older)))
     print("-" * 64)
     if not past:
-        live = live_commits(shown)
+        live = live_commits(shown) + live_computer(shown)
         if live:
             print("\n  " + "\n  ".join(live))
     if s_bad and not past:   # VC, 1 Nov 2026: a red run on unfinished work must not stop anyone from committing

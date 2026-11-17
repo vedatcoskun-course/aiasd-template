@@ -14,7 +14,7 @@ Bu hafta aynı versiyon web yerine bir telefonda çalışacak. Sunucu tarafı no
 
 - Mobil uygulamayı Flutter, React Native–Expo, Kotlin ya da Swift kullanarak geliştirmelisiniz.
 - Mobil uygulama, web sayfanızla aynı endpoint'leri çağıracaktır.
-- Her ekran, ilgili olduğu gereksinimi bir yorum (comment) ile -örneğin `// serves: REQ-002` gibi- içermelidir. Bu yorum, ekran ile gereksinimi birbirine bağlayacaktır. Böylece telefon ekranı, gereksinimin zincirine (chain) dokuzuncu halka olarak eklenecektir.
+- Her ekran, ilgili olduğu gereksinimi bir yorum (comment) ile -örneğin `// serves: REQ-002` gibi- içermelidir. Bu yorum, ekran ile gereksinimi birbirine bağlayacaktır. Böylece telefon ekranı, gereksinimin görev listesindeki dokuzuncu görev olur.
 
 Derste Yapılacaklar
 
@@ -43,11 +43,11 @@ Gelecek haftalarda ürününüz sohbet botunu (chatbot) içerecektir. Uygulaman�
 
 8. haftadan önce testçilerinizin e-posta adreslerini toplayın. Yeni bir kişisel Google Play hesabı 14 gün boyunca 12 testçi ister. Kullanacağınız LLM API'sinde bir hesap da açın. Bu hesabın anahtarı (key) yalnızca `.env` dosyasına girmelidir.
 
-## Zincire bir halka daha ekleniyor
+## Görev listesinde bir görev daha tamamlanıyor
 
-İşlevsel gereksinimlerinizin her biri bir halka zinciridir. Bu hafta zincirin dokuzuncu halkası oluşacaktır.
+İşlevsel gereksinimlerinizin her birinin bir görev listesi vardır. Bu hafta listenin dokuzuncu görevi tamamlanıyor.
 
-| Halka | Nerede durur | Ne zamandan beri |
+| Görev | Nerede durur | Ne zamandan beri |
 |---|---|---|
 | 1 ve 2. Gereksinim ve Kullanım Senaryoları (use case) | `week02/requirements.json` ve `week02/SRS.md` | 2. hafta |
 | 3. Ekranlar, `serves:` ile | `week04/prototype/` | 4. hafta |
@@ -57,8 +57,8 @@ Gelecek haftalarda ürününüz sohbet botunu (chatbot) içerecektir. Uygulaman�
 | 8. Web istemcisindeki sayfa | `web/` | 6. hafta |
 | 9. Mobil istemcideki ekran; bu ekran aynı endpoint'lere istek gönderir | `mobile/`, `// serves: REQ-…` ile | Bu hafta |
 
-Kaynak (source) hala `requirements.json` dosyasıdır. Telefon ekranı, web sayfası gibi, gereksinimin ve test case'lerinin söylediğini yapmalıdır. Telefon bir halkanın yanlış olduğunu gösterirse önce o
-halkayı değiştirin. Değişiklik için `PROPOSAL.md` içine bir satır yazın. Bir gereksinim ya da bir test case
+Kaynak (source) hala `requirements.json` dosyasıdır. Telefon ekranı, web sayfası gibi, gereksinimin ve test case'lerinin söylediğini yapmalıdır. Telefon önceki bir görevin yanlış olduğunu gösterirse önce o
+görevi düzeltin. Değişiklik için `PROPOSAL.md` içine bir satır yazın. Bir gereksinim ya da bir test case
 için bu satır bir değişiklik talebidir (change request), 6. hafta §9'daki gibi.
 
 ### Bu hafta bilmeniz gerekenler
