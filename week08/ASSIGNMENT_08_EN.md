@@ -86,7 +86,7 @@ The chatbot shall run through your own server. The phone shall never talk to the
 start  the chat screen in mobile/
   ↓    POST /chat
   ↓    your server
-  ↓    the LLM API of your choice (the key is only in server/.env)
+  ↓    the LLM API of your choice (the key is only in .env)
   ↓    your server
   ↓    the chat screen shows the answer as "AI answer"
 ```
@@ -126,8 +126,8 @@ You will also use these new terms:
 | Term | What it means |
 |---|---|
 | LLM API | An LLM API is a service on the internet that answers a text with a text, such as the Gemini, OpenAI, Anthropic or Groq API. Your server sends it a message and gets an answer back. |
-| API key | The API key is the password of your LLM API account. Whoever has the key can spend the money of your account. The key must stay only in `server/.env`. |
-| `.env` | `.env` is the file of your server that holds passwords and keys. It is listed in `.gitignore`, so it never reaches GitHub (`AI_Doc3`, python-dotenv). `server/.env.example` holds only the names, such as `LLM_API_KEY=`. |
+| API key | The API key is the password of your LLM API account. Whoever has the key can spend the money of your account. The key must stay only in `.env`. |
+| `.env` | `.env` is the file at the root of your repository that holds the passwords and keys of your server, the same file as your e-mail settings (Week 6 §10). It is listed in `.gitignore`, so it never reaches GitHub (`AI_Doc3`, python-dotenv). `.env.example` holds only the names, such as `LLM_API_KEY=`. |
 | System prompt | The system prompt is the instructions that your server sends to the model before the message of the user. It says what the chatbot is for, and what it must not do. |
 | Daily limit | The daily limit is the number of messages that one user can send in one day. After the limit, your server shall answer 429. |
 | Test track | The test track is the part of the store where a build goes to testers before it goes to the public. On Google Play, the test track is called closed testing. |
@@ -239,7 +239,7 @@ Here is an example of the Change log line: *"2026-11-17 — CR-03: the chatbot. 
 ### 4.3 `POST /chat` on your server
 
 - **Get your key before the class.** Open an account with the LLM API of your choice, and create a key. The sign-up can take some time, so do it before the lecture day, for example at home.
-- **Keep the key only in `server/.env`.** Put the key into `server/.env` as `LLM_API_KEY=...`, and read it with `os.getenv("LLM_API_KEY")`. Never write the key into your code, into your app or into a file that you commit. Add `LLM_API_KEY=` without a value to `server/.env.example`. The checker looks for keys in every file of your repository.
+- **Keep the key only in `.env`.** Put the key into `.env`, the file at the root of your repository that already holds your e-mail settings (Week 6 §10), as `LLM_API_KEY=...`, and read it with `os.getenv("LLM_API_KEY")`. Never write the key into your code, into your app or into a file that you commit. Add `LLM_API_KEY=` without a value to `.env.example`, next to the names of your e-mail settings. The checker looks for keys in every file of your repository.
 - **Require the login.** Without a valid token, the route shall answer 401, as your other routes do.
 - **Send the model only the data of the user.** If the chatbot answers questions about records, send the model only the records of the logged-in user. Never send the data of other users, e-mail addresses or passwords.
 - **Limit the messages of each user.** Count the messages of each user per day. After the limit in your requirement, your server shall answer 429 with a message that the user can read.

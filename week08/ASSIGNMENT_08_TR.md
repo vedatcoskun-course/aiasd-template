@@ -86,7 +86,7 @@ Sohbet botu kendi sunucun üzerinden çalışmalıdır. Telefon LLM API'siyle as
 başla  mobile/ içindeki sohbet ekranı
   ↓    POST /chat
   ↓    sunucun
-  ↓    seçtiğin LLM API'si (anahtar yalnız server/.env içinde)
+  ↓    seçtiğin LLM API'si (anahtar yalnız .env içinde)
   ↓    sunucun
   ↓    sohbet ekranı cevabı "AI answer" olarak gösterir
 ```
@@ -126,8 +126,8 @@ Bu hafta şunları öğreneceksin:
 | Terim | Anlamı |
 |---|---|
 | LLM API | LLM API, bir metne bir metinle cevap veren internetteki bir hizmettir; örneğin Gemini, OpenAI, Anthropic ya da Groq API'si. Sunucun ona bir mesaj gönderir ve bir cevap alır. |
-| API anahtarı (API key) | API anahtarı, LLM API hesabının şifresidir. Anahtarı eline geçiren, hesabındaki parayı harcayabilir. Anahtar yalnız `server/.env` içinde durmalı. |
-| `.env` | `.env`, sunucunun şifreleri ve anahtarları tutan dosyasıdır. `.gitignore` içinde listelendiği için asla GitHub'a ulaşmaz (`AI_Doc3`, python-dotenv). `server/.env.example` yalnız adları tutar, örneğin `LLM_API_KEY=`. |
+| API anahtarı (API key) | API anahtarı, LLM API hesabının şifresidir. Anahtarı eline geçiren, hesabındaki parayı harcayabilir. Anahtar yalnız `.env` içinde durmalı. |
+| `.env` | `.env`, reponun kök klasöründe sunucunun şifrelerini ve anahtarlarını tutan dosyadır; e-posta ayarlarının bulunduğu dosyanın ta kendisidir (6. hafta §10). `.gitignore` içinde listelendiği için asla GitHub'a ulaşmaz (`AI_Doc3`, python-dotenv). `.env.example` yalnız adları tutar, örneğin `LLM_API_KEY=`. |
 | Sistem prompt'u (system prompt) | Sistem prompt'u, sunucunun kullanıcının mesajından önce modele gönderdiği talimatlardır. Sohbet botunun ne için olduğunu ve neyi yapmaması gerektiğini söyler. |
 | Günlük sınır | Günlük sınır, bir kullanıcının bir günde gönderebileceği mesaj sayısıdır. Sınırdan sonra sunucun 429 ile cevap vermelidir. |
 | Test kanalı (test track) | Test kanalı, bir build'in herkese açılmadan önce testçilere gittiği mağaza bölümüdür. Google Play'de test kanalının adı kapalı testtir (closed testing). |
@@ -239,7 +239,7 @@ Change log satırı için bir örnek: *"2026-11-18 — CR-03: sohbet botu. Yeni 
 ### 4.3 Sunucunda `POST /chat`
 
 - **Anahtarını dersten önce al.** Seçtiğin LLM API'sinde bir hesap aç ve bir anahtar oluştur. Kayıt biraz zaman alabilir, bu yüzden bunu ders gününden önce, örneğin evde yap.
-- **Anahtarı yalnız `server/.env` içinde tut.** Anahtarı `server/.env` dosyasına `LLM_API_KEY=...` olarak koy ve `os.getenv("LLM_API_KEY")` ile oku. Anahtarı asla koduna, uygulamana ya da commit ettiğin bir dosyaya yazma. `server/.env.example` dosyasına değeri olmadan `LLM_API_KEY=` satırını ekle. Checker reponun her dosyasında anahtar arar.
+- **Anahtarı yalnız `.env` içinde tut.** Anahtarı, reponun kök klasöründe e-posta ayarlarını zaten tutan `.env` dosyasına (6. hafta §10) `LLM_API_KEY=...` olarak koy ve `os.getenv("LLM_API_KEY")` ile oku. Anahtarı asla koduna, uygulamana ya da commit ettiğin bir dosyaya yazma. `.env.example` dosyasına, e-posta ayarlarının adlarının yanına, değeri olmadan `LLM_API_KEY=` satırını ekle. Checker reponun her dosyasında anahtar arar.
 - **Login iste.** Geçerli bir token olmadan route, diğer route'ların gibi 401 ile cevap vermelidir.
 - **Modele yalnız kullanıcının verisini gönder.** Sohbet botu kayıtlarla ilgili soruları cevaplıyorsa modele yalnız giriş yapmış kullanıcının kayıtlarını gönder. Diğer kullanıcıların verisini, e-posta adreslerini ya da şifreleri asla gönderme.
 - **Her kullanıcının mesajlarını sınırla.** Her kullanıcının günlük mesajlarını say. Gereksinimindeki sınırdan sonra sunucun, kullanıcının okuyabileceği bir mesajla 429 ile cevap vermelidir.

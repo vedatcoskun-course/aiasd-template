@@ -1830,7 +1830,8 @@ def week6() -> None:
           ".env must never be committed, and .gitignore must list it. Found: "
           + ("it is in the repository. Remove it with git rm --cached .env and change the password it held."
              if tracked else ".gitignore does not list .env."), DEADLINE)
-    example = read(".env.example") or ""
+    # VC, 18 Nov 2026: Week 8 said server/.env, Week 6 the root; the names may be in either file, so both are read
+    example = "\n".join(x.lstrip("\ufeff") for x in (read(".env.example"), read("server/.env.example")) if x)
     names = {}
     for ln in example.splitlines():
         if ln.strip() and not ln.strip().startswith("#") and "=" in ln:
@@ -2499,7 +2500,7 @@ def _prose(text: str) -> str:
 
 def week8() -> None:
     """The chatbot as a change request: a functional must requirement, a manual test case, the api.md row of
-    POST /chat (401, 429, 503), the route on the server with the key only in server/.env, and the chat screen in
+    POST /chat (401, 429, 503), the route on the server with the key only in .env, and the chat screen in
     mobile/ (serves:, POST /chat, the label "AI answer"). student.json lists the computers of the student. By
     Saturday: S3 (at least 12 testers, at least 6 of them classmates), PRIVACY.md, the tests still green, and the new
     AI log (how the assistants were used in the whole week)."""
@@ -2567,17 +2568,17 @@ def week8() -> None:
         later(8, 'week04/test_cases.json has a test case of the chatbot with "run": "manual"', why)
         later(8, "PROPOSAL.md has a dated Change log line for the chatbot", why)
 
-    # --- in the lecture: POST /chat on the server, the key only in server/.env --------------------------------
+    # --- in the lecture: POST /chat on the server, the key only in .env --------------------------------
     routes = [k for k in route_defs() if k.startswith("POST ") and k.rstrip("/").endswith("/chat")]
     check(8, "server/ has the route POST /chat", bool(routes),
           "server/ must have the route POST /chat. Found: " + ("no server/ folder." if not (ROOT / "server").is_dir()
                                                               else "no such route."))
     server_code = "\n".join((p.read_text(encoding="utf-8", errors="replace") for p in (ROOT / "server").rglob("*.py")
                              if "tests" not in p.parts and ".venv" not in p.parts)) if (ROOT / "server").is_dir() else ""
-    example = read("server/.env.example") or read(".env.example") or ""
+    example = "\n".join(x.lstrip("\ufeff") for x in (read(".env.example"), read("server/.env.example")) if x)  # the root (Week 6) or server/
     check(8, f"the server reads {LLM_KEY_NAME} from the environment, and .env.example names it without a value",
           LLM_KEY_NAME in server_code and bool(re.search(rf"^\s*{LLM_KEY_NAME}\s*=\s*$", example, re.M)),
-          f'Your server must read the key of the LLM API with os.getenv("{LLM_KEY_NAME}"), and server/.env.example '
+          f'Your server must read the key of the LLM API with os.getenv("{LLM_KEY_NAME}"), and .env.example '
           f"must have the line {LLM_KEY_NAME}= with no value after it. Found: "
           + (f"{LLM_KEY_NAME} is not in the code of server/." if LLM_KEY_NAME not in server_code
              else f"no empty {LLM_KEY_NAME}= line in .env.example."))
@@ -3751,10 +3752,10 @@ TR_RULES: list[tuple[str, str]] = [
      "server/ içinde POST /chat route'u olmalı. Bulunan: böyle bir route yok."),
     ("the server reads LLM_API_KEY from the environment, and .env.example names it without a value",
      "sunucu LLM_API_KEY'i ortamdan okuyor ve .env.example onu değeri olmadan anıyor"),
-    ('Your server must read the key of the LLM API with os.getenv("LLM_API_KEY"), and server/.env.example must have the line LLM_API_KEY= with no value after it. Found: LLM_API_KEY is not in the code of server/.',
-     'Sunucun LLM API anahtarını os.getenv("LLM_API_KEY") ile okumalı ve server/.env.example içinde, arkasında değer olmayan LLM_API_KEY= satırı olmalı. Bulunan: server/ kodunda LLM_API_KEY yok.'),
-    ('Your server must read the key of the LLM API with os.getenv("LLM_API_KEY"), and server/.env.example must have the line LLM_API_KEY= with no value after it. Found: no empty LLM_API_KEY= line in .env.example.',
-     'Sunucun LLM API anahtarını os.getenv("LLM_API_KEY") ile okumalı ve server/.env.example içinde, arkasında değer olmayan LLM_API_KEY= satırı olmalı. Bulunan: .env.example içinde boş bir LLM_API_KEY= satırı yok.'),
+    ('Your server must read the key of the LLM API with os.getenv("LLM_API_KEY"), and .env.example must have the line LLM_API_KEY= with no value after it. Found: LLM_API_KEY is not in the code of server/.',
+     'Sunucun LLM API anahtarını os.getenv("LLM_API_KEY") ile okumalı ve .env.example içinde, arkasında değer olmayan LLM_API_KEY= satırı olmalı. Bulunan: server/ kodunda LLM_API_KEY yok.'),
+    ('Your server must read the key of the LLM API with os.getenv("LLM_API_KEY"), and .env.example must have the line LLM_API_KEY= with no value after it. Found: no empty LLM_API_KEY= line in .env.example.',
+     'Sunucun LLM API anahtarını os.getenv("LLM_API_KEY") ile okumalı ve .env.example içinde, arkasında değer olmayan LLM_API_KEY= satırı olmalı. Bulunan: .env.example içinde boş bir LLM_API_KEY= satırı yok.'),
     ("mobile/ has a screen with serves: {r} that sends the message to POST /chat",
      "mobile/ içinde serves: {r} olan ve mesajı POST /chat'e gönderen bir ekran var"),
     ("mobile/ must have the chat screen: its source file names {r} in a comment like // serves: {s}, and it sends the message to POST /chat. Found: no source file in mobile/ names it.",
